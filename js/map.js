@@ -1,9 +1,15 @@
 function generateLevel(){
   tryTo('generate map', function(){
+    let abletiles = generateTiles()
+    let connectedtiles = randomPassableTile().getConnectedTiles().length
+    if(abletiles != connectedtiles){
+      console.error("not all connected? "+connectedtiles+"/"+abletiles);
+    }
+    return true;
     //return generateTiles() == randomPassableTile().getConnectedTiles().length;
-    return generateTiles();
+    //return generateTiles();
   });
-  console.log("mapgen done.");
+  //console.log("mapgen done.");
   
 
   generateMonsters();
@@ -42,13 +48,14 @@ function generateTiles(){
   mapTiles.create(userCallback);
   /*
   */
-  
+  /*
+  //Now that we're using rot.js before this I could redo all of this to work with that.
+  //What it's doing is 3 * pick a random tile, pick random neighbour until it's done that 10 times not caring if it again goes over same tile.
+  //Dunno if I want to give making what I originally wanted from this a try.
   changedtiles = [];
   //Pick a random tile, make it pool
   //this is so finicky
   pooltiles = [];
-  /*
-  */
   count = 1;
   while(count < 4){
     let rx = randomRange(0,numTiles)
@@ -78,20 +85,32 @@ function generateTiles(){
     count++;
   }
   
+  */
+  let count = 1;
+  while(count < 4){
+    tile = randomPassableTile();
+    tiles[tile.x][tile.y] = new Pool(tile.x,tile.y);
+    for(let i=0;i<10;i++){
+      tile = tile.getAdjacentNeighbors()[0] //Works?
+      if(getTile(tile.x,tile.y).constructor.name != "Pool" && inBounds(tile.x,tile.y)){
+        if(getTile(tile.x,tile.y).constructor.name == "Wall" && inBounds(tile.x,tile.y)) floorTiles++;
+        tiles[tile.x][tile.y].replace(Pool);
+      }
+    }
+    count++;
+  }
+  
   
   for(let i=0;i<numTiles;i++){
     //tiles[i] = [];
     for(let j=0;j<numTiles;j++){
       //console.log("mapgen pool:"+tiles[i][j]+" "+i+" "+j+" ");
       let adjFloors = tiles[i][j].getAdjacentPassableNeighbors().length;
-      if (pooltiles.includes(i+","+j)){
-        tiles[i][j] = new Pool(i,j);
-        //console.log("mapgen pool:"+""+" "+i+" "+j+" ");
-        //passableTiles++;
-      }else if(Math.random() < 0.2 && tiles[i][j].constructor.name == "Wall" && adjFloors && tiles[i][j].getAdjacentVent().length < 1){
+      if(Math.random() < 0.2 && tiles[i][j].constructor.name == "Wall" && adjFloors && tiles[i][j].getAdjacentVent().length < 1 && inBounds(i,j)){
         //tiles[i][j] = new Wall(i,j);
-        if (tiles[i][j].checkDoorway()) tiles[i][j] = new Vent(i,j);
-        else tiles[i][j] = new Floor(i,j);
+        if(tiles[i][j].constructor.name == "Wall" && inBounds(i,j)) floorTiles++;
+        if (tiles[i][j].checkDoorway()) tiles[i][j].replace(Vent);
+        else tiles[i][j].replace(Floor);
         //console.log("mapgen stuff:"+tiles[i][j].getAdjacentVent().length+" "+i+" "+j+" ");
         //console.log("mapgen stuff:"+JSON.stringify(tiles[i][j].getAdjacentPassableNeighbors())+" "+i+" "+j+" ");
       }else{
@@ -107,15 +126,27 @@ function generateTiles(){
   
   //Doing this on it's own so there's no need to think about it before.
   //The return values is used to check if the level seems ok.
-  let passableTiles=0;
+  let passableTilesWrong=0;
   tiles.forEach(el => {
     el.forEach(tile => {
-      if (tile.passable) passableTiles++;
+      if (tile.crawlable) passableTilesWrong++;
     })
   });
-  console.log("made "+passableTiles+"/"+((numTiles*numTiles)-(numTiles*4-4))+" passable tiles(excluding edges), that's "+(passableTiles/(numTiles*numTiles-(numTiles*4-4))));
+  
+  let passableTiles=0;
+  for(let i=0;i<numTiles;i++){
+    //tiles[i] = [];
+    for(let j=0;j<numTiles;j++){
+      if (tiles[i][j].crawlable && inBounds(i,j)) passableTiles++;
+    }
+  }
+  if (passableTiles != passableTilesWrong || passableTiles != floorTiles) {
+    console.error("made a:"+passableTiles+" or b:"+passableTilesWrong+" or c:"+floorTiles+" passable tiles");
+  }
+  
+  //console.log("made "+passableTiles+"/"+((numTiles*numTiles)-(numTiles*4-4))+" passable tiles(excluding edges), that's "+(passableTiles/(numTiles*numTiles-(numTiles*4-4))));
   //if (passableTiles/(numTiles*numTiles) < 0.5) {}
-  console.log("made "+passableTiles+"/"+(numTiles*numTiles)+" passable tiles, that's "+passableTiles/(numTiles*numTiles));
+  //console.log("made "+passableTiles+"/"+(numTiles*numTiles)+" passable tiles, that's "+passableTiles/(numTiles*numTiles));
   return passableTiles;
 }
 
@@ -139,7 +170,7 @@ function randomPassableTile(cond){
     let x = randomRange(0,numTiles-1);
     let y = randomRange(0,numTiles-1);
     tile = getTile(x, y);
-    return tile.passable && !tile.monster && !tile[cond];
+    return tile.passable && !tile.monster && !tile[cond];//!tile[cond] is true when cond isn't supplied?
   });
   return tile;
 }

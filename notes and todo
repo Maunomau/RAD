@@ -51,11 +51,13 @@ Magic circles that allow casting (any or specific?) spells for free?
 Wake up sounds(wasps esp.)
 Runedrop indicator? Show rune icons on UI, fancy way would be to show runes moving from count to drop indicator and then to level.
 Oh, runes could be just the icon to avoid needing to call them runes.
+Doing damage to resting enemies can break their hp display or something.
 
 Slime puddles
 
 
 done:
+getConnectedTiles doesn't work correctly?(inBounds checks fixed it)
 Fix turning sometimes failing to show your sprite.(Issue was type coercion sometimes detecting that for a reason no longer relevant I had set player.dir to be a string of a number)
 water
 submergion

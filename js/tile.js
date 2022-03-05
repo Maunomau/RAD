@@ -76,7 +76,7 @@ class Tile{
     let frontier = [this];
     while(frontier.length){
       let neighbors = frontier.pop()
-                              .getAdjacentPassableNeighbors()
+                              .getAdjacentCrawlable()
                               .filter(t => !connectedTiles.includes(t));
       connectedTiles = connectedTiles.concat(neighbors);
       frontier = frontier.concat(neighbors);
