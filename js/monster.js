@@ -316,13 +316,13 @@ class Player extends Monster{
       if (!this.tile.crawlable) return;//above pit for some reason probably
       this.small = true;
       this.peaceful = true;
-      this.sprite = 4;
+      this.sprite = 4 + Math.min(4+this.depth, 6);
     }
     else {
       if (!this.tile.passable) return;//in vent probably
       this.small = false;
       this.peaceful = false;
-      this.sprite = 0;
+      this.sprite = 0 + Math.min(0+this.depth, 3);
       //End turn
       this.TUs++
       playSound("blip");

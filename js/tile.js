@@ -226,13 +226,13 @@ class Pool extends Tile{
 
 class Water extends Tile{
   constructor(x,y){
-    super(x, y, 14, true, true, true, "water", 2);
+    super(x, y, 14, true, true, true, "water", 3);
   };
 }
 
 class DeepWater extends Tile{
   constructor(x,y){
-    super(x, y, 15, true, true, true, "water", 2);
+    super(x, y, 15, true, true, true, "water", 4);
   };
 }
 

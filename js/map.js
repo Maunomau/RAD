@@ -86,15 +86,16 @@ function generateTiles(){
   }
   
   */
-  let count = 1;
+  let count = 0;
+  let types = [Pool, Puddle, Water, DeepWater];
   while(count < 4){
     tile = randomPassableTile();
     tiles[tile.x][tile.y] = new Pool(tile.x,tile.y);
-    for(let i=0;i<10;i++){
+    for(let i=0;i<8;i++){
       tile = tile.getAdjacentNeighbors()[0] //Works?
-      if(getTile(tile.x,tile.y).constructor.name != "Pool" && inBounds(tile.x,tile.y)){
+      if(getTile(tile.x,tile.y) != types[count] && inBounds(tile.x,tile.y)){
         if(getTile(tile.x,tile.y).constructor.name == "Wall" && inBounds(tile.x,tile.y)) floorTiles++;
-        tiles[tile.x][tile.y].replace(Pool);
+        tiles[tile.x][tile.y].replace(types[count]);
       }
     }
     count++;
