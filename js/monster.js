@@ -24,16 +24,18 @@ class Monster{
   }
 
   update(){
-    if (this.shield) this.shield--;
-    if (this.resting){
-      //Not sure if I really need the rp variable. I suppose I might want situations where rest happens without healing or such.
-      if (this.rp < this.fullHp*this.restspeed || this.hp < this.fullHp){
+    if(this.shield) this.shield--;
+    if(this.resting){
+      //Not sure if I really need the rp variable. I suppose I might want situations where rest happens without healing or such(such as SLEEPMORE spell).
+      if(this.rp < this.fullHp*this.restspeed){
         this.rp++;
-        this.hp = Math.floor(this.rp/this.restspeed);
+        //this.hp = Math.floor(this.rp/this.restspeed);
+        if(this.rp % this.restspeed == 0 && this.hp < this.rp/this.restspeed && this.hp < this.fullHp) this.hp += 1;
       }else{
         this.resting = false;
         this.rp = 0;
         this.stunned = false;
+        this.restspeed++ //Increase resting time so that repeatedly beating enemies isn't total waste
         console.log(""+this.constructor.name+" got up. hp:"+this.hp);
       }
       console.log(""+this.constructor.name+" rested (rp:"+this.rp+" hp:"+this.hp+")");
@@ -191,7 +193,10 @@ class Monster{
       this.KO();
     }
     
-    if(this.resting && this.hp >= 1) this.resting = false;
+    if(this.resting && this.hp >= 1) {
+      this.resting = false;
+      this.rp = 0;
+    }
     
     if(this.isPlayer){
       //playSound("hit1");
@@ -296,6 +301,7 @@ class Player extends Monster{
       //this.resting = true;//won't work since player has separate drawHp() and update(), all it does is make enemies swap with player instead of attacking
       this.hp += 0.5;
       if (this.hp < this.fullHp) this.hpup = true;
+      else this.hpup = false;
       //Not sure if I should require spending two full turns to get any benefit
       //Crouch rest (twice) to trigger resting state?
       //Or base on submergion so crouch rest at depth 2 and just rest at depth 3
@@ -406,6 +412,7 @@ Slow, leaves slippery puddles.
 class Slime extends Monster{
   constructor(tile){
       super(tile, 0, 2, 4);
+      this.small = true;
   }
 
   update(){
@@ -424,12 +431,14 @@ Makes webs, poisons?
 class Spider extends Monster{
   constructor(tile){
       super(tile, 1, 1, 12);
+      this.small = true;
   }
 }
 
 class Wolfpup extends Monster{
   constructor(tile){
       super(tile, 2, 2);
+      this.small = true;
   }
 }
 
@@ -595,6 +604,7 @@ class Rabbit extends Monster{ //
   constructor(tile){
       super(tile, 10, 1, 3);
       this.peaceful = true;
+      this.small = true;
   }
   //Move randomly twice
   doStuff(){
@@ -617,6 +627,7 @@ class Bunny extends Monster{ //
   constructor(tile){
       super(tile, 11, 1, 3);
       this.peaceful = true;
+      this.small = true;
   }
   //Move randomly
   doStuff(){

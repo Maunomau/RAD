@@ -93,7 +93,7 @@ function tick(){
   turn++;
   levelturn++;
   gemMax = charges + usedCharges.length + gemCount();
-  console.log("Turn:"+turn);
+  console.log("Turn:"+turn+"("+levelturn+")");
 }
 
 function showTitle(){
@@ -102,7 +102,7 @@ function showTitle(){
 
   gameState = "title";
   
-  RWord = ROT.RNG.getItem(["Raging", "Rampant", "Ravenous", "Restless", "Ridiculous", "Rough", "Rowdy", "Rugged", "Ruthless"]);
+  RWord = ROT.RNG.getItem(["Raging", "Rampant", "Ravenous", "Rough", "Rowdy", "Rugged", "Ruthless"]);
   
   drawText("Running Around Dressless", 48, true, canvas.height/2 - 110, "white");
   //drawText("in a Nascent Territory Full of Rowdy Monsters", 25, true, canvas.height/2 - 50, "white");

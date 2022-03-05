@@ -22,7 +22,7 @@ spells = {
   },
   MAELSTROM: {
     cost: 1,
-    dropdistance: 5,
+    dropdistance: 10,
     droptime: 1,
     f: function(caster){
       for(let i=0;i<monsters.length;i++){
@@ -35,8 +35,8 @@ spells = {
   },
   DASH: {
     cost: 1,
-    dropdistance: 1,
-    droptime: 1,
+    dropdistance: 3,
+    droptime: 3,
     f: function(caster){
       let newTile = caster.tile;
       while(true){
@@ -103,19 +103,16 @@ spells = {
       }
     }
   },
-  EX: {
+  SLEEPMORE: {
     cost: 1,
-    dropdistance: 5,
+    dropdistance: 10,
     droptime: 2,
     f: function(){
-      let directions = [
-        [-1, -1],
-        [-1, 1],
-        [1, -1],
-        [1, 1]
-      ];
-      for(let k=0;k<directions.length;k++){
-        boltTravel(directions[k], 14, 3);
+      for(let i=0;i<monsters.length;i++){
+        if (monsters[i].resting){
+          monsters[i].rp = 0;
+          monsters[i].fullHp += 2;
+        }
       }
     }
   },
@@ -152,6 +149,22 @@ spells = {
         }
       }
       shakeAmount = 20;
+    }
+  },
+  EX: {
+    cost: 1,
+    dropdistance: 5,
+    droptime: 2,
+    f: function(){
+      let directions = [
+        [-1, -1],
+        [-1, 1],
+        [1, -1],
+        [1, 1]
+      ];
+      for(let k=0;k<directions.length;k++){
+        boltTravel(directions[k], 14, 3);
+      }
     }
   },
   DIG: {
