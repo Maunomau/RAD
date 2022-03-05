@@ -14,9 +14,11 @@ class Tile{
 	}
 
   replace(newTileType){
+		let monmove = this.monster;
     tiles[this.x][this.y] = new newTileType(this.x, this.y);
+		//copy monster over(being in vent while it's replaced with floor breaks things otherwise)
+		tiles[this.x][this.y].monster = monmove;
     return tiles[this.x][this.y];
-		//copy monster over?
   }
 
 	//manhattan distance
@@ -103,38 +105,60 @@ class Tile{
   }
 	
   stepOn(monster){
-    if(monster.isPlayer && this.gem){
-      charges++;
-			
-			//adjust to something better.
-			if(charges % 1 == 0 && numSpells < 9){
-        numSpells++;
-				player.addSpell(Object.keys(spells)[numSpells-1]);
-      }
-			
-			playSound("treasure");
-      this.gem = false;
-      spawnMonster();
-			
-			/* set graphics based on amount of runes and whether you have a belt */
-			let belt = ""
-			if (player.belt) belt = "belt";
-			
-			if (charges >= 16 && playersheet.src != 'art/player16x16'+belt+'-runed3.png'){
-				playersheet.src = 'art/player16x16'+belt+'-runed3.png';
-			}else if (charges >= 8 && playersheet.src != 'art/player16x16'+belt+'-runed2.png'){
-				playersheet.src = 'art/player16x16'+belt+'-runed2.png';
-			}else if (charges >= 4 && playersheet.src != 'art/player16x16'+belt+'-runed1.png'){
-				playersheet.src = 'art/player16x16'+belt+'-runed1.png';
-				console.log("Runed1.");
-			}else if (charges >= 2 && playersheet.src != 'art/player16x16'+belt+'-runed0.png'){
-				playersheet.src = 'art/player16x16'+belt+'-runed0.png';
-				console.log("Runed0.");
-			}else if (playersheet.src != 'art/player16x16'+belt+'.png'){
-				playersheet.src = 'art/player16x16'+belt+'.png';
-				console.log("no runed.");
+    if(monster.isPlayer){
+			if(this.gem){
+	      charges++;
+				
+				//adjust to something better.
+				if(charges % 1 == 0 && numSpells < 9){
+	        numSpells++;
+					player.addSpell(Object.keys(spells)[numSpells-1]);
+	      }
+				
+				playSound("treasure");
+	      this.gem = false;
+	      spawnMonster();
+				
+				/* set graphics based on amount of runes and whether you have a belt */
+				let belt = ""
+				if (player.belt) belt = "belt";
+				
+				if (charges >= 16 && playersheet.src != 'art/player16x16'+belt+'-runed3.png'){
+					playersheet.src = 'art/player16x16'+belt+'-runed3.png';
+				}else if (charges >= 8 && playersheet.src != 'art/player16x16'+belt+'-runed2.png'){
+					playersheet.src = 'art/player16x16'+belt+'-runed2.png';
+				}else if (charges >= 4 && playersheet.src != 'art/player16x16'+belt+'-runed1.png'){
+					playersheet.src = 'art/player16x16'+belt+'-runed1.png';
+					console.log("Runed1.");
+				}else if (charges >= 2 && playersheet.src != 'art/player16x16'+belt+'-runed0.png'){
+					playersheet.src = 'art/player16x16'+belt+'-runed0.png';
+					console.log("Runed0.");
+				}else if (playersheet.src != 'art/player16x16'+belt+'.png'){
+					playersheet.src = 'art/player16x16'+belt+'.png';
+					console.log("no runed.");
+				}
+	    }
+			//The way I'm doing this assumes a lot about player's spritesheet, mainly that runes and belt are handled some other way.
+			if (this.liquid && this.depth){
+			 	if(
+					player.sprite != Math.min(0+this.depth, 3) || 
+					player.sprite != Math.min(4+this.depth, 6)
+				){
+					//player.sprite = player.sprite+this.depth
+					//How do I change from one depth to another nicely?
+					//Oh, right, crouching has just 2 depth graphics
+					if (player.small) player.sprite = Math.min(4+this.depth, 6);
+					else if (!"lying in water? or whatever") player.sprite = Math.min(7+this.depth, 9);
+					else player.sprite = Math.min(0+this.depth, 3);
+					//
+				}
+			}else if (player.sprite != 0 && player.sprite != 4 && player.sprite < 7){
+				//exit liquid
+				if (player.small) player.sprite = 4;
+				else player.sprite = 0;
 			}
-    }
+		}
+		//
 		playSound("step", monster.Tile);
   }
 }
@@ -189,28 +213,32 @@ class Pit extends Tile{
 
 class Puddle extends Tile{
   constructor(x,y){
-    super(x, y, 12, true);
-    //super(x, y, 7, true, 0, "water", 1);
+    super(x, y, 12, true, true, true, "water", 1);
+		
   };
 }
 
 class Pool extends Tile{
   constructor(x,y){
-    super(x, y, 13, true);
-    //super(x, y, 8, true, 0, "water", 2);
+    super(x, y, 13, true, true, true, "water", 2);
   };
 }
 
 class Water extends Tile{
   constructor(x,y){
-    super(x, y, 14, true);
-    //super(x, y, 8, true, 0, "water", 2);
+    super(x, y, 14, true, true, true, "water", 2);
   };
 }
 
 class DeepWater extends Tile{
   constructor(x,y){
-    super(x, y, 15, true);
-    //super(x, y, 8, true, 0, "water", 2);
+    super(x, y, 15, true, true, true, "water", 2);
+  };
+}
+
+class Slimepuddle extends Tile{
+  constructor(x,y){
+    super(x, y, 16, true, true, true, "slime", 1);
+		
   };
 }

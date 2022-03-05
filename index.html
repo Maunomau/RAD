@@ -135,18 +135,23 @@ text
         player.dir = "3";
       }
       if(e.key=="q") {
-        if (player.dir) player.dir = player.dir-1;
+        if (player.dir > 0) player.dir = player.dir-1;
         else player.dir = 3;//Type coercion is neat
         player.lastMove = dirmap[player.dir];
         player.TUs++
+        console.log("turning left. Set last move to"+JSON.stringify(dirmap[player.dir])+" and dir to "+player.dir+".");
       }
       if(e.key=="e") {
         if (player.dir < 3) player.dir = player.dir+1;
         else player.dir = 0;
         player.lastMove = dirmap[player.dir];
         player.TUs++
+        console.log("turning right. Set last move to"+JSON.stringify(dirmap[player.dir])+" and dir to "+player.dir+".");
       }
       if(e.key=="x") {
+        player.rest();
+      }
+      if(e.key=="z") {//x and c are kind of close and it's easy to press wrong one.
         player.rest();
       }
       if(e.key=="c") {

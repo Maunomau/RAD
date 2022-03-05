@@ -100,9 +100,9 @@ class Monster{
   drawHp(pip){
     //Health pips are size 6, figure out how many we can show per line based on tilesize
     let modul = Math.floor(tileSize / 6);
-    //I could do these in one for loop couldn't I? Well hp potentially being higher than fullHp... Would just mean needing Math.Max()
+    //I could do these in one for loop couldn't I? Well hp potentially being higher than fullHp... Would just mean needing Math.max()
     if(!this.resting){
-      for(let i=0 ; i < this.hp ; i++){
+      for(let i=0 ; i < Math.floor(this.hp) ; i++){
         ctx.drawImage(
           pip,
           this.getDisplayX() * tileSize + Math.floor(i/modul)*(6),
@@ -187,7 +187,7 @@ class Monster{
       return;
     }
     this.hp -= damage;
-    if(this.hp <= 0){
+    if(Math.floor(this.hp) <= 0){
       this.KO();
     }
     
@@ -265,6 +265,7 @@ class Player extends Monster{
     this.spells = Object.keys(spells).splice(0,numSpells);
     //this.spells = [];
     this.TUs = 0;//Timeunits(or "Turningunits"), to track "free" actions such as turning(not sure I'll use them for anything).
+    this.restspeed = 2;//rest turns to gain 1 hp
 
   }
   
@@ -272,10 +273,13 @@ class Player extends Monster{
     if (this.shield) this.shield--;
     this.stunned = false;//get player out of stun state(could do earlier if grey pips after damage is issue also might want player able to actually get stunned at some point)
     this.TUs = 0;
+    console.log("player hp: "+this.hp+"/"+this.fullHp+"/"+maxHp);
   }
   
   tryMove(dx, dy){
     this.lastMove = [dx,dy];//Set last move even when failing to move so digging and such works.
+    this.resting = false;
+    this.hpup = false;//ehh, not the best way and place to do this
     if(super.tryMove(dx,dy)){
       playSound("blip");
       tick();
@@ -285,7 +289,18 @@ class Player extends Monster{
   }
   
   rest(){
-    player.tile.stepOn(this);
+    this.tile.stepOn(this);//To pickup gems
+    //Heal in water
+    if (this.tile.liquid = "water" && this.tile.depth >= 2 && this.hp < this.fullHp) {
+      this.tile.setEffect(13);
+      //this.resting = true;//won't work since player has separate drawHp() and update(), all it does is make enemies swap with player instead of attacking
+      this.hp += 0.5;
+      if (this.hp < this.fullHp) this.hpup = true;
+      //Not sure if I should require spending two full turns to get any benefit
+      //Crouch rest (twice) to trigger resting state?
+      //Or base on submergion so crouch rest at depth 2 and just rest at depth 3
+      //Nothing changes fullHp from 3, it's fine though makes discovering how to heal harder so could update with level changes, though thinking about it I don't think I actually want exits to give hp.
+    }
     playSound("blip");
     tick();
   }
@@ -302,10 +317,19 @@ class Player extends Monster{
       this.small = false;
       this.peaceful = false;
       this.sprite = 0;
+      //End turn
+      this.TUs++
+      playSound("blip");
+      tick();
     }
     this.TUs++
-    playSound("blip");
-    tick();
+    /*
+    //End turn
+    What if only on getting up?
+    Losing only one turn to misinput instead of two is better
+    If I do make use of TUs could just make getting up more expensive
+    player.tile.stepOn(this);//To pickup gems
+    */
   }
   
   addSpell(newSpell){                                                       
@@ -343,7 +367,7 @@ class Player extends Monster{
     //Health pips are size 6, figure out how many we can show per line based on tilesize
     let modul = Math.floor(tileSize / 6);
     //
-    for(let i=0; i<this.hp; i++){
+    for(let i=0 ; i < Math.floor(this.hp) ; i++){
       ctx.drawImage(
         pip,
         this.getDisplayX() * tileSize + tileSize - 6 - Math.floor(i/modul)*(6),
@@ -360,6 +384,15 @@ class Player extends Monster{
         this.getDisplayX() * tileSize + tileSize - 6 - Math.floor(i/modul)*(6),
         this.getDisplayY() * tileSize + tileSize - 6 - (i%modul)*(6),
       );
+    }
+    if (this.hpup){
+      let i = Math.floor(this.hp);
+        ctx.drawImage(
+          pipyellow,
+          this.getDisplayX() * tileSize + tileSize - 6 - Math.floor(i/modul)*(6),
+          this.getDisplayY() * tileSize + tileSize - 6 - (i%modul)*(6),
+        );
+      
     }
   }	
 }
