@@ -1,12 +1,14 @@
 class Tile{
   //constructor(x, y, sprite, passable, crawlable, liquid, depth){
-	constructor(x, y, sprite, passable, crawlable=0, liquid=0, depth=0){
+	constructor(x, y, sprite, passable, crawlable=true, flyable=true, liquid=0, depth=0){
     this.x = x;
     this.y = y;
     this.sprite = sprite;
-    this.passable = passable;//no wall
-    //height and ceiling height? no
-    this.crawlable = crawlable; //1-3 for how high the opening is?
+    this.passable = passable;//not wall, vent or pit
+    this.crawlable = crawlable;//Can be crawled on so anything but walls and pits
+		this.flyable = flyable;//not wall or vent
+		//There's probably a better way than to have -able flag for everything possible
+		//for vents at first I wanted different opening heights but dunno if I still want that.
     this.liquid = liquid; //"water"
     this.depth = depth; //0-6
 	}
@@ -26,6 +28,7 @@ class Tile{
     return getTile(this.x + dx, this.y + dy)
   }
 
+	//get nearby tiles in random order
   getAdjacentNeighbors(){
     return shuffle([
       this.getNeighbor(0, -1),
@@ -55,6 +58,10 @@ class Tile{
 
   getAdjacentCrawlable(){
     return this.getAdjacentNeighbors().filter(t => t.crawlable);
+  }
+
+  getAdjacentFlyable(){
+    return this.getAdjacentNeighbors().filter(t => t.flyable);
   }
 
   getAdjacentVent(){
@@ -159,30 +166,16 @@ class Exit extends Tile{
   }
 }
 
-class Puddle extends Tile{
-  constructor(x,y){
-    super(x, y, 7, true);
-    //super(x, y, 7, true, 0, "water", 1);
-  };
-}
-
-class Pool extends Tile{
-  constructor(x,y){
-    super(x, y, 8, true);
-    //super(x, y, 8, true, 0, "water", 2);
-  };
-}
-
 class Wall extends Tile{
   constructor(x, y){
-    super(x, y, 3, false);
+    super(x, y, 3, false, false, false);
     //super(x, y, 3, false, 0, "none", 0);
   }
 }
 
 class Vent extends Tile{
   constructor(x, y){
-    super(x, y, 4, false);
+    super(x, y, 4, false, true, false);
     //super(x, y, 4, false, 1, "none", 0);
   }
 }
@@ -190,5 +183,34 @@ class Vent extends Tile{
 class Pit extends Tile{
   constructor(x,y){
     super(x, y, 6, true);
+    //super(x, y, 6, false, false, true);
+  };
+}
+
+class Puddle extends Tile{
+  constructor(x,y){
+    super(x, y, 12, true);
+    //super(x, y, 7, true, 0, "water", 1);
+  };
+}
+
+class Pool extends Tile{
+  constructor(x,y){
+    super(x, y, 13, true);
+    //super(x, y, 8, true, 0, "water", 2);
+  };
+}
+
+class Water extends Tile{
+  constructor(x,y){
+    super(x, y, 14, true);
+    //super(x, y, 8, true, 0, "water", 2);
+  };
+}
+
+class DeepWater extends Tile{
+  constructor(x,y){
+    super(x, y, 15, true);
+    //super(x, y, 8, true, 0, "water", 2);
   };
 }

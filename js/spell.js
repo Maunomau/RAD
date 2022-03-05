@@ -163,7 +163,7 @@ spells = {
       for(let i=0;i<=charges;i++){
         let testTile = newTile.getNeighbor(player.lastMove[0],player.lastMove[1]);
         if(testTile.passable){
-          testTile.replace(Pit);
+          testTile.replace(Pool);
           newTile = testTile;
         }else if(inBounds(testTile.x, testTile.y)){
           testTile.replace(Vent);

@@ -142,13 +142,13 @@ class Monster{
 
   tryMove(dx, dy){
     let newTile = this.tile.getNeighbor(dx,dy);
-    if(newTile.passable){
+    if(newTile.passable || this.small && newTile.crawlable || this.flying && newTile.flyable){
       this.lastMove = [dx,dy];
       if(!newTile.monster){
           this.move(newTile);
       }else{
         //This neatly allows player to hit nonplayers and nonplayers to hit player
-        if(this.isPlayer != newTile.monster.isPlayer && !newTile.monster.resting){
+        if(this.isPlayer != newTile.monster.isPlayer && !newTile.monster.resting && !this.peaceful){
           console.log(""+this.constructor.name+" attacks "+newTile.monster.constructor.name+".");
           this.attackedThisTurn = true;
           newTile.monster.stunned = true;
@@ -161,6 +161,9 @@ class Monster{
           this.offsetY = (newTile.y - this.tile.y)/2;
         }else if (newTile.monster.resting){
           this.swap(newTile, this.tile);
+        }else if (this.isPlayer && this.peaceful){
+          //returning true after peaceful move attempt is fine for rabbits but player shouldn't do that.
+          return false;
         }
       }
       return true;
@@ -201,11 +204,18 @@ class Monster{
 
   KO(){
     this.resting = true;
-    //adjust for knocking out
-    //this.tile.monster = null;
     if(this.isPlayer){
       this.sprite = randomRange(7,8);
       this.dead = true;
+    }
+  }
+
+  //Just in case flesh egg isn't the only thing we want to actually remove.
+  die(){
+    this.dead = true;
+    this.tile.monster = null;
+    if(this.isPlayer){
+      this.sprite = randomRange(7,8);
     }
   }
 
@@ -276,6 +286,24 @@ class Player extends Monster{
   
   rest(){
     player.tile.stepOn(this);
+    playSound("blip");
+    tick();
+  }
+  
+  crouch(){
+    if (!this.small && this.tile.crawlable) {
+      if (!this.tile.crawlable) return;//above pit for some reason probably
+      this.small = true;
+      this.peaceful = true;
+      this.sprite = 4;
+    }
+    else {
+      if (!this.tile.passable) return;//in vent probably
+      this.small = false;
+      this.peaceful = false;
+      this.sprite = 0;
+    }
+    this.TUs++
     playSound("blip");
     tick();
   }
@@ -533,17 +561,18 @@ Flees
 class Rabbit extends Monster{ // 
   constructor(tile){
       super(tile, 10, 1, 3);
+      this.peaceful = true;
   }
   //Move randomly twice
   doStuff(){
-    this.attackedThisTurn = false;
-    let neighbors = this.tile.getAdjacentPassableNeighbors();
+    this.attackedThisTurn = false;//Shouldn't be attacking anyway but just in case a way to anger is added.
+    let neighbors = this.tile.getAdjacentCrawlable();
     if(neighbors.length){
       this.tryMove(neighbors[0].x - this.tile.x, neighbors[0].y - this.tile.y);
     }
 
     if(!this.attackedThisTurn){
-      let neighbors = this.tile.getAdjacentPassableNeighbors();
+      let neighbors = this.tile.getAdjacentCrawlable();
       if(neighbors.length){
         this.tryMove(neighbors[0].x - this.tile.x, neighbors[0].y - this.tile.y);
       }
@@ -554,10 +583,11 @@ class Rabbit extends Monster{ //
 class Bunny extends Monster{ // 
   constructor(tile){
       super(tile, 11, 1, 3);
+      this.peaceful = true;
   }
   //Move randomly
   doStuff(){
-    let neighbors = this.tile.getAdjacentPassableNeighbors();
+    let neighbors = this.tile.getAdjacentCrawlable();
     if(neighbors.length){
       this.tryMove(neighbors[0].x - this.tile.x, neighbors[0].y - this.tile.y);
     }

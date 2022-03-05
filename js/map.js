@@ -44,18 +44,18 @@ function generateTiles(){
   */
   
   changedtiles = [];
-  //Pick a random tile, make it pit
+  //Pick a random tile, make it pool
   //this is so finicky
-  pittiles = [];
+  pooltiles = [];
   /*
   */
   count = 1;
   while(count < 4){
     let rx = randomRange(0,numTiles)
     let ry = randomRange(0,numTiles)
-    pittiles[0] = rx+","+ry;
-    //Pick a neighbour, make it pit
-    while (pittiles.length<10*count){
+    pooltiles[0] = rx+","+ry;
+    //Pick a neighbour, make it pool
+    while (pooltiles.length<10*count){
       switch (randomRange(1,4)) {
         case 1:
           if(ry<numTiles-1) ry++;
@@ -67,12 +67,12 @@ function generateTiles(){
           if(rx<numTiles-1) rx++;
       }
       //tiles[rx][ry] = new Pit(rx,ry);
-      if (pittiles.includes(rx+","+ry)){
-        //add pit anyway since things won't work if we don't
+      if (pooltiles.includes(rx+","+ry)){
+        //add pool anyway since things won't work if we don't
         ry++
-        pittiles.push(rx+","+ry);
+        pooltiles.push(rx+","+ry);
       }else{
-        pittiles.push(rx+","+ry);
+        pooltiles.push(rx+","+ry);
       }
     }
     count++;
@@ -82,11 +82,11 @@ function generateTiles(){
   for(let i=0;i<numTiles;i++){
     //tiles[i] = [];
     for(let j=0;j<numTiles;j++){
-      //console.log("mapgen pit:"+tiles[i][j]+" "+i+" "+j+" ");
+      //console.log("mapgen pool:"+tiles[i][j]+" "+i+" "+j+" ");
       let adjFloors = tiles[i][j].getAdjacentPassableNeighbors().length;
-      if (pittiles.includes(i+","+j)){
-        tiles[i][j] = new Pit(i,j);
-        //console.log("mapgen pit:"+""+" "+i+" "+j+" ");
+      if (pooltiles.includes(i+","+j)){
+        tiles[i][j] = new Pool(i,j);
+        //console.log("mapgen pool:"+""+" "+i+" "+j+" ");
         //passableTiles++;
       }else if(Math.random() < 0.2 && tiles[i][j].constructor.name == "Wall" && adjFloors && tiles[i][j].getAdjacentVent().length < 1){
         //tiles[i][j] = new Wall(i,j);
