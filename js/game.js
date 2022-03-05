@@ -102,9 +102,12 @@ function showTitle(){
 
   gameState = "title";
   
-  drawText("Running Around Dressless", 50, true, canvas.height/2 - 110, "white");
+  RWord = ROT.RNG.getItem(["Raging", "Rampant", "Ravenous", "Restless", "Ridiculous", "Rough", "Rowdy", "Rugged", "Ruthless"]);
+  
+  drawText("Running Around Dressless", 48, true, canvas.height/2 - 110, "white");
   //drawText("in a Nascent Territory Full of Rowdy Monsters", 25, true, canvas.height/2 - 50, "white");
-  drawText("in a Nest That's Full of Rowdy Monsters", 25, true, canvas.height/2 - 50, "white");
+  drawText("in a Nascent Territory Full of "+RWord+" Monsters", 25, true, canvas.height/2 - 50, "white");
+  //drawText("in a Nest That's Full of Rowdy Monsters", 25, true, canvas.height/2 - 50, "white");
   
   drawScores();
   

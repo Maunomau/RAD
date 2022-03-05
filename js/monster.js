@@ -275,7 +275,7 @@ class Player extends Monster{
   }
   
   rest(){
-    tile.stepOn(player.tile);
+    player.tile.stepOn(this);
     playSound("blip");
     tick();
   }
