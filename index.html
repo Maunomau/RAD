@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<title>RADiaNTFoRM(Running Around Dressless in a Nascent Territory Full of Rowdy Monsters)</title>
+
+
+<style>
+    canvas{
+        outline: 1px solid white;
+    }
+
+    body{
+        background-color: indigo;
+        text-align: center;
+        margin-top: 50px;
+    }
+</style>
+
+
+text
+<br>
+<canvas></canvas>
+<script src="https://cdn.jsdelivr.net/npm/rot-js@2/dist/rot.js"></script>
+<script src="rotjs/rot.js"></script>
+<script src="js/game.js"></script>
+<script src="js/map.js"></script>
+<script src="js/tile.js"></script>
+<script src="js/monster.js"></script>
+<script src="js/util.js"></script>
+<script src="js/spell.js"></script>
+<script>
+
+
+  monstersheet = new Image();
+  monstersheet.src = 'monsters.png';
+
+  playersheet = new Image();
+  playersheet.src = 'art/player16x16.png';
+
+  effectsheet = new Image();
+  effectsheet.src = 'effects.png';
+
+  tileset = new Image();
+  tileset.src = 'tiles.png';
+
+  //There's a better way to do this I assume.
+  pipred = new Image();
+  pipred.src = 'pipred.png';
+
+  pipredshield = new Image();
+  pipredshield.src = 'pipredwhite.png';
+
+  pipblue = new Image();
+  pipblue.src = 'pipblue.png';
+
+  pipblueshield = new Image();
+  pipblueshield.src = 'pipbluewhite.png';
+
+  pipyellow = new Image();
+  pipyellow.src = 'pipyellow.png';
+
+  pipyellowshield = new Image();
+  pipyellowshield.src = 'pipyellowwhite.png';
+
+  pipshield = new Image();
+  pipshield.src = 'pipwhite.png';
+
+  pipgray = new Image();
+  pipgray.src = 'pipgray.png';
+
+  pipgrayshield = new Image();
+  pipgrayshield.src = 'pipgraywhite.png';
+
+  pipz0 = new Image();
+  pipz0.src = 'pipZ0.png';
+
+  pipz1 = new Image();
+  pipz1.src = 'pipZ1.png';
+
+  pipz2 = new Image();
+  pipz2.src = 'pipZ2.png';
+
+  tileset.onload = showTitle;
+
+  //tileSize = 64;
+  tileSize = 32;
+  numTiles = 16;
+  uiWidth = 5;
+  level = 1;
+  maxHp = 10; 
+  seenMons = new Set();
+  
+  gameState = "loading";
+
+  startingHp = 3;
+  numLevels = 13;
+  
+  shakeAmount = 0;
+  shakeX = 0;
+  shakeY = 0;
+  
+  soundsplayed = {}
+  
+  //I feel like there's a better way to achieve this but this works.
+  //dirmap = [{x:0,y:1}, {x:-1,y:0}, {x:0,y:-1}, {x:1,y:0}]
+  dirmap = [
+    [0,1],
+    [-1,0],
+    [0,-1],
+    [1,0]
+  ]
+
+
+  document.querySelector("html").onkeypress = function(e){
+
+    if(gameState == "title"){
+      startGame();
+    }else if(gameState == "dead"){
+      showTitle();
+    }else if(gameState == "running"){
+      if(e.key=="w") {
+        player.tryMove(0, -1);
+        player.dir = "2";
+      }
+      if(e.key=="s") {
+        player.tryMove(0, 1);
+        player.dir = "0";
+      }
+      if(e.key=="a") {
+        player.tryMove(-1, 0);
+        player.dir = "1";
+      }
+      if(e.key=="d") {
+        player.tryMove(1, 0);
+        player.dir = "3";
+      }
+      if(e.key=="q") {
+        if (player.dir) player.dir = player.dir-1;
+        else player.dir = 3;//Type coercion is neat
+        player.lastMove = dirmap[player.dir];
+        player.TUs++
+      }
+      if(e.key=="e") {
+        if (player.dir < 3) player.dir = player.dir+1;
+        else player.dir = 0;
+        player.lastMove = dirmap[player.dir];
+        player.TUs++
+      }
+      if(e.key=="x") {
+        player.rest();
+      }
+      
+      //Not how I'd like to do this but will do for now.
+      if(e.key>=1 && e.key<=9) player.castSpell(e.key-1);
+      if(e.key=="0") player.castSpell(9);
+      
+      //Debug keys
+      if(e.key=="r") {
+        startLevel(player.hp);
+      }
+      if(e.key=="t") {
+        generateTiles();
+      }
+      if(e.key=="g") {
+        usedCharges.push([0, 1, player.tile, 1]);
+      }
+    }
+  };
+
+  //function draw(){
+    //ctx.clearRect(0,0,canvas.width,canvas.height);
+    //ctx.fillRect (x*tileSize,y*tileSize,tileSize,tileSize);
+    //ctx.drawImage(spritesheet, x*tileSize, y*tileSize);
+  //}
+
+  setInterval(draw, 15);
+
+  setupCanvas();
+  /*
+  generateLevel();
+  
+  //startingTile = randomPassableTile();
+  //x = startingTile.x;
+  //y = startingTile.y;
+  player = new Player(randomPassableTile());
+  */
+  initSounds();
+
+</script>
+<br>
+text2 <script>//gameState</script>
