@@ -91,13 +91,14 @@ text
   gameState = "loading";
 
   startingHp = 3;
-  numLevels = 13;
+  numLevels = 6;
   
   shakeAmount = 0;
   shakeX = 0;
   shakeY = 0;
   
   soundsplayed = {}
+  lastGemCount = -1;
   
   //I feel like there's a better way to achieve this but this works.
   //dirmap = [{x:0,y:1}, {x:-1,y:0}, {x:0,y:-1}, {x:1,y:0}]
@@ -109,15 +110,22 @@ text
   ]
   
   RWord = ROT.RNG.getItem(["Raging", "Rampant", "Ravenous", "Restless", "Ridiculous", "Rough", "Rowdy", "Rugged", "Ruthless"]);
-
-
+  
+  mapRNG = ROT.RNG.clone();
+  gRNG = ROT.RNG.clone();
+  worldRNG = ROT.RNG.clone();
+  savedMaps = {};
+  savedMaps = [];
+  
   document.querySelector("html").onkeypress = function(e){
+    console.log("Pressed "+e.key+".");
 
     if(gameState == "title"){
       startGame();
     }else if(gameState == "dead"){
       showTitle();
     }else if(gameState == "running"){
+      console.group("Turn:"+turn+"("+levelturn+")");
       if(e.key=="w") {
         player.tryMove(0, -1);
         player.dir = 2;
@@ -172,26 +180,27 @@ text
       if(e.key=="g") {
         usedCharges.push([0, 1, player.tile, 1]);
       }
+      if(e.key=="l") {
+        tiles = savedMaps[level-1].map ;
+        console.log("Loading saved map "+ level-1 +".");
+      }
+      
+      console.groupEnd()
     }
   };
+  
+  document.querySelector("html").onkeydown = function(e){
+    //console.log("Key down "+e.key+".");
+  }
+  
+  document.querySelector("html").onkeyup = function(e){
+    //console.log("Key up "+e.key+".");
+  }
 
-  //function draw(){
-    //ctx.clearRect(0,0,canvas.width,canvas.height);
-    //ctx.fillRect (x*tileSize,y*tileSize,tileSize,tileSize);
-    //ctx.drawImage(spritesheet, x*tileSize, y*tileSize);
-  //}
 
   setInterval(draw, 15);
 
   setupCanvas();
-  /*
-  generateLevel();
-  
-  //startingTile = randomPassableTile();
-  //x = startingTile.x;
-  //y = startingTile.y;
-  player = new Player(randomPassableTile());
-  */
   initSounds();
 
 </script>

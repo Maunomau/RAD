@@ -1,33 +1,63 @@
-function generateLevel(){
+function generateLevel(lvlid){
+  //currentSeed = mapRNG.setSeed(worldRNG.getUniform());
+  currentSeed = worldRNG.getUniform();
+  mapRNG.setSeed(currentSeed);
+  currentSeed = mapRNG.getSeed();//ensure these are the same.
+  console.groupCollapsed("mapgen(seed:%c"+ currentSeed +"%c)", "color:green", "color:")
   tryTo('generate map', function(){
     let abletiles = generateTiles()
-    let connectedtiles = randomPassableTile().getConnectedTiles().length
+    let connectedtiles = randomPassableTile(0, gRNG).getConnectedTiles().length//This shouldn't change anything so no need for mapRNG.
     if(abletiles != connectedtiles){
-      console.error("not all connected? "+connectedtiles+"/"+abletiles);
+      console.warn("not all connected? "+connectedtiles+"/"+abletiles);
     }
     return true;
     //return generateTiles() == randomPassableTile().getConnectedTiles().length;
     //return generateTiles();
   });
   //console.log("mapgen done.");
+  console.groupEnd()
+  console.groupCollapsed("mapgen p5(%cmonsters and gems%c).", "color:violet", "color:");
   
 
   generateMonsters();
   
   for(let i=0;i<8;i++){
-    randomPassableTile().gem = 1;
+    randomPassableTile(0, mapRNG).gem = 1;
   }
+  console.groupEnd()
+  
+  savedMaps.push({seed:mapRNG.getSeed, map:tiles, id:lvlid})
+  console.info("saved map "+ (savedMaps.length-1) +"");
+  
 }
 
 function generateTiles(){
   tiles = [];
   
+  let rngState = ROT.RNG.getState();
+  //Presumably no easy way to make ROT not use it's own RNG so setting it's state to mapRNG's
+  ROT.RNG.setState(mapRNG.getState());
+  //console.log("starting map gen with seed: "+ mapRNG.getSeed() +"");
+  /*
+  Seeding would reset the state which we don't want... Or wait, what if before each mapgen we set seed using worldRNG?
+  That way we can store just the seed for level.
+  */
+  ROT.RNG.setSeed(currentSeed);
+  
+  
+  console.groupCollapsed("mapgen p1(ROT.Map).");
+  console.info("starting seeds: m:"+ mapRNG.getSeed() +" r:"+ ROT.RNG.getSeed() +" w:"+ worldRNG.getSeed() +"");
+  console.info("RNG states are: m:"+ mapRNG.getState() +" r:"+ ROT.RNG.getState() +" w:"+ worldRNG.getState() +"");
+  console.log("ROT.Map.Digger");
+
+
+  
   for(let i=0;i<numTiles;i++){
     tiles[i] = [];
     for(let j=0;j<numTiles;j++){
-        tiles[i][j] = "_";
-      }
+      tiles[i][j] = "_";
     }
+  }
   
   let floorTiles=0;
   var mapTiles = new ROT.Map.Digger(numTiles, numTiles, {
@@ -46,6 +76,12 @@ function generateTiles(){
     if (value == 1) tiles[x][y] = new Wall(x,y);
   }
   mapTiles.create(userCallback);
+  console.info("Done. RNG states are: m:"+ mapRNG.getState() +" r:"+ ROT.RNG.getState() +" w:"+ worldRNG.getState() +"");
+  mapRNG.setState(ROT.RNG.getState());
+  //Give ROT.RNG back whatever state it was in before?
+  ROT.RNG.setState(rngState);
+  console.log("MapRNG set to ROT.RNG and ROT.RNG set to it's previous state.");
+  console.log("RNG states are: m:"+ mapRNG.getState() +" r:"+ ROT.RNG.getState() +" w:"+ worldRNG.getState() +"");
   /*
   */
   /*
@@ -86,13 +122,15 @@ function generateTiles(){
   }
   
   */
+  console.groupEnd()
+  console.groupCollapsed("mapgen p2(%cwater%c).", "color:cyan", "color:");
   let count = 0;
   let types = [Pool, Puddle, Water, DeepWater];
   while(count < 4){
-    tile = randomPassableTile();
+    tile = randomPassableTile(0, mapRNG);
     tiles[tile.x][tile.y] = new Pool(tile.x,tile.y);
     for(let i=0;i<8;i++){
-      tile = tile.getAdjacentNeighbors()[0] //Works?
+      tile = tile.getAdjacentNeighbors(mapRNG)[0] //Works?
       if(getTile(tile.x,tile.y) != types[count] && inBounds(tile.x,tile.y)){
         if(getTile(tile.x,tile.y).constructor.name == "Wall" && inBounds(tile.x,tile.y)) floorTiles++;
         tiles[tile.x][tile.y].replace(types[count]);
@@ -100,14 +138,17 @@ function generateTiles(){
     }
     count++;
   }
+  console.log("RNG states are: m:"+ mapRNG.getState() +" r:"+ ROT.RNG.getState() +" w:"+ worldRNG.getState() +"");
   
+  console.groupEnd()
+  console.groupCollapsed("mapgen p3(%cvents and holes%c).", "color:grey", "color:");
   
   for(let i=0;i<numTiles;i++){
     //tiles[i] = [];
     for(let j=0;j<numTiles;j++){
       //console.log("mapgen pool:"+tiles[i][j]+" "+i+" "+j+" ");
-      let adjFloors = tiles[i][j].getAdjacentPassableNeighbors().length;
-      if(Math.random() < 0.2 && tiles[i][j].constructor.name == "Wall" && adjFloors && tiles[i][j].getAdjacentVent().length < 1 && inBounds(i,j)){
+      let adjFloors = tiles[i][j].getAdjacentPassableNeighbors(mapRNG).length;
+      if(mapRNG.getUniform() < 0.2 && tiles[i][j].constructor.name == "Wall" && adjFloors && tiles[i][j].getAdjacentVent(mapRNG).length < 1 && inBounds(i,j)){
         //tiles[i][j] = new Wall(i,j);
         if(tiles[i][j].constructor.name == "Wall" && inBounds(i,j)) floorTiles++;
         if (tiles[i][j].checkDoorway()) tiles[i][j].replace(Vent);
@@ -120,10 +161,12 @@ function generateTiles(){
       }
     }
   }
-  
+  console.log("RNG states are: m:"+ mapRNG.getState() +" r:"+ ROT.RNG.getState() +" w:"+ worldRNG.getState() +"");
   /*
   */
   
+  console.groupEnd()
+  console.groupCollapsed("mapgen p4(%ccheck passability%c).", "color:yellow", "color:");
   
   //Doing this on it's own so there's no need to think about it before.
   //The return values is used to check if the level seems ok.
@@ -146,8 +189,11 @@ function generateTiles(){
   }
   
   //console.log("made "+passableTiles+"/"+((numTiles*numTiles)-(numTiles*4-4))+" passable tiles(excluding edges), that's "+(passableTiles/(numTiles*numTiles-(numTiles*4-4))));
-  //if (passableTiles/(numTiles*numTiles) < 0.5) {}
-  //console.log("made "+passableTiles+"/"+(numTiles*numTiles)+" passable tiles, that's "+passableTiles/(numTiles*numTiles));
+  if (passableTiles/(numTiles*numTiles) < 0.48) {
+    console.warn("made only "+ passableTiles +"/"+ (numTiles*numTiles) +" passable tiles(ratio of "+ (passableTiles/(numTiles*numTiles)) +")");
+  }else{
+    console.info("made "+ passableTiles +"/"+ (numTiles*numTiles) +" passable tiles(ratio of "+ (passableTiles/(numTiles*numTiles)) +")");
+  }
   return passableTiles;
 }
 
@@ -165,18 +211,19 @@ function getTile(x, y){
   }
 }
 
-function randomPassableTile(cond){
+//Todo: make more flexible(crawlable, don't care about monster)
+function randomPassableTile(cond, rng = gRNG){
   let tile;
   tryTo('get random passable tile', function(){
-    let x = randomRange(0,numTiles-1);
-    let y = randomRange(0,numTiles-1);
+    let x = randomRange(0,numTiles-1, rng);
+    let y = randomRange(0,numTiles-1, rng);
     tile = getTile(x, y);
     return tile.passable && !tile.monster && !tile[cond];//!tile[cond] is true when cond isn't supplied?
   });
   return tile;
 }
 
-function randomTileWithinDistance(sourceTile, distance, type="", cond){
+function randomTileWithinDistance(sourceTile, distance, type="", cond, rng = gRNG){
   let tile;
   tryTo('get tile('+type+') within a distance('+distance+')', function(){
     
@@ -184,7 +231,7 @@ function randomTileWithinDistance(sourceTile, distance, type="", cond){
     let y = sourceTile.y + randomRange(-distance,distance);
     tile = getTile(x, y);
     if (type){
-      console.log("asd");
+      console.log("asdWIP");
     }
     
     return tile.passable && !tile.gem;
@@ -195,7 +242,7 @@ function randomTileWithinDistance(sourceTile, distance, type="", cond){
 function generateMonsters(){
     monsters = [];
     let numMonsters = level+1;
-    monsterType = shuffle([Slime, Spider, Wolf, Crystal, Wasp, Goblin, Hobgoblin, Fleshegg, Rabbit])[0];
+    monsterType = shuffle([Slime, Spider, Wolf, Crystal, Wasp, Goblin, Hobgoblin, Fleshegg, Rabbit], mapRNG)[0];
     for(let i=0;i<numMonsters;i++){
         spawnMonster(monsterType, 1);
     }

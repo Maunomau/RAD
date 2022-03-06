@@ -31,13 +31,13 @@ class Tile{
   }
 
 	//get nearby tiles in random order
-  getAdjacentNeighbors(){
+  getAdjacentNeighbors(rng = gRNG){
     return shuffle([
       this.getNeighbor(0, -1),
       this.getNeighbor(0, 1),
       this.getNeighbor(-1, 0),
       this.getNeighbor(1, 0)
-    ]);
+    ], rng);
   }
 
   checkDoorway(){
@@ -54,20 +54,20 @@ class Tile{
 			else return 0;
   }
 
-  getAdjacentPassableNeighbors(){
-    return this.getAdjacentNeighbors().filter(t => t.passable);
+  getAdjacentPassableNeighbors(rng = gRNG){
+    return this.getAdjacentNeighbors(rng).filter(t => t.passable);
   }
 
-  getAdjacentCrawlable(){
-    return this.getAdjacentNeighbors().filter(t => t.crawlable);
+  getAdjacentCrawlable(rng = gRNG){
+    return this.getAdjacentNeighbors(rng).filter(t => t.crawlable);
   }
 
-  getAdjacentFlyable(){
-    return this.getAdjacentNeighbors().filter(t => t.flyable);
+  getAdjacentFlyable(rng = gRNG){
+    return this.getAdjacentNeighbors(rng).filter(t => t.flyable);
   }
 
-  getAdjacentVent(){
-    return this.getAdjacentNeighbors().filter(t => t.constructor.name=="Vent");
+  getAdjacentVent(rng = gRNG){
+    return this.getAdjacentNeighbors(rng).filter(t => t.constructor.name=="Vent");
   }
 
   getConnectedTiles(){

@@ -11,19 +11,12 @@ function tryTo(description, callback){
 }
 
 
-function randomRange(min, max){
-  return Math.floor(Math.random()*(max-min+1))+min;
+//leaving these 2 mainly just so I can omit specifying rng to use
+function randomRange(min, max, rng = gRNG){
+  return rng.getUniformInt(min, max);
 }
-
-function shuffle(arr){
-  let temp, r;
-  for (let i = 1; i < arr.length; i++) {
-    r = randomRange(0,i);
-    temp = arr[i];
-    arr[i] = arr[r];
-    arr[r] = temp;
-  }
-  return arr;
+function shuffle(arr, rng = gRNG){
+  return rng.shuffle(arr);
 }
 
 function rightPad(textArray){
@@ -37,3 +30,18 @@ function rightPad(textArray){
   });
   return finalText;
 }
+
+
+/*
+https://stackoverflow.com/questions/41898612/format-console-log-with-color-and-variables-surrounding-non-formatted-text
+
+console.log('aa %c Sample Text', 'color:green;');
+console.log("%cHello, "+"World","color:red;","color:blue;");
+console.log("%c%s"," is ","%c%d","years old.", "color:red","Bob", "color:blue", 42);
+console.log("%c%s"+" is "+"%c%d"+"years old.", "color:red","Bob", "color:blue", 42);
+console.log("%c is %c years %c old.", "color:red", "color:lightblue", "color:white");
+console.log("%c%s%c = %c%s","background:orange", "Array[index0]", "background:inherit;", "background:yellow;font-style: italic;", "google.com")
+
+
+
+*/

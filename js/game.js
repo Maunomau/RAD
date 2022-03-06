@@ -61,6 +61,7 @@ function draw(){
       let spellText = (i+1) + ") " + (player.spells[i] || "");
       drawText(spellText, 20, false, 110+i*40, "aqua");
     }
+    
   }
 }
 
@@ -93,7 +94,15 @@ function tick(){
   turn++;
   levelturn++;
   gemMax = charges + usedCharges.length + gemCount();
-  console.log("Turn:"+turn+"("+levelturn+")");
+  
+  
+  
+  //
+  if (rngLog[0] != mapRNG.getState()[0]){
+    console.warn("MapRNG changed!:"+ mapRNG.getState()[0] +"");
+    console.log("MapRNG was:"+ rngLog[0] +"");
+    rngLog = mapRNG.getState();
+  }
 }
 
 function showTitle(){
@@ -101,6 +110,11 @@ function showTitle(){
   ctx.fillRect(0,0,canvas.width, canvas.height);
 
   gameState = "title";
+  
+  
+  //mapRNG.setSeed(12345);
+  worldRNG.setSeed(12345);
+  
   
   RWord = ROT.RNG.getItem(["Raging", "Rampant", "Ravenous", "Rough", "Rowdy", "Rugged", "Ruthless"]);
   
@@ -130,7 +144,7 @@ function startGame(){
   startLevel(startingHp);
   seenMons = new Set();
   usedCharges = []
-
+  
   //gameState = "mapgen";
 }
 
@@ -148,13 +162,15 @@ function startLevel2(playerHp){
   console.log("RNG test: "+ROT.RNG.getNormal(0, 10));
   console.log("RNG test: "+ROT.RNG.getPercentage());
   console.log("RNG test: "+ROT.RNG.getPercentage());
+  console.log("RNG test: "+ ROT.RNG.getUniformInt(31, 69) +"");
+  console.log("RNG test: "+ ROT.RNG.getUniformInt(31, 69) +"");
+  console.log("RNG seed: "+ ROT.RNG.getSeed() +"");
+  console.log("RNG state: "+ ROT.RNG.getState() +"");
   errcount = 0;
-  generateTiles();
-  gameState = "running";
   
   try{
     //generateLevel();
-    generateTiles();
+    //generateTiles();
     gameState = "running";
   }
   catch (error){
@@ -169,11 +185,30 @@ function startLevel(playerHp){
   spawnCounter = spawnRate;
   
   generateLevel();
+  startLevelPart2(playerHp)
+}
+//split to part 2 just for debugging
+function startLevelPart2(playerHp){
+  
+  console.groupCollapsed("place(%cplayer and exit%c).", "color:khaki", "color:");
+  //Should these use mapRNG or not? Dunno.
 
-  player = new Player(randomPassableTile("gem"));
+  player = new Player(randomPassableTile("gem", gRNG));
+  //player = new Player(randomPassableTile("gem", mapRNG));
   player.hp = playerHp;
   
-  randomPassableTile().replace(Exit);
+  randomPassableTile(0, gRNG).replace(Exit);
+  //randomPassableTile(0, mapRNG).replace(Exit);
+  
+  
+  console.log("map gen all done with seeds: m:"+ mapRNG.getSeed() +" r:"+ ROT.RNG.getSeed() +" w:"+ worldRNG.getSeed() +"");
+  console.log("RNG states are: m:"+ mapRNG.getState() +" r:"+ ROT.RNG.getState() +" w:"+ worldRNG.getState() +"");
+  rngLog = mapRNG.getState();
+  console.groupEnd()
+  
+  //console.log("mapgen done(seed:"+ mapRNG.getSeed() +")");
+  console.groupEnd()
+  
   gameState = "running";
   levelturn = 0;
   gemMax = charges + gemCount();

@@ -48,6 +48,10 @@ class Monster{
       console.log(""+this.constructor.name+" is stunned.");
       return;
     }
+    if(Math.floor(this.hp) < 1) {
+      this.KO();
+      console.error(""+this.constructor.name+" wasn't resting for some reason despite having "+ this.hp +" hp.");
+    }
     this.doStuff();
   }
 
@@ -99,6 +103,7 @@ class Monster{
     this.offsetX -= Math.sign(this.offsetX)*(1/4);
     this.offsetY -= Math.sign(this.offsetY)*(1/4);
   }
+  
   drawHp(pip){
     //Health pips are size 6, figure out how many we can show per line based on tilesize
     let modul = Math.floor(tileSize / 6);
@@ -151,7 +156,7 @@ class Monster{
       }else{
         //This neatly allows player to hit nonplayers and nonplayers to hit player
         if(this.isPlayer != newTile.monster.isPlayer && !newTile.monster.resting && !this.peaceful){
-          console.log(""+this.constructor.name+" attacks "+newTile.monster.constructor.name+".");
+          console.log(""+this.constructor.name+"("+this.hp+") attacks "+newTile.monster.constructor.name+"("+newTile.hp+").");
           this.attackedThisTurn = true;
           newTile.monster.stunned = true;
           newTile.monster.hit(1 + this.bonusAttack, this);
@@ -316,13 +321,13 @@ class Player extends Monster{
       if (!this.tile.crawlable) return;//above pit for some reason probably
       this.small = true;
       this.peaceful = true;
-      this.sprite = 4 + Math.min(4+this.depth, 6);
+      this.sprite = Math.min(4+this.tile.depth, 6);
     }
     else {
       if (!this.tile.passable) return;//in vent probably
       this.small = false;
       this.peaceful = false;
-      this.sprite = 0 + Math.min(0+this.depth, 3);
+      this.sprite = Math.min(0+this.tile.depth, 3);
       //End turn
       this.TUs++
       playSound("blip");

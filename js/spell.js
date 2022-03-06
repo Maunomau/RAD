@@ -140,7 +140,7 @@ spells = {
           if(tile.constructor.name == "Wall"){
             //tile.replace(Floor);
             let numWalls = 4 - tile.getAdjacentPassableNeighbors().length;
-            if (numWalls < 3 && Math.random() < 0.5){
+            if (numWalls < 3 && gRNG.getUniform() < 0.5){
               tile.replace(Floor);
             }
           }else if(tile.monster && !tile.monster.flying){
@@ -286,6 +286,7 @@ function gemCount(){
       if (tile.gem) gemCount++;
     })
   });
-  console.log("gemcount:"+gemCount);
+  if(lastGemCount != gemCount)console.log("gemcount add "+(gemCount-lastGemCount)+" = %c"+gemCount, "color:violet");
+  lastGemCount = gemCount;
   return gemCount;
 }

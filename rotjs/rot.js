@@ -44,6 +44,7 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
       seed = seed * 69069 + 1 >>> 0;
       this._s2 = seed * FRAC;
       this._c = 1;
+      console.log("rot.js setting seed of "+ this.constructor.name +" to "+seed);
       return this;
     };
     /**
