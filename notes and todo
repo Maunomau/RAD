@@ -28,22 +28,45 @@ Rabbits are deadly, sure they won't try to attack you but being within 2 tiles o
   I could make them just not attack ever, they'd still be somewhat interesting as they might block you.
 
 
-Idea: Pits are water, put 0 to 3 flesh eggs into water each level, stepping on water has a chance of disturbing an egg, quakes (on turns 50+ or so?) also do that and also expand water tiles.
-  Also water required for healing or something?
 
+
+plans, ideas and hopeful todo:
+Idea: put 0 to 3 flesh eggs into water each level, stepping on water has a chance of disturbing an egg, quakes (on turns 50+ or so?) also do that and also expand water tiles.
+  Also water required for healing or something?
+  Nighttime start event?
+  
+UI
+  TU bar
+  Runes section
+  Spells
+  Soundmap
+  Clickable controls
+  Allies
+  Daytime/Season
+
+Shrinking
+  Enter crawlable areas without crouching
+  New even smaller entrances(tiny pathways)
+    Contents not necessarily displayed, could effectively be portals
+      Considering also just crawl sized one, idea being that it'd be easy to replace walls next to existing vent entrances with them so vents aren't just weird doors and I don't necessarily need to generate vent sections as part of same map.
+        Actually generating a separate vent map could be an option though. Might be boring to move in if it just links the vent entrances together so either make auto run in corridors thing or make the vent map more interesting.
+  Some explanation for how you achieve shrinking(power of belt or something)
+Building "a rail way" that you can use to "teleport" along it (when shrunk).
+  Potentially just have preexisting lines that indicate tiny pathways and such.
+Level edge exits
+  For base building(esp. a home base of sorts), if you've got just up or down as directions to go there's limited reasons for building stuff(prep for ascension would be good one though).
+  Start off in a (seemingly?) dead end and need to go few levels in one direction before reaching ideal central base location where there are multiple exits
+    if defensibility is a concern the base spot could be just before the crossing.
+Day-night cycle.
+  No light at night, so at least limited LoS, could go all the way and make you effectively blind and move based on memory and sounds.
 
 todo:
-seeded mapgen
-going back to previous areas
-  make usedCharges level based
 make fast monsters animate nicely(the 1st move is instant atm.)
   WOOP works fine so somehow getting it to do the two tile move in one step would work
 communicate runes causing new spawns better if I don't change how spawns work
   time until next spawn counter
   line to new spawn?
-stereo sound based on if sound source is to left or right
 adjust spells to work in a way where each spell has a dedicated slot.
-mapgen RNG separate from normal RNG
 limited free turning? Should try having it so you can look in only 2 or 3 directions, otherwise once I add facing based FoV you'd want to spin around every turn, or maybe just have one direction(behind) you can't see and no free turning. Or I could just not have turning affect FoV.
   Maybe have a bar or such with 3 or 4 free actions and have picking up stuff take 1, getting up take 2, start crawling 1 or 2. Should actually doing full turn actions take 1 so that turn ends once you get to 4?
 Magic circles that allow casting (any or specific?) spells for free?
@@ -51,17 +74,20 @@ Magic circles that allow casting (any or specific?) spells for free?
 Wake up sounds(wasps esp.)
 Runedrop indicator? Show rune icons on UI, fancy way would be to show runes moving from count to drop indicator and then to level.
 Oh, runes could be just the icon to avoid needing to call them runes.
+Sound panning, stereo sound based on if sound source is to left or right
+Soundmap.
+Soundmap focus, passing a turn should show sounds on the main map instead of less accurate sound map.
+
 Doing damage to resting enemies can break their hp display or something.
 Remove/Change spawning, while the game is kind of fun with it I want a different feel.
-Sound panning
-Line of Sight
-UI
-  TU bar
-  Runes section
-  Spells
-  Soundmap
-  Clickable controls
 
+seeded mapgen
+mapgen RNG separate from normal RNG
+going back to previous areas
+  make usedCharges level based
+Level edge exits
+daynight
+Line of Sight
 Slime puddles
 
 
@@ -69,6 +95,7 @@ done:
 getConnectedTiles doesn't work correctly?(inBounds checks fixed it)
 Fix turning sometimes failing to show your sprite.(Issue was type coercion sometimes detecting that for a reason no longer relevant I had set player.dir to be a string of a number)
 water
+pits are water
 submergion
 crawling
 knockout instead of delete enemies
