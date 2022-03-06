@@ -48,8 +48,10 @@ function draw(){
     }
     /*
     */
-    for(let i=0;i<monsters.length;i++){
-      monsters[i].draw();
+    if (monsters[0]){
+      for(let i=0;i<monsters.length;i++){
+        monsters[i].draw();
+      }
     }
     //drawSprite(0, x, y);
     player.draw();
@@ -184,7 +186,7 @@ function startLevel(playerHp){
   spawnRate = 15;
   spawnCounter = spawnRate;
   
-  generateLevel();
+  generateLevel(level);
   startLevelPart2(playerHp)
 }
 //split to part 2 just for debugging

@@ -2,7 +2,7 @@ function generateLevel(lvlid){
   //currentSeed = mapRNG.setSeed(worldRNG.getUniform());
   currentSeed = worldRNG.getUniform();
   mapRNG.setSeed(currentSeed);
-  currentSeed = mapRNG.getSeed();//ensure these are the same.
+  currentSeed = JSON.parse(JSON.stringify(mapRNG.getSeed()));//ensure these are the same.
   console.groupCollapsed("mapgen(seed:%c"+ currentSeed +"%c)", "color:green", "color:")
   tryTo('generate map', function(){
     let abletiles = generateTiles()
@@ -26,7 +26,18 @@ function generateLevel(lvlid){
   }
   console.groupEnd()
   
-  savedMaps.push({seed:mapRNG.getSeed, map:tiles, id:lvlid})
+  
+  //Save the resulting map 
+  //for leaving and re-entering 
+  //and to make it easier to check that the seed always generates the same map.
+  //savedMaps.push({seed:structuredClone(mapRNG.getSeed), map:structuredClone(tiles), id:lvlid, mons:structuredClone(monsters)})
+  savedMaps.push({seed:currentSeed, map:tiles, id:lvlid, mons:monsters})
+  let test = monsters.slice();
+  //let test = (JSON.stringify(monsters))
+  //let test2 = (JSON.stringify(tiles))
+  let test2 = Object.assign({}, tiles);
+  //let test3 = JSON.parse(test)
+  clonedMaps.push({seed:currentSeed, map:test2, id:lvlid, mons:test})
   console.info("saved map "+ (savedMaps.length-1) +"");
   
 }
@@ -240,22 +251,42 @@ function randomTileWithinDistance(sourceTile, distance, type="", cond, rng = gRN
 }
 
 function generateMonsters(){
-    monsters = [];
-    let numMonsters = level+1;
-    monsterType = shuffle([Slime, Spider, Wolf, Crystal, Wasp, Goblin, Hobgoblin, Fleshegg, Rabbit], mapRNG)[0];
-    for(let i=0;i<numMonsters;i++){
-        spawnMonster(monsterType, 1);
-    }
+  monsters = [];
+  let numMonsters = level+1;
+  monsterType = shuffle([Slime, Spider, Wolf, Crystal, Wasp, Goblin, Hobgoblin, Fleshegg, Rabbit], mapRNG)[0];
+  for(let i=0;i<numMonsters;i++){
+      spawnMonster(monsterType, 1);
+  }
 }
 
 function spawnMonster(type = 0, delay = -1, tile = randomPassableTile()){
-    let monsterType
-    if (type){
-      monsterType = type
-    }else{
-      monsterType = shuffle([Slime, Spider, Wolf, Crystal, Wasp, Goblin, Hobgoblin, Fleshegg, Rabbit])[0];
+  let monsterType
+  if (type){
+    monsterType = type
+  }else{
+    monsterType = shuffle([Slime, Spider, Wolf, Crystal, Wasp, Goblin, Hobgoblin, Fleshegg, Rabbit])[0];
+  }
+  let monster = new monsterType(tile);
+  if (delay >= 0) monster.teleportCounter = delay;
+  monsters.push(monster);
+}
+
+//WIP
+//remake monsters array based on map.
+function getMonsters(){
+  monsters = [];
+  /*
+  tiles.forEach(el => {
+    el.forEach(tile => {
+      if (tile.monster) monsters.push(tile.monster);
+    })
+  });
+  */
+  
+  for(let i=0;i<numTiles;i++){
+    //tiles[i] = [];
+    for(let j=0;j<numTiles;j++){
+      if (tiles[i][j].monster) monsters.push(tile.monster);
     }
-    let monster = new monsterType(tile);
-    if (delay >= 0) monster.teleportCounter = delay;
-    monsters.push(monster);
+  }
 }

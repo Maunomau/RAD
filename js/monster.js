@@ -27,7 +27,7 @@ class Monster{
     if(this.shield) this.shield--;
     if(this.resting){
       //Not sure if I really need the rp variable. I suppose I might want situations where rest happens without healing or such(such as SLEEPMORE spell).
-      if(this.rp < this.fullHp*this.restspeed){
+      if(this.rp < this.fullHp*this.restspeed || this.hp < 1){
         this.rp++;
         //this.hp = Math.floor(this.rp/this.restspeed);
         if(this.rp % this.restspeed == 0 && this.hp < this.rp/this.restspeed && this.hp < this.fullHp) this.hp += 1;
@@ -196,6 +196,8 @@ class Monster{
     this.hp -= damage;
     if(Math.floor(this.hp) <= 0){
       this.KO();
+      //Should overkill be allowed? It increases the KO time which seems a bit abuseable so no, hitting recovering enemies with spells already is nice enough(also communicating negative hp seems annoying).
+      this.hp = 0;
     }
     
     if(this.resting && this.hp >= 1) {
