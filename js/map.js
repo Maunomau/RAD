@@ -1,12 +1,60 @@
-function generateLevel(lvlid){
+function generateWorld(){
+  wTiles = [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 2, 2, 2, 1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  ]
+}
+
+function generateLevel(){
   //currentSeed = mapRNG.setSeed(worldRNG.getUniform());
-  currentSeed = worldRNG.getUniform();
+  //currentSeed = worldRNG.getUniform();
+  //console.warn("? "+day+" "+wpos[0]+" "+(wpos[1])+" "+(wpos[2])+" "+worldRNG.getSeed());
+  //console.warn("? "+day+" "+parseInt(+wpos[0]+""+(wpos[1])+""+(wpos[2]))+" "+worldRNG.getSeed());
+  
+  //currentSeed = parseInt(day+""+parseInt(+wpos[0]+""+(wpos[1])+""+(wpos[2]))+""+worldRNG.getSeed());
+  //currentSeed = Math.sqrt(Math.sqrt(currentSeed))+worldRNG.getSeed()
+  currentSeed = (day+(wpos[0]/100)+(wpos[1]*10)+(wpos[2])+worldRNG.getSeed());
+  currentSeed = ([wpos[0], wpos[1], wpos[2], wpos[3]].join(''));
+  if (savedMaps.hasOwnProperty(currentSeed)){
+    console.warn("map already visited "+currentSeed);
+    tiles = savedMaps[currentSeed].map;
+    monsters = savedMaps[currentSeed].mons;
+    return;
+  }
+  console.warn("?cs "+currentSeed);
   mapRNG.setSeed(currentSeed);
-  currentSeed = JSON.parse(JSON.stringify(mapRNG.getSeed()));//ensure these are the same.
+  //currentSeed = JSON.parse(JSON.stringify(mapRNG.getSeed()));//ensure these are the same.
   console.groupCollapsed("mapgen(seed:%c"+ currentSeed +"%c)", "color:green", "color:")
   tryTo('generate map', function(){
     let abletiles = generateTiles()
-    let connectedtiles = randomPassableTile(0, gRNG).getConnectedTiles().length//This shouldn't change anything so no need for mapRNG.
+    let connectedtiles = randomPassableTile(0, mapRNG).getConnectedTiles().length//This shouldn't change anything so no need for mapRNG.
     if(abletiles != connectedtiles){
       console.warn("not all connected? "+connectedtiles+"/"+abletiles);
     }
@@ -30,14 +78,17 @@ function generateLevel(lvlid){
   //Save the resulting map 
   //for leaving and re-entering 
   //and to make it easier to check that the seed always generates the same map.
-  //savedMaps.push({seed:structuredClone(mapRNG.getSeed), map:structuredClone(tiles), id:lvlid, mons:structuredClone(monsters)})
-  savedMaps.push({seed:currentSeed, map:tiles, id:lvlid, mons:monsters})
+  //savedMaps.push({seed:structuredClone(mapRNG.getSeed), map:structuredClone(tiles), mons:structuredClone(monsters)})
+  //savedMaps.push({seed:currentSeed, map:tiles, mons:monsters})
+  //savedMaps.push({[currentSeed]:tiles});
+  //savedMaps[currentSeed] = tiles;
+  savedMaps[currentSeed] = {map:tiles, mons:monsters}
   let test = monsters.slice();
   //let test = (JSON.stringify(monsters))
   //let test2 = (JSON.stringify(tiles))
   let test2 = Object.assign({}, tiles);
   //let test3 = JSON.parse(test)
-  clonedMaps.push({seed:currentSeed, map:test2, id:lvlid, mons:test})
+  clonedMaps.push({seed:currentSeed, map:test2, mons:test})
   console.info("saved map "+ (savedMaps.length-1) +"");
   
 }
@@ -138,7 +189,7 @@ function generateTiles(){
   let count = 0;
   let types = [Pool, Puddle, Water, DeepWater];
   while(count < 4){
-    tile = randomPassableTile(0, mapRNG);
+    let tile = randomPassableTile(0, mapRNG);
     tiles[tile.x][tile.y] = new Pool(tile.x,tile.y);
     for(let i=0;i<8;i++){
       tile = tile.getAdjacentNeighbors(mapRNG)[0] //Works?

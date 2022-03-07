@@ -171,8 +171,12 @@ class Floor extends Tile{
 }
 
 class Exit extends Tile{
-  constructor(x, y){
+  constructor(x, y, wx, wy, entryDir){
     super(x, y, 0, true);
+    this.wx = wx;
+    this.wy = wy;
+    this.entryDir = entryDir;
+		console.warn("Exit's entryDir="+entryDir);
   }
 
   stepOn(monster){
@@ -183,8 +187,12 @@ class Exit extends Tile{
 				addRecords(charges, true);
         showTitle();
       }else{
-        level++;
-        startLevel(Math.min(maxHp, player.hp+1));
+        //level++;
+				wpos[0] += this.wx
+				wpos[1] += this.wy
+        startLevel(this.entryDir, player.hp);
+				console.table(wpos);
+        //startLevel([this.wx, this.wy, wpos[2], wpos[3]].join(''));
       }
     }
   }

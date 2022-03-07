@@ -85,13 +85,17 @@ text
   numTiles = 16;
   uiWidth = 5;
   level = 1;
+  day = 1;
+  roomCount = 0;
+  roomMax = 24;
+  wpos = [16,16,10,0]//world position, x,y,z,plane
   maxHp = 10; 
   seenMons = new Set();
   
   gameState = "loading";
 
   startingHp = 3;
-  numLevels = 6;
+  numLevels = 8;
   
   shakeAmount = 0;
   shakeX = 0;
@@ -108,6 +112,16 @@ text
     [0,-1],
     [1,0]
   ]
+  wdirmap = [
+    [0,1,0,0],
+    [-1,0,0,0],
+    [0,-1,0,0],
+    [1,0,0,0],
+    [0,0,-1,0],
+    [0,0,1,0],
+    [0,0,0,-1],
+    [0,0,0,1],
+  ]//4 down, 5 up, 6 lower, 7 higher
   
   RWord = ROT.RNG.getItem(["Raging", "Rampant", "Ravenous", "Restless", "Ridiculous", "Rough", "Rowdy", "Rugged", "Ruthless"]);
   
@@ -115,7 +129,8 @@ text
   gRNG = ROT.RNG.clone();
   worldRNG = ROT.RNG.clone();
   savedMaps = {};
-  savedMaps = [];
+  //savedMaps = [];
+  clonedMaps = [];
   
   document.querySelector("html").onkeypress = function(e){
     console.log("Pressed "+e.key+".");
@@ -172,7 +187,10 @@ text
       
       //Debug keys
       if(e.key=="r") {
-        startLevel(player.hp);
+        //startLevel(0, 0, 0, 0, day);
+        //startLevel(worldPos[0], worldPos[1], worldPos[2], worldPos[3], day);
+        //startLevel(wpos.join(''));
+        startLevel(0);
       }
       if(e.key=="t") {
         generateTiles();
@@ -188,7 +206,7 @@ text
         //getMonsters();
         monsters = savedMaps[level-1].mons ;
         console.log("Loading saved map "+ level-1 +".");
-        startLevel2(player.hp)
+        //startLevel2(0)
       }
       
       console.groupEnd()

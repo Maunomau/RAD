@@ -236,10 +236,10 @@ Should stacks of charges be a thing or how should I handle spells using more tha
 
 function dropCharges(){
   for(let k=usedCharges.length-1;k>=0;k--){
-    delay = usedCharges[k][0];
-    distance = usedCharges[k][1];
-    tile = usedCharges[k][2];
-    type = usedCharges[k][3];
+    let delay = usedCharges[k][0];
+    let distance = usedCharges[k][1];
+    let tile = usedCharges[k][2];
+    let type = usedCharges[k][3];
     console.log("Respawning a rune gem near "+tile.x+","+tile.y);
     if (delay <= 0){
       // spawn charge within el[1] distance from el[2]
