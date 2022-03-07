@@ -8,9 +8,9 @@ function setupCanvas(){
   canvas.style.height = canvas.height + 'px';
   ctx.imageSmoothingEnabled = false;
 }
-function drawTile(tile, x, y){
+function drawTile(tile, x, y, sheet=tileset){
   ctx.drawImage(
-    tileset,
+    sheet,
     (tile%4)*16,
     Math.floor(tile/4)*16,
     16,
@@ -37,8 +37,9 @@ function drawSprite(sprite, x, y, sheet, dir = 0){
 }
 
 function draw(){
-  if(gameState == "running" || gameState == "dead"){  
+  if(gameState == "running" || gameState == "dead"){
     ctx.clearRect(0,0,canvas.width,canvas.height);
+    //{background-color: rgb(255, 0, 0);}
     screenshake();
     
     for(let i=0;i<numTiles;i++){
@@ -48,6 +49,10 @@ function draw(){
     }
     /*
     */
+    if (darkness) {
+      ctx.fillStyle = 'rgba(0, 0, 0, '+darkness+')';
+      ctx.fillRect(0, 0, numTiles*tileSize, numTiles*tileSize);
+    }
     if (monsters[0]){
       for(let i=0;i<monsters.length;i++){
         monsters[i].draw();
@@ -64,6 +69,7 @@ function draw(){
       drawText(spellText, 20, false, 110+i*40, "aqua");
     }
     
+    
   }
 }
 
@@ -71,7 +77,8 @@ function tick(){
   soundsplayed = {} //(soundname: distance)Used to avoid more distant sounds replacing closer ones.
   //iterate over monsters(including player) (importantly in reverse so they can be safely deleted)
   //adjust for knocking out
-  dropCharges()
+  passTime();
+  dropCharges();
   for(let k=monsters.length-1;k>=0;k--){
     if(!monsters[k].dead){
       monsters[k].update();
@@ -107,6 +114,55 @@ function tick(){
   }
 }
 
+function passTime(){
+  time++;
+  
+  if (time > timeInDay) {
+    
+    day++;
+    time = 0;
+    darkness = 0;
+  }
+  
+  //darkness = Math.floor(time/8) / Math.floor(timeInDay/8)
+  switch(Math.floor((time/timeInDay)*10)) {
+    case 0://
+      darkness = 0;
+      break;
+    case 1://
+      darkness = 0;
+      break;
+    case 2://
+      darkness = 0;
+      break;
+    case 3://
+      darkness = 0;
+      break;
+    case 4://
+      darkness = 0;
+      break;
+    case 5://
+      darkness = 0.25;
+      break;
+    case 6://
+      darkness = 0.5;
+      break;
+    case 7://
+      darkness = 0.5;
+      break;
+    case 8://
+      darkness = 0.75;
+      break;
+    case 9://
+      darkness = 0.75;
+      break;
+    case 10://
+      darkness = 1;
+      break;
+  }
+  console.log("time phase:"+ Math.floor((time/timeInDay)*10) +", darkness is at "+ darkness);
+}
+
 function showTitle(){
   ctx.fillStyle = 'rgba(0,0,0,.50)';
   ctx.fillRect(0,0,canvas.width, canvas.height);
@@ -138,15 +194,25 @@ function showTitle(){
 function startGame(){
   //playSound("newLevel");
   sounds["newLevel"].play();
+  wTiles = [];
+  generateWorld()
+  wpos = [15,14,10,0];//world position, x,y,z,plane
+  //wpos = [14,14,10,0];
   level = 1;
   charges = 0;
+  runecharges = [];
   turn = 0;
   levelturn = 0;
   numSpells = 0;
-  startLevel(-1);
   seenMons = new Set();
   usedCharges = []
+  day = 1;
+  time = 0;
   
+  lastGemCount = -1;
+  gemid = 0;
+  
+  startLevel(-1);
   //gameState = "mapgen";
 }
 

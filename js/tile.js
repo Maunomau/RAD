@@ -31,13 +31,26 @@ class Tile{
   }
 
 	//get nearby tiles in random order
-  getAdjacentNeighbors(rng = gRNG){
-    return shuffle([
-      this.getNeighbor(0, -1),
-      this.getNeighbor(0, 1),
-      this.getNeighbor(-1, 0),
-      this.getNeighbor(1, 0)
-    ], rng);
+  getAdjacentNeighbors(rng = gRNG, diagonality){
+		if(diagonality=="diagonal"){
+			return shuffle([
+				this.getNeighbor(0, -1),
+				this.getNeighbor(0, 1),
+				this.getNeighbor(-1, 0),
+				this.getNeighbor(1, 0),
+				this.getNeighbor(-1, -1),
+				this.getNeighbor(1, 1),
+				this.getNeighbor(-1, 1),
+				this.getNeighbor(1, -1)
+			], rng);
+		}else{
+			return shuffle([
+				this.getNeighbor(0, -1),
+				this.getNeighbor(0, 1),
+				this.getNeighbor(-1, 0),
+				this.getNeighbor(1, 0)
+			], rng);
+		}
   }
 
   checkDoorway(){
@@ -90,6 +103,11 @@ class Tile{
 		if(this.gem){
       drawTile(5, this.x, this.y);
     }
+		if(this.maincircle >= 0){
+			if("activated specific circle" || this.maincircle == 5){
+				drawTile(this.maincircle, this.x, this.y, maincircle);
+			}
+    }
 		if(this.effectCounter){                    
       this.effectCounter--;
       ctx.globalAlpha = this.effectCounter/30;
@@ -108,6 +126,7 @@ class Tile{
     if(monster.isPlayer){
 			if(this.gem){
 	      charges++;
+				runecharges.push(this.gem);
 				
 				//adjust to something better.
 				if(charges % 1 == 0 && numSpells < 9){
@@ -149,6 +168,7 @@ class Tile{
     if(monster.isPlayer){
 			if(this.gem){//Most ways to get on tile already stepOn it so this shouldn't be needed much.
 	      charges++;
+				runecharges.push(this.gem);
 				
 				//adjust to something better.
 				if(charges % 1 == 0 && numSpells < 9){

@@ -33,6 +33,15 @@ text
   monstersheet.src = 'monsters.png';
 
   playersheet = new Image();
+  playersheet.src = 'art/player16x16belt-runed4.png';
+  playersheet.src = 'art/player16x16belt-runed3.png';
+  playersheet.src = 'art/player16x16belt-runed2.png';
+  playersheet.src = 'art/player16x16belt-runed1.png';
+  playersheet.src = 'art/player16x16belt.png';
+  playersheet.src = 'art/player16x16-runed4.png';
+  playersheet.src = 'art/player16x16-runed3.png';
+  playersheet.src = 'art/player16x16-runed2.png';
+  playersheet.src = 'art/player16x16-runed1.png';
   playersheet.src = 'art/player16x16.png';
 
   effectsheet = new Image();
@@ -40,6 +49,15 @@ text
 
   tileset = new Image();
   tileset.src = 'tiles.png';
+
+  maincircle = new Image();
+  maincircle.src = 'art/maincircle2c.png';
+  maincircle.src = 'art/maincircle2b.png';
+  maincircle.src = 'art/maincircle2.png';
+  maincircle.src = 'art/maincircle1.png';
+
+  circles = new Image();
+  circles.src = 'art/circles.png';
 
   //There's a better way to do this I assume.
   pipred = new Image();
@@ -86,12 +104,11 @@ text
   uiWidth = 5;
   level = 1;
   day = 1;
+  time = 0;
+  darkness = 0;
+  timeInDay = 500;
   roomCount = 0;
   roomMax = 24;
-  wTiles = [];
-  generateWorld()
-  wpos = [14,11,10,0];//world position, x,y,z,plane
-  //wpos = [14,14,10,0];
   maxHp = 10; 
   seenMons = new Set();
   
@@ -105,7 +122,6 @@ text
   shakeY = 0;
   
   soundsplayed = {}
-  lastGemCount = -1;
   
   //I feel like there's a better way to achieve this but this works.
   //dirmap = [{x:0,y:1}, {x:-1,y:0}, {x:0,y:-1}, {x:1,y:0}]

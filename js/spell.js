@@ -244,7 +244,6 @@ function dropCharges(){
     if (delay <= 0){
       // spawn charge within el[1] distance from el[2]
       if (distance == 0){
-        //getTile(tile.x, tile.y).gem = 1
         if (!tile.gem){
           tile.gem = type;
           tile.setEffect(13);

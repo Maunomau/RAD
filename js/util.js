@@ -31,7 +31,39 @@ function rightPad(textArray){
   return finalText;
 }
 
+function getTPW(num){
+  let l = ["akesi","ala","alasa","ale","anpa","ante","anu","awen","e","en","epiku","esun","ijo","ike","ilo","insa","jaki","jasima","jelo","jo","kala","kalama","kama","kasi","ken","kepeken","kili","kin","kipisi","kiwen","ko","kon","kule","kulupu","kute","la","lanpan","lape","laso","lawa","leko","len","lete","li","lili","linja","lipu","loje","lon","luka","lukin","lupa","ma","mama","mani","meli","meso","mi","mije","misikeke","moku","moli","monsi","monsuta","mu","mun","musi","mute","namako","nanpa","nasa","nasin","nena","ni","nimi","noka","oko","olin","ona","open","pakala","pali","palisa","pan","pana","pi","pilin","pimeja","pini","pipi","poka","pona","sama","seli","selo","seme","sewi","sijelo","sike","sin","sina","sinpin","sitelen","soko","sona","soweli","suli","suno","supa","suwi","tan","taso","yawa","telo","tenpo","toki","tomo","tonsi","tu","unpa","uta","utala","valo","van","vaso","vava","veka","vile","o","a","usavi","unu","kapesi","kiki","powe","soto","teje","misa","isipin","kan","majuna","linluwi","pake"];
+  return l[num];
+}
 
+/*
+https://lipu-linku.github.io/
+consider omitting or handling differently:
+a, e, la, li, o
+en kin lon mu pi tu van
+leko tonsi
+epiku lanpan 
+no:kijetesantakalu kokosila ku n pu 
+include?: 
+  usavi (magic)
+  unu (purple)
+  kapesi (brown, gray)
+  kiki (spiky)
+  powe (unreal, false, untrue; pretend; deceive, trick)
+  soto teje (left right)
+  misa (Glires or Eulipotyphla; rat, mouse, squirrel, rabbit, rodent; {~ suli} capybara)
+  isipin (to think, to imagine, to believe, to remember, to recall; a thought, an idea {see pilin, toki, insa})
+  kan (with, among, in the company of {see kepeken, poka})
+  majuna (old, aged, ancient)
+  linluwi (network, internet, connection; weave, braid, interlace)
+  pake (stop, cease, halt; to block the way, to interrupt; to prevent {see pini})
+  peto (cry, tears; sad, sadness)
+
+
+["akesi","ala","alasa","ale","anpa","ante","anu","awen","e","en","epiku","esun","ijo","ike","ilo","insa","jaki","jasima","jelo","jo","kala","kalama","kama","kasi","ken","kepeken","kili","kin","kipisi","kiwen","ko","kon","kule","kulupu","kute","la","lanpan","lape","laso","lawa","leko","len","lete","li","lili","linja","lipu","loje","lon","luka","lukin","lupa","ma","mama","mani","meli","meso","mi","mije","misikeke","moku","moli","monsi","monsuta","mu","mun","musi","mute","namako","nanpa","nasa","nasin","nena","ni","nimi","noka","oko","olin","ona","open","pakala","pali","palisa","pan","pana","pi","pilin","pimeja","pini","pipi","poka","pona","sama","seli","selo","seme","sewi","sijelo","sike","sin","sina","sinpin","sitelen","soko","sona","soweli","suli","suno","supa","suwi","tan","taso","yawa","telo","tenpo","toki","tomo","tonsi","tu","unpa","uta","utala","valo","van","vaso","vava","veka","vile","o","a",","usavi","unu","kapesi","kiki","powe","soto","teje","misa","isipin","kan","majuna","linluwi","pake","apeja"]
+
+["a","akesi","ala","alasa","ale","anpa","ante","anu","awen","e","en","epiku","esun","ijo","ike","ilo","insa","jaki","jasima","jelo","jo","kala","kalama","kama","kasi","ken","kepeken","kili","kin","kipisi","kiwen","ko","kon","kule","kulupu","kute","la","lanpan","lape","laso","lawa","leko","len","lete","li","lili","linja","lipu","loje","lon","luka","lukin","lupa","ma","mama","mani","meli","meso","mi","mije","misikeke","moku","moli","monsi","monsuta","mu","mun","musi","mute","namako","nanpa","nasa","nasin","nena","ni","nimi","noka","o","oko","olin","ona","open","pakala","pali","palisa","pan","pana","pi","pilin","pimeja","pini","pipi","poka","pona","sama","seli","selo","seme","sewi","sijelo","sike","sin","sina","sinpin","sitelen","soko","sona","soweli","suli","suno","supa","suwi","tan","taso","yawa","telo","tenpo","toki","tomo","tonsi","tu","unpa","uta","utala","valo","van","vaso","vava","veka","vile"]
+*/
 /*
 https://stackoverflow.com/questions/41898612/format-console-log-with-color-and-variables-surrounding-non-formatted-text
 

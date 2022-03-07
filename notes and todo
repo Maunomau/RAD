@@ -81,20 +81,21 @@ Soundmap focus, passing a turn should show sounds on the main map instead of les
 Doing damage to resting enemies can break their hp display or something.
 Remove/Change spawning, while the game is kind of fun with it I want a different feel.
 
-seeded mapgen
-mapgen RNG separate from normal RNG
-going back to previous areas
-  make usedCharges level based
-Level edge exits
+make usedCharges level based
 daynight
 Line of Sight
 
 Slime puddles
 Different floor after destroyed wall
 would crystal being able to swap with you using woop be too much?
+need some way to track collected gems on a worldmap level.
 
 
 done:
+going back to previous areas
+Level edge exits
+mapgen RNG separate from normal RNG
+seeded mapgen
 getConnectedTiles doesn't work correctly?(inBounds checks fixed it)
 Fix turning sometimes failing to show your sprite.(Issue was type coercion sometimes detecting that for a reason no longer relevant I had set player.dir to be a string of a number)
 water

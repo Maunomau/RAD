@@ -42,15 +42,15 @@ function generateLevel(entryDir=-1, playerHp=3){
   //currentSeed = parseInt(day+""+parseInt(+wpos[0]+""+(wpos[1])+""+(wpos[2]))+""+worldRNG.getSeed());
   //currentSeed = Math.sqrt(Math.sqrt(currentSeed))+worldRNG.getSeed()
   currentSeed = (day+(wpos[0]/100)+(wpos[1]*10)+(wpos[2])+worldRNG.getSeed());
-  currentSeed = ([wpos[0], wpos[1], wpos[2], wpos[3]].join(''));
+  currentSeed = ([day, wpos[0], wpos[1], wpos[2], wpos[3], worldRNG.getSeed()].join(''));
   if (savedMaps.hasOwnProperty(currentSeed)){
-    console.warn("map already visited "+currentSeed);
+    console.log("map already visited "+currentSeed);
     tiles = savedMaps[currentSeed].map;
     monsters = savedMaps[currentSeed].mons;
     placeExitsAndPlayer(entryDir, playerHp, gRNG);
     return;
   }
-  console.warn("?cs "+currentSeed);
+  //console.warn("?cs "+currentSeed);
   mapRNG.setSeed(currentSeed);
   //currentSeed = JSON.parse(JSON.stringify(mapRNG.getSeed()));//ensure these are the same.
   
@@ -59,7 +59,8 @@ function generateLevel(entryDir=-1, playerHp=3){
   else console.groupCollapsed("mapgen(seed:%c"+ currentSeed +"%c)", "color:green", "color:");
   
   tryTo('generate map', function(){
-    let abletiles = generateTiles()
+    //let abletiles = generateTiles(wTiles[wpos[0]][wpos[1]])
+    let abletiles = generateTiles(getRoomtype())
     let connectedtiles = randomPassableTile(0, mapRNG).getConnectedTiles().length//This shouldn't change anything so no need for mapRNG.
     if(abletiles != connectedtiles){
       console.warn("not all connected? "+connectedtiles+"/"+abletiles);
@@ -70,17 +71,19 @@ function generateLevel(entryDir=-1, playerHp=3){
   });
   //console.log("mapgen done.");
   console.groupEnd()
-  console.groupCollapsed("mapgen p5(%cmonsters and gems%c).", "color:violet", "color:");
   
-
-  generateMonsters();
-  
-  for(let i=0;i<8;i++){
-    randomPassableTile(0, mapRNG).gem = 1;
+  if(getRoomtype() == 1){
+    monsters = [];
+    
+  }else{
+    console.groupCollapsed("mapgen p5(%cmonsters%c).", "color:brown", "color:");
+    generateMonsters();
+    console.groupEnd()
+    
+    console.groupCollapsed("mapgen p6(%cgems%c).", "color:violet", "color:");
+    placeGems();
+    console.groupEnd()
   }
-  console.groupEnd()
-  
-  
   
   //Save the resulting map 
   //for leaving and re-entering 
@@ -109,7 +112,7 @@ function generateLevel(entryDir=-1, playerHp=3){
 }
 
 function placeExitsAndPlayer(entryDir=-1, playerHp=3, rng=mapRNG){
-  console.groupCollapsed("mapgen p6(%cexits%c and %cplayer%c).", "color:violet", "color:", "color:khaki", "color:");
+  console.groupCollapsed("mapgen p7(%cexits%c and %cplayer%c).", "color:violet", "color:", "color:khaki", "color:");
   //console.group("mapgen p6(%cexits%c and %cplayer%c).", "color:violet", "color:", "color:khaki", "color:");
   //Should these use mapRNG or not? Dunno.
   /*
@@ -180,7 +183,7 @@ function placeExitsAndPlayer(entryDir=-1, playerHp=3, rng=mapRNG){
   
 }
 
-function generateTiles(){
+function generateTiles(roomtype=2){
   tiles = [];
   
   let rngState = ROT.RNG.getState();
@@ -197,7 +200,6 @@ function generateTiles(){
   console.groupCollapsed("mapgen p1(ROT.Map).");
   console.info("starting seeds: m:"+ mapRNG.getSeed() +" r:"+ ROT.RNG.getSeed() +" w:"+ worldRNG.getSeed() +"");
   console.info("RNG states are: m:"+ mapRNG.getState() +" r:"+ ROT.RNG.getState() +" w:"+ worldRNG.getState() +"");
-  console.log("ROT.Map.Digger");
 
 
   
@@ -209,22 +211,62 @@ function generateTiles(){
   }
   
   let floorTiles=0;
-  var mapTiles = new ROT.Map.Digger(numTiles, numTiles, {
-    roomWidth:[2,5], 
-    roomHeight:[2,5],  
-    corridorLength:[1, 4], 
-    dugPercentage:0.9
-  });
-  var userCallback = function(x, y, value) {
-    //SHOW(ROT.Util.format("Value %s generated at [%s,%s]", value, x, y));
-    //console.log("mapgen stuff:"+value+" "+x+" "+y+" ");
-    if (value == 0) {
-      tiles[x][y] = new Floor(x,y);
-      floorTiles++;
+  if(roomtype == 1){
+    var mapTiles = new ROT.Map.Arena(numTiles, numTiles);
+    var userCallback = function(x, y, value) {
+      //SHOW(ROT.Util.format("Value %s generated at [%s,%s]", value, x, y));
+      //console.log("mapgen stuff:"+value+" "+x+" "+y+" ");
+      if (value == 0) {
+        tiles[x][y] = new Floor(x,y);
+        floorTiles++;
+      }
+      if (value == 1) tiles[x][y] = new Wall(x,y);
     }
-    if (value == 1) tiles[x][y] = new Wall(x,y);
+    mapTiles.create(userCallback);
+    let circletile = tiles[numTiles/2][numTiles/2];
+    console.log("test"+ circletile.getAdjacentNeighbors(mapRNG, "diagonal") +"");
+    //let outertiles = getAdjacentNeighbors(mapRNG, "diagonal");//actually no shuffling or anything
+    //if I felt like it I could actually make the specific circles positions random as long as corner ones and non-corner ones stay that way but that'd mean figuring out pixel offsets and doing this in a different way instead of this easy method, probably not doing that(oh, it'd also potentially mean somehow matching the circles in other rooms so yeah no).
+    tiles[(numTiles/2-1)][(numTiles/2-1)].maincircle = 0;
+    tiles[numTiles/2][numTiles/2-1].maincircle = 1;
+    tiles[numTiles/2+1][numTiles/2-1].maincircle = 2;
+    tiles[numTiles/2-1][numTiles/2].maincircle = 4;
+    tiles[numTiles/2][numTiles/2].maincircle = 5;
+    tiles[numTiles/2+1][numTiles/2].maincircle = 6;
+    tiles[numTiles/2-1][numTiles/2+1].maincircle = 8;
+    tiles[numTiles/2][numTiles/2+1].maincircle = 9;
+    tiles[numTiles/2+1][numTiles/2+1].maincircle = 10;
+    //circletile.getNeighbor(1, 1).maincircle = 9;
+    /*
+    let outertiles = [
+    ];
+    for(let i=0;i<outertiles.length;i++){
+      
+    }
+    */
+    
+    
+    
+  }else{
+    console.log("ROT.Map.Digger");
+    var mapTiles = new ROT.Map.Digger(numTiles, numTiles, {
+      roomWidth:[2,5], 
+      roomHeight:[2,5],  
+      corridorLength:[1, 4], 
+      dugPercentage:0.9
+    });
+    var userCallback = function(x, y, value) {
+      //SHOW(ROT.Util.format("Value %s generated at [%s,%s]", value, x, y));
+      //console.log("mapgen stuff:"+value+" "+x+" "+y+" ");
+      if (value == 0) {
+        tiles[x][y] = new Floor(x,y);
+        floorTiles++;
+      }
+      if (value == 1) tiles[x][y] = new Wall(x,y);
+    }
+    mapTiles.create(userCallback);
   }
-  mapTiles.create(userCallback);
+  
   console.info("Done. RNG states are: m:"+ mapRNG.getState() +" r:"+ ROT.RNG.getState() +" w:"+ worldRNG.getState() +"");
   mapRNG.setState(ROT.RNG.getState());
   //Give ROT.RNG back whatever state it was in before?
@@ -271,50 +313,54 @@ function generateTiles(){
   }
   
   */
-  console.groupEnd()
-  console.groupCollapsed("mapgen p2(%cwater%c).", "color:cyan", "color:");
-  let count = 0;
-  let types = [Pool, Puddle, Water, DeepWater];
-  while(count < 4){
-    let tile = randomPassableTile(0, mapRNG);
-    tiles[tile.x][tile.y] = new Pool(tile.x,tile.y);
-    for(let i=0;i<8;i++){
-      tile = tile.getAdjacentNeighbors(mapRNG)[0] //Works?
-      if(getTile(tile.x,tile.y) != types[count] && inBounds(tile.x,tile.y)){
-        if(getTile(tile.x,tile.y).constructor.name == "Wall" && inBounds(tile.x,tile.y)) floorTiles++;
-        tiles[tile.x][tile.y].replace(types[count]);
+  if(roomtype != 1){
+    
+    console.groupEnd()
+    console.groupCollapsed("mapgen p2(%cwater%c).", "color:cyan", "color:");
+    let count = 0;
+    let types = [Pool, Puddle, Water, DeepWater];
+    while(count < 4){
+      let tile = randomPassableTile(0, mapRNG);
+      //tiles[tile.x][tile.y] = new Pool(tile.x,tile.y);
+      tiles[tile.x][tile.y].replace(types[count]);
+      for(let i=0;i<8;i++){
+        tile = tile.getAdjacentNeighbors(mapRNG)[0] //Works?
+        if(getTile(tile.x,tile.y) != types[count] && inBounds(tile.x,tile.y)){
+          if(getTile(tile.x,tile.y).constructor.name == "Wall" && inBounds(tile.x,tile.y)) floorTiles++;
+          tiles[tile.x][tile.y].replace(types[count]);
+        }
+      }
+      count++;
+    }
+    console.log("RNG states are: m:"+ mapRNG.getState() +" r:"+ ROT.RNG.getState() +" w:"+ worldRNG.getState() +"");
+  
+    console.groupEnd()
+    console.groupCollapsed("mapgen p3(%cvents and holes%c).", "color:grey", "color:");
+    
+    for(let i=0;i<numTiles;i++){
+      //tiles[i] = [];
+      for(let j=0;j<numTiles;j++){
+        //console.log("mapgen pool:"+tiles[i][j]+" "+i+" "+j+" ");
+        let adjFloors = tiles[i][j].getAdjacentPassableNeighbors(mapRNG).length;
+        if(mapRNG.getUniform() < 0.2 && tiles[i][j].constructor.name == "Wall" && adjFloors && tiles[i][j].getAdjacentVent(mapRNG).length < 1 && inBounds(i,j)){
+          //tiles[i][j] = new Wall(i,j);
+          if(tiles[i][j].constructor.name == "Wall" && inBounds(i,j)) floorTiles++;
+          if (tiles[i][j].checkDoorway()) tiles[i][j].replace(Vent);
+          else tiles[i][j].replace(Floor);
+          //console.log("mapgen stuff:"+tiles[i][j].getAdjacentVent().length+" "+i+" "+j+" ");
+          //console.log("mapgen stuff:"+JSON.stringify(tiles[i][j].getAdjacentPassableNeighbors())+" "+i+" "+j+" ");
+        }else{
+          //passableTiles++;
+          //changedtiles.push(i+","+j)
+        }
       }
     }
-    count++;
+    console.log("RNG states are: m:"+ mapRNG.getState() +" r:"+ ROT.RNG.getState() +" w:"+ worldRNG.getState() +"");
+    /*
+    */
+    
+    console.groupEnd()
   }
-  console.log("RNG states are: m:"+ mapRNG.getState() +" r:"+ ROT.RNG.getState() +" w:"+ worldRNG.getState() +"");
-  
-  console.groupEnd()
-  console.groupCollapsed("mapgen p3(%cvents and holes%c).", "color:grey", "color:");
-  
-  for(let i=0;i<numTiles;i++){
-    //tiles[i] = [];
-    for(let j=0;j<numTiles;j++){
-      //console.log("mapgen pool:"+tiles[i][j]+" "+i+" "+j+" ");
-      let adjFloors = tiles[i][j].getAdjacentPassableNeighbors(mapRNG).length;
-      if(mapRNG.getUniform() < 0.2 && tiles[i][j].constructor.name == "Wall" && adjFloors && tiles[i][j].getAdjacentVent(mapRNG).length < 1 && inBounds(i,j)){
-        //tiles[i][j] = new Wall(i,j);
-        if(tiles[i][j].constructor.name == "Wall" && inBounds(i,j)) floorTiles++;
-        if (tiles[i][j].checkDoorway()) tiles[i][j].replace(Vent);
-        else tiles[i][j].replace(Floor);
-        //console.log("mapgen stuff:"+tiles[i][j].getAdjacentVent().length+" "+i+" "+j+" ");
-        //console.log("mapgen stuff:"+JSON.stringify(tiles[i][j].getAdjacentPassableNeighbors())+" "+i+" "+j+" ");
-      }else{
-        //passableTiles++;
-        //changedtiles.push(i+","+j)
-      }
-    }
-  }
-  console.log("RNG states are: m:"+ mapRNG.getState() +" r:"+ ROT.RNG.getState() +" w:"+ worldRNG.getState() +"");
-  /*
-  */
-  
-  console.groupEnd()
   console.groupCollapsed("mapgen p4(%ccheck passability%c).", "color:yellow", "color:");
   
   //Doing this on it's own so there's no need to think about it before.
@@ -338,7 +384,7 @@ function generateTiles(){
   }
   
   //console.log("made "+passableTiles+"/"+((numTiles*numTiles)-(numTiles*4-4))+" passable tiles(excluding edges), that's "+(passableTiles/(numTiles*numTiles-(numTiles*4-4))));
-  if (passableTiles/(numTiles*numTiles) < 0.48) {
+  if (passableTiles/(numTiles*numTiles) < 0.40) {
     console.warn("made only "+ passableTiles +"/"+ (numTiles*numTiles) +" passable tiles(ratio of "+ (passableTiles/(numTiles*numTiles)) +")");
   }else{
     console.info("made "+ passableTiles +"/"+ (numTiles*numTiles) +" passable tiles(ratio of "+ (passableTiles/(numTiles*numTiles)) +")");
@@ -351,6 +397,13 @@ function inBounds(x,y){
   return x>0 && y>0 && x<numTiles-1 && y<numTiles-1;
 }
 
+function getRoomtype(x, y){
+  if (x){
+    return wTiles[x][y];
+  }else{
+    return wTiles[wpos[0]][wpos[1]];
+  }
+}
 
 function getTile(x, y){
   if(inBounds(x,y)){
@@ -426,5 +479,15 @@ function getMonsters(){
     for(let j=0;j<numTiles;j++){
       if (tiles[i][j].monster) monsters.push(tile.monster);
     }
+  }
+}
+
+
+function placeGems(){
+  
+  for(let i=0;i<8;i++){
+    //randomPassableTile(0, mapRNG).gem = 1;
+    randomPassableTile(0, mapRNG).gem = getTPW(gemid);
+    gemid++;
   }
 }
