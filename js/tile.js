@@ -117,26 +117,9 @@ class Tile{
 				
 				playSound("treasure");
 	      this.gem = false;
-	      spawnMonster();
+	      //spawnMonster();
 				
-				/* set graphics based on amount of runes and whether you have a belt */
-				let belt = ""
-				if (player.belt) belt = "belt";
-				
-				if (charges >= 16 && playersheet.src != 'art/player16x16'+belt+'-runed3.png'){
-					playersheet.src = 'art/player16x16'+belt+'-runed3.png';
-				}else if (charges >= 8 && playersheet.src != 'art/player16x16'+belt+'-runed2.png'){
-					playersheet.src = 'art/player16x16'+belt+'-runed2.png';
-				}else if (charges >= 4 && playersheet.src != 'art/player16x16'+belt+'-runed1.png'){
-					playersheet.src = 'art/player16x16'+belt+'-runed1.png';
-					console.log("Runed1.");
-				}else if (charges >= 2 && playersheet.src != 'art/player16x16'+belt+'-runed0.png'){
-					playersheet.src = 'art/player16x16'+belt+'-runed0.png';
-					console.log("Runed0.");
-				}else if (playersheet.src != 'art/player16x16'+belt+'.png'){
-					playersheet.src = 'art/player16x16'+belt+'.png';
-					console.log("no runed.");
-				}
+				player.runed();
 	    }
 			//The way I'm doing this assumes a lot about player's spritesheet, mainly that runes and belt are handled some other way.
 			if (this.liquid && this.depth){
@@ -161,6 +144,26 @@ class Tile{
 		//
 		playSound("step", monster.Tile);
   }
+	
+  interactWith(monster){
+    if(monster.isPlayer){
+			if(this.gem){//Most ways to get on tile already stepOn it so this shouldn't be needed much.
+	      charges++;
+				
+				//adjust to something better.
+				if(charges % 1 == 0 && numSpells < 9){
+	        numSpells++;
+					player.addSpell(Object.keys(spells)[numSpells-1]);
+	      }
+				
+				playSound("treasure");
+	      this.gem = false;
+	      //spawnMonster();
+				
+				player.runed();
+	    }
+		}
+	}
 }
 
 class Floor extends Tile{
@@ -176,10 +179,11 @@ class Exit extends Tile{
     this.wx = wx;
     this.wy = wy;
     this.entryDir = entryDir;
-		console.warn("Exit's entryDir="+entryDir);
+		//console.info("Exit's entryDir="+entryDir);
   }
 
-  stepOn(monster){
+  //stepOn(monster){}
+  interactWith(monster){
     if(monster.isPlayer){
 			playSound("newLevel");
       if(level == numLevels){
@@ -195,7 +199,7 @@ class Exit extends Tile{
         //startLevel([this.wx, this.wy, wpos[2], wpos[3]].join(''));
       }
     }
-  }
+	}
 }
 
 class Wall extends Tile{

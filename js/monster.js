@@ -407,7 +407,28 @@ class Player extends Monster{
         );
       
     }
-  }	
+  }
+  
+  /* set player graphics based on amount of runes and whether you have a belt */
+  runed(){
+    let belt = ""
+    if (player.belt) belt = "belt";
+    
+    if (charges >= 16 && playersheet.src != 'art/player16x16'+belt+'-runed3.png'){
+      playersheet.src = 'art/player16x16'+belt+'-runed3.png';
+    }else if (charges >= 8 && playersheet.src != 'art/player16x16'+belt+'-runed2.png'){
+      playersheet.src = 'art/player16x16'+belt+'-runed2.png';
+    }else if (charges >= 4 && playersheet.src != 'art/player16x16'+belt+'-runed1.png'){
+      playersheet.src = 'art/player16x16'+belt+'-runed1.png';
+      console.log("Runed1.");
+    }else if (charges >= 2 && playersheet.src != 'art/player16x16'+belt+'-runed0.png'){
+      playersheet.src = 'art/player16x16'+belt+'-runed0.png';
+      console.log("Runed0.");
+    }else if (playersheet.src != 'art/player16x16'+belt+'.png'){
+      playersheet.src = 'art/player16x16'+belt+'.png';
+      console.log("no runed.");
+    }
+  }
 }
 
 // All Monsters: Slime, Spider, Wolfpup, Wolf, Crystal, Wasp, Goblin, Hobgoblin, Fleshball, Fleshegg, Rabbit, Bunny, Shade, Snake

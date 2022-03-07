@@ -32,7 +32,8 @@ function generateWorld(){
   ]
 }
 
-function generateLevel(){
+function generateLevel(entryDir=-1, playerHp=3){
+  console.groupEnd()
   //currentSeed = mapRNG.setSeed(worldRNG.getUniform());
   //currentSeed = worldRNG.getUniform();
   //console.warn("? "+day+" "+wpos[0]+" "+(wpos[1])+" "+(wpos[2])+" "+worldRNG.getSeed());
@@ -46,12 +47,17 @@ function generateLevel(){
     console.warn("map already visited "+currentSeed);
     tiles = savedMaps[currentSeed].map;
     monsters = savedMaps[currentSeed].mons;
+    placeExitsAndPlayer(entryDir, playerHp, gRNG);
     return;
   }
   console.warn("?cs "+currentSeed);
   mapRNG.setSeed(currentSeed);
   //currentSeed = JSON.parse(JSON.stringify(mapRNG.getSeed()));//ensure these are the same.
-  console.groupCollapsed("mapgen(seed:%c"+ currentSeed +"%c)", "color:green", "color:")
+  
+  //let cmsg = '"mapgen(seed:%c"+ currentSeed +"%c)", "color:green", "color:"';
+  if (logUncollapseMode == "mapgen")console.group("mapgen(seed:%c"+ currentSeed +"%c)", "color:green", "color:");
+  else console.groupCollapsed("mapgen(seed:%c"+ currentSeed +"%c)", "color:green", "color:");
+  
   tryTo('generate map', function(){
     let abletiles = generateTiles()
     let connectedtiles = randomPassableTile(0, mapRNG).getConnectedTiles().length//This shouldn't change anything so no need for mapRNG.
@@ -75,6 +81,7 @@ function generateLevel(){
   console.groupEnd()
   
   
+  
   //Save the resulting map 
   //for leaving and re-entering 
   //and to make it easier to check that the seed always generates the same map.
@@ -82,14 +89,94 @@ function generateLevel(){
   //savedMaps.push({seed:currentSeed, map:tiles, mons:monsters})
   //savedMaps.push({[currentSeed]:tiles});
   //savedMaps[currentSeed] = tiles;
-  savedMaps[currentSeed] = {map:tiles, mons:monsters}
-  let test = monsters.slice();
-  //let test = (JSON.stringify(monsters))
-  //let test2 = (JSON.stringify(tiles))
-  let test2 = Object.assign({}, tiles);
-  //let test3 = JSON.parse(test)
-  clonedMaps.push({seed:currentSeed, map:test2, mons:test})
-  console.info("saved map "+ (savedMaps.length-1) +"");
+  savedMaps[currentSeed] = {map:tiles, mons:monsters};
+  if("clone map for some reason" == 1){
+    //let test = (JSON.stringify(monsters))
+    //let test2 = (JSON.stringify(tiles))
+    //let test3 = JSON.parse(test)
+    let test = monsters.slice();
+    let test2 = Object.assign({}, tiles);
+    clonedMaps.push({seed:currentSeed, map:test2, mons:test});
+    console.info("cloned map "+ (clonedMaps.length-1) +"");
+  }
+  
+  placeExitsAndPlayer(entryDir, playerHp);
+  
+  //console.log("map gen all done with seeds: m:"+ mapRNG.getSeed() +" r:"+ ROT.RNG.getSeed() +" w:"+ worldRNG.getSeed() +"");
+  //console.log("RNG states are: m:"+ mapRNG.getState() +" r:"+ ROT.RNG.getState() +" w:"+ worldRNG.getState() +"");
+  rngLog = mapRNG.getState();
+  console.groupEnd();
+}
+
+function placeExitsAndPlayer(entryDir=-1, playerHp=3, rng=mapRNG){
+  console.groupCollapsed("mapgen p6(%cexits%c and %cplayer%c).", "color:violet", "color:", "color:khaki", "color:");
+  //console.group("mapgen p6(%cexits%c and %cplayer%c).", "color:violet", "color:", "color:khaki", "color:");
+  //Should these use mapRNG or not? Dunno.
+  /*
+  dirs = [
+    tiles[numTiles/2+randomRange(-2,2,mapRNG)][numTiles-2],
+    tiles[0+1][numTiles/2+randomRange(-2,2,mapRNG)],
+    tiles[numTiles/2+randomRange(-2,2,mapRNG)][0+1],
+    tiles[numTiles-2][numTiles/2+randomRange(-2,2,mapRNG)],
+  ];
+    */
+  dirs = [
+    tiles[numTiles/2][numTiles-2],
+    tiles[0+1][numTiles/2],
+    tiles[numTiles/2][0+1],
+    tiles[numTiles-2][numTiles/2],
+  ];
+  let wtile1 = wTiles[wpos[0]][wpos[1]];
+  console.log("This rooms type is "+wtile1+" and it's position is ["+wpos[0]+"]["+wpos[1]+"]");
+  for(let i=0 ; i<dirs.length ; i++) {
+    let tile = dirs[i];
+    let frontTileType = Floor;
+    //let frontTileType = Pit;
+    let frontTile = tiles[tile.x-dirmap[i][0]][tile.y-dirmap[i][1]];
+    let wtile2 = wTiles[ (wpos[0] + dirmap[i][0]) ][ (wpos[1] + dirmap[i][1]) ];
+    if(wTiles[ (wpos[0] + dirmap[i][0]) ][ (wpos[1] + dirmap[i][1]) ]){
+      //carve a path to the exit
+      //Could probably use getAdjacentPassableNeighbors() to do this better.
+      if(!tile.passable){
+        while(true){
+          if(frontTile.passable) break;
+          else{
+            tiles[frontTile.x][frontTile.y].replace(frontTileType);
+            frontTile = tiles[frontTile.x-dirmap[i][0]][frontTile.y-dirmap[i][1]];//closer to center
+          }
+        }
+      }
+      //add the exit
+      tiles[tile.x][tile.y] = new Exit(tile.x, tile.y, dirmap[i][0], dirmap[i][1], i);
+      console.log("spawned exit in direction "+i+" leading to room type "+wtile2+" (wTiles["+(wpos[0]+dirmap[i][0])+","+(wpos[1]+dirmap[i][1])+"])");
+    }else{
+      console.log("no world tile in direction "+i+" wTiles["+(wpos[0]+dirmap[i][0])+","+(wpos[1]+dirmap[i][1])+"]");
+    }
+    
+    //entryDir is opposite of i
+    if(entryDir >= 0 && entryDir <= 3){
+      //console.log("dir"+(dirmap[entryDir][0]+dirmap[entryDir][1])+" and entryDir"+(dirmap[i][1]+dirmap[i][0])+"");
+      //Hmm, so you can tell if dir is southeast or northwest by adding and you can tell if it's north-south or east-west by checking a position
+      /*console.log("dir "+i+" vs "+entryDir+
+        " x="+ (dirmap[entryDir][0] == -dirmap[i][0]) +
+        " y="+ (dirmap[entryDir][1] == -dirmap[i][1]) +"");
+        */
+      if(dirmap[entryDir][0] == -dirmap[i][0] && -dirmap[entryDir][1] == dirmap[i][1]){
+        console.log("dir "+i+" is opposite of "+entryDir+". So player should be at tile["+tile.x+","+tile.y+"] near tile["+frontTile.x+","+frontTile.y+"].");
+        //player = new Player(tiles[frontTile.x][frontTile.y]);
+        player = new Player(tiles[tile.x][tile.y]);
+        player.hp = playerHp;
+        //player = new Player(randomPassableTile("gem", mapRNG));
+      }
+    }
+    
+  }
+  if (entryDir < 0 || entryDir > 3){
+    console.log("didn't use edge exit("+entryDir+").");
+    player = new Player(randomPassableTile("gem", mapRNG));
+    player.hp = playerHp;
+  }
+  console.groupEnd();
   
 }
 

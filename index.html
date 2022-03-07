@@ -88,7 +88,10 @@ text
   day = 1;
   roomCount = 0;
   roomMax = 24;
-  wpos = [16,16,10,0]//world position, x,y,z,plane
+  wTiles = [];
+  generateWorld()
+  wpos = [14,11,10,0];//world position, x,y,z,plane
+  //wpos = [14,14,10,0];
   maxHp = 10; 
   seenMons = new Set();
   
@@ -132,15 +135,22 @@ text
   //savedMaps = [];
   clonedMaps = [];
   
+  logUncollapseMode = "turns";
+  logUncollapseMode = "mapgen";
+  
   document.querySelector("html").onkeypress = function(e){
-    console.log("Pressed "+e.key+".");
+    //console.log("Pressed "+e.key+".");
 
     if(gameState == "title"){
       startGame();
     }else if(gameState == "dead"){
       showTitle();
     }else if(gameState == "running"){
-      console.group("Turn:"+turn+"("+levelturn+")");
+      //turn ending keys... not sure how I feel about doing this.
+      if(e.key=="w"||e.key=="a"||e.key=="s"||e.key=="d"||e.key=="z"||(e.key=="c"&&player.small||e.key>=1 && e.key<=9)){
+        if (logUncollapseMode == "turns")console.group("Turn:"+turn+"("+levelturn+")");
+        else console.groupCollapsed("Turn:"+turn+"("+levelturn+")");
+      }
       if(e.key=="w") {
         player.tryMove(0, -1);
         player.dir = 2;
@@ -172,7 +182,7 @@ text
         console.log("turning right. Set last move to"+JSON.stringify(dirmap[player.dir])+" and dir to "+player.dir+".");
       }
       if(e.key=="x") {
-        player.rest();
+        player.tile.interactWith(player);
       }
       if(e.key=="z") {//x and c are kind of close and it's easy to press wrong one.
         player.rest();
