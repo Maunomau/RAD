@@ -375,6 +375,34 @@ class Player extends Monster{
     }
   }
 
+  draw(){
+    if(this.teleportCounter > 1){
+      drawSprite(31, this.getDisplayX(),  this.getDisplayY(), this.sheet);
+    }else if(this.teleportCounter == 1 || this.stunned){
+      //drawSprite(30, this.tile.x, this.tile.y, this.sheet);
+      //drawSprite(this.sprite, this.tile.x, this.tile.y, this.sheet);
+      drawSprite(this.sprite, this.getDisplayX(),  this.getDisplayY(), this.sheet, this.dir);
+      this.drawHp(pipgray);
+      if(this.isPlayer){
+          //console.log("Player stunned is "+this.stunned+".");
+      }
+    }else{
+      drawSprite(this.sprite, this.getDisplayX(),  this.getDisplayY(), this.sheet, this.dir);
+      //if(this.belt)
+      //if(charges || runes)
+      drawSprite(this.sprite, this.getDisplayX(),  this.getDisplayY(), beltsheet, this.dir);
+      drawSprite(this.sprite, this.getDisplayX(),  this.getDisplayY(), belt2sheet, this.dir);
+      for(let i=0 ; i < runesprites.length ; i++){
+        //let runesheet = eval("runes"+runesprites[i]+"sheet");
+        let runesheet = runesprites[i];
+        drawSprite(this.sprite, this.getDisplayX(),  this.getDisplayY(), runesheet, this.dir);
+      }
+      this.drawHp(this.piptype);
+    }
+    this.offsetX -= Math.sign(this.offsetX)*(1/4);
+    this.offsetY -= Math.sign(this.offsetY)*(1/4);
+  }
+
   //Draw player health on the other side to make being inside an egg or such look ok.
   drawHp(pip){
     //Health pips are size 6, figure out how many we can show per line based on tilesize

@@ -420,7 +420,7 @@ function randomPassableTile(cond, rng = gRNG){
     let x = randomRange(0,numTiles-1, rng);
     let y = randomRange(0,numTiles-1, rng);
     tile = getTile(x, y);
-    return tile.passable && !tile.monster && !tile[cond];//!tile[cond] is true when cond isn't supplied?
+    return tile.passable && !tile.monster && !tile[cond];// !tile[cond] is true when cond isn't supplied?
   });
   return tile;
 }

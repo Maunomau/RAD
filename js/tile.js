@@ -125,20 +125,10 @@ class Tile{
   stepOn(monster){
     if(monster.isPlayer){
 			if(this.gem){
-	      charges++;
-				runecharges.push(this.gem);
-				
-				//adjust to something better.
-				if(charges % 1 == 0 && numSpells < 9){
-	        numSpells++;
-					player.addSpell(Object.keys(spells)[numSpells-1]);
-	      }
-				
+				pickupRune(this.gem);
 				playSound("treasure");
 	      this.gem = false;
 	      //spawnMonster();
-				
-				player.runed();
 	    }
 			//The way I'm doing this assumes a lot about player's spritesheet, mainly that runes and belt are handled some other way.
 			if (this.liquid && this.depth){
@@ -167,20 +157,10 @@ class Tile{
   interactWith(monster){
     if(monster.isPlayer){
 			if(this.gem){//Most ways to get on tile already stepOn it so this shouldn't be needed much.
-	      charges++;
-				runecharges.push(this.gem);
-				
-				//adjust to something better.
-				if(charges % 1 == 0 && numSpells < 9){
-	        numSpells++;
-					player.addSpell(Object.keys(spells)[numSpells-1]);
-	      }
-				
+				pickupRune(this.gem);
 				playSound("treasure");
 	      this.gem = false;
 	      //spawnMonster();
-				
-				player.runed();
 	    }
 		}
 	}

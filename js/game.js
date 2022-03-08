@@ -30,7 +30,7 @@ function drawSprite(sprite, x, y, sheet, dir = 0){
     16,
     16,
     x*tileSize + shakeX,
-    y*tileSize + shakeY,
+    y*tileSize + shakeY-9,
     tileSize,
     tileSize
   );
@@ -129,36 +129,16 @@ function passTime(){
     case 0://
       darkness = 0;
       break;
-    case 1://
-      darkness = 0;
-      break;
-    case 2://
-      darkness = 0;
-      break;
-    case 3://
-      darkness = 0;
-      break;
-    case 4://
-      darkness = 0;
-      break;
-    case 5://
-      darkness = 0.25;
-      break;
-    case 6://
-      darkness = 0.5;
-      break;
-    case 7://
-      darkness = 0.5;
-      break;
-    case 8://
-      darkness = 0.75;
-      break;
-    case 9://
-      darkness = 0.75;
-      break;
-    case 10://
-      darkness = 1;
-      break;
+    case 1: darkness = 0; break;
+    case 2: darkness = 0; break;
+    case 3: darkness = 0; break;
+    case 4: darkness = 0; break;
+    case 5: darkness = 0.25; break;
+    case 6: darkness = 0.5; break;
+    case 7: darkness = 0.5; break;
+    case 8: darkness = 0.75; break;
+    case 9: darkness = 0.75; break;
+    case 10: darkness = 1; break;
   }
   console.log("time phase:"+ Math.floor((time/timeInDay)*10) +", darkness is at "+ darkness);
 }
@@ -196,7 +176,7 @@ function startGame(){
   sounds["newLevel"].play();
   wTiles = [];
   generateWorld()
-  wpos = [15,14,10,0];//world position, x,y,z,plane
+  wpos = [14,14,10,0];//world position, x,y,z,plane
   //wpos = [14,14,10,0];
   level = 1;
   charges = 0;

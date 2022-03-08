@@ -43,6 +43,25 @@ text
   playersheet.src = 'art/player16x16-runed2.png';
   playersheet.src = 'art/player16x16-runed1.png';
   playersheet.src = 'art/player16x16.png';
+  playersheet.src = 'art/pol-.png';
+
+  beltsheet = new Image();
+  beltsheet.src = 'art/pol-belt.png';
+  belt2sheet = new Image();
+  belt2sheet.src = 'art/pol-belt2.png';
+
+  runes0sheet = new Image();
+  runes0sheet.src = 'art/pol-runes0-belly.png';
+  runes1sheet = new Image();
+  runes1sheet.src = 'art/pol-runes1-waist-chest.png';
+  runes2sheet = new Image();
+  runes2sheet.src = 'art/pol-runes2-arms.png';
+  runes3sheet = new Image();
+  runes3sheet.src = 'art/pol-runes3-legs.png';
+  runes4sheet = new Image();
+  runes4sheet.src = 'art/pol-runes4-top.png';
+  //let runeSpriteOptions = [runes0sheet,runes1sheet,runes2sheet,runes3sheet,runes4sheet];
+  runesprites = [] //used to combine random runesheets
 
   effectsheet = new Image();
   effectsheet.src = 'effects.png';
@@ -151,8 +170,8 @@ text
   //savedMaps = [];
   clonedMaps = [];
   
-  logUncollapseMode = "turns";
   logUncollapseMode = "mapgen";
+  logUncollapseMode = "turns";
   
   document.querySelector("html").onkeypress = function(e){
     //console.log("Pressed "+e.key+".");
