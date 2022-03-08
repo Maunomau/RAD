@@ -229,30 +229,34 @@ function boltTravel(direction, effect, damage){
 
 
 function pickupRune(rune){
-  
-  charges++;
-  runecharges.push(rune);
-  
-  //adjust to something better.
-  if(charges % 1 == 0 && numSpells < 9){
-    numSpells++;
-    player.addSpell(Object.keys(spells)[numSpells-1]);
-  }
-  
-  //playSound("treasure");
-  //spawnMonster();
-  let useSingleSpriteForPlayer = false
-  if (useSingleSpriteForPlayer) player.runed();
-  else {
-    if("add more runes to player sprite" && (runecharges.length/4) >= runesprites.length){
-      let runeSpriteOptions = [runes0sheet,runes1sheet,runes2sheet,runes3sheet,runes4sheet];
-      if(runesprites.length < runeSpriteOptions.length){
-        let i = randomRange(0, runeSpriteOptions.length-1);
-        while(runesprites.includes(runeSpriteOptions[i])) i = randomRange(0, runeSpriteOptions.length-1);
-        runesprites.push(runeSpriteOptions[i]);
-        console.log("more %c runes", "color:cyan");
-      }else console.log("already fully%c runed", "color:cyan");
+  let maxRunes = 10// TODO: set max based on spells/circles equipped
+  if(runeinv.length < maxRunes){
+    charges++;
+    runeinv.push(rune);
+    //are elemntal charges separate pickup or do runes double as them? Add charge here if latter.
+    
+    //adjust to something better.
+    if(runeinv.length % 1 == 0 && numSpells < 9){
+      numSpells++;
+      player.addSpell(Object.keys(spells)[numSpells-1]);
     }
+    
+    //spawnMonster();
+    let useSingleSpriteForPlayer = false
+    if (useSingleSpriteForPlayer) player.runed();
+    else {
+      if("add more runes to player sprite" && (runeinv.length/4) >= runesprites.length){
+        let runeSpriteOptions = [runes0sheet,runes1sheet,runes2sheet,runes3sheet,runes4sheet];
+        if(runesprites.length < runeSpriteOptions.length){
+          let i = randomRange(0, runeSpriteOptions.length-1);
+          while(runesprites.includes(runeSpriteOptions[i])) i = randomRange(0, runeSpriteOptions.length-1);
+          runesprites.push(runeSpriteOptions[i]);
+          console.log("more %c runes", "color:cyan");
+        }else console.log("already fully%c runed", "color:cyan");
+      }
+    }
+    playSound("treasure");
+    return true;//tell the tile that it can remove the rune from itself
   }
 }
 

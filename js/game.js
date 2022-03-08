@@ -8,11 +8,11 @@ function setupCanvas(){
   canvas.style.height = canvas.height + 'px';
   ctx.imageSmoothingEnabled = false;
 }
-function drawTile(tile, x, y, sheet=tileset){
+function drawTile(tile, x, y, sheet=tileset, sheetwidth=4){
   ctx.drawImage(
     sheet,
-    (tile%4)*16,
-    Math.floor(tile/4)*16,
+    (tile%sheetwidth)*16,
+    Math.floor(tile/sheetwidth)*16,
     16,
     16,
     x*tileSize + shakeX,
@@ -62,7 +62,8 @@ function draw(){
     player.draw();
     
     drawText("Level:"+level+" t:"+levelturn+"", 18, false, 40, "violet");
-    drawText("Runes:"+charges+"/"+gemMax, 18, false, 70, "violet");
+    //drawText("Runes:"+charges+"/"+gemMax, 18, false, 70, "violet");
+    drawText("Runes:"+runeinv.length+"/"+gemMax, 18, false, 70, "violet");
     
     for(let i=0; i<player.spells.length; i++){
       let spellText = (i+1) + ") " + (player.spells[i] || "");
@@ -178,9 +179,9 @@ function startGame(){
   generateWorld()
   wpos = [14,14,10,0];//world position, x,y,z,plane
   //wpos = [14,14,10,0];
-  level = 1;
-  charges = 0;
-  runecharges = [];
+  level = 1;//TBR
+  charges = 0;//TBR
+  runeinv = [];
   turn = 0;
   levelturn = 0;
   numSpells = 0;

@@ -104,8 +104,8 @@ class Tile{
       drawTile(5, this.x, this.y);
     }
 		if(this.maincircle >= 0){
-			if("activated specific circle" || this.maincircle == 5){
-				drawTile(this.maincircle, this.x, this.y, maincircle);
+			if("have activated specific circle" || this.maincircle == 4){
+				drawTile(this.maincircle, this.x, this.y, maincircle, 3);
 			}
     }
 		if(this.effectCounter){                    
@@ -125,9 +125,7 @@ class Tile{
   stepOn(monster){
     if(monster.isPlayer){
 			if(this.gem){
-				pickupRune(this.gem);
-				playSound("treasure");
-	      this.gem = false;
+				if(pickupRune(this.gem)) this.gem = false;
 	      //spawnMonster();
 	    }
 			//The way I'm doing this assumes a lot about player's spritesheet, mainly that runes and belt are handled some other way.
@@ -157,11 +155,20 @@ class Tile{
   interactWith(monster){
     if(monster.isPlayer){
 			if(this.gem){//Most ways to get on tile already stepOn it so this shouldn't be needed much.
-				pickupRune(this.gem);
-				playSound("treasure");
-	      this.gem = false;
+				if(pickupRune(this.gem)) this.gem = false;
 	      //spawnMonster();
 	    }
+			if(this.maincircle){
+				let i = this.maincircle;
+				let count = 0;
+				while(circle[i].charge < circle[i].maxCharge && runeinv.length > 0){
+					circle[i].charge++
+					//circle[i].runesChargedWith.push(runeinv[runeinv.length-1])
+					//runeinv.pop()
+					circle[i].runesChargedWith.push(runeinv.pop());//pop return the last item too!
+					count++// TODO: play sound based on count
+				}
+			}
 		}
 	}
 }

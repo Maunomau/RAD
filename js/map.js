@@ -29,7 +29,67 @@ function generateWorld(){
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-  ]
+  ];
+  
+  circle = [] ;
+  let spellOptions = shuffle(Object.keys(spells), mapRNG);
+  //let spellOptions = shuffle(["WOOP", "BRAVERY", "MAELSTROM", "DASH", "BOLT", "SWAP", "CROSS", "SLEEPMORE", "POWER", "EX", "DIG"], mapRNG);//Object.keys(spells) after removals
+  for (var i = 0; i < 10; i++) {
+    if (i != 4){
+      
+      circle[i] = {
+        charge:0,
+        maxCharge:16,
+        runesChargedWith:[],
+        spell:spellOptions[i],
+        spell2:spellOptions[i+8],// need 2 unique spells per circle
+      }
+    }else{
+      circle[i] = {
+        charge:0,
+        maxCharge:8,
+        runesChargedWith:[],
+        spell:spellOptions[16],
+        spell2:spellOptions[17],
+      }
+    }
+  }
+  
+  
+  for(let i=0;i<wTiles.length;i++){
+    //tiles[i] = [];
+    for(let j=0;j<wTiles[0].length;j++){
+      if(wTiles[i][j] > 0);{
+        //let type = wTiles[i][j];
+        let type = JSON.parse(JSON.stringify(wTiles[i][j]))//just in case
+        wTiles[i][j] = {
+          type:type,
+          runes:[
+            {
+              word:"akesi",//should be redundant
+              spritesrc:"art/runes/akesi.png",
+              holder:false,
+              element:"none",
+              timer:0,
+            },
+            {
+              word:"ala",
+              spritesrc:"art/runes/ala.png",
+              holder:false,
+              element:"none",
+              timer:0,
+            },
+          ],
+          monsters:[],
+          otherstuff:{},
+          //lastBeenTo://day+":"+time;
+        };
+        //console.table(wTiles[i][j]);
+      }
+    }
+  }
+  
+  
 }
 
 function generateLevel(entryDir=-1, playerHp=3){
@@ -130,14 +190,14 @@ function placeExitsAndPlayer(entryDir=-1, playerHp=3, rng=mapRNG){
     tiles[numTiles-2][numTiles/2],
   ];
   let wtile1 = wTiles[wpos[0]][wpos[1]];
-  console.log("This rooms type is "+wtile1+" and it's position is ["+wpos[0]+"]["+wpos[1]+"]");
+  console.log("This rooms type is "+wtile1.type+" and it's position is ["+wpos[0]+"]["+wpos[1]+"]");
   for(let i=0 ; i<dirs.length ; i++) {
     let tile = dirs[i];
     let frontTileType = Floor;
     //let frontTileType = Pit;
     let frontTile = tiles[tile.x-dirmap[i][0]][tile.y-dirmap[i][1]];
     let wtile2 = wTiles[ (wpos[0] + dirmap[i][0]) ][ (wpos[1] + dirmap[i][1]) ];
-    if(wTiles[ (wpos[0] + dirmap[i][0]) ][ (wpos[1] + dirmap[i][1]) ]){
+    if(wTiles[ (wpos[0] + dirmap[i][0]) ][ (wpos[1] + dirmap[i][1]) ].type){
       //carve a path to the exit
       //Could probably use getAdjacentPassableNeighbors() to do this better.
       if(!tile.passable){
@@ -230,12 +290,12 @@ function generateTiles(roomtype=2){
     tiles[(numTiles/2-1)][(numTiles/2-1)].maincircle = 0;
     tiles[numTiles/2][numTiles/2-1].maincircle = 1;
     tiles[numTiles/2+1][numTiles/2-1].maincircle = 2;
-    tiles[numTiles/2-1][numTiles/2].maincircle = 4;
-    tiles[numTiles/2][numTiles/2].maincircle = 5;
-    tiles[numTiles/2+1][numTiles/2].maincircle = 6;
-    tiles[numTiles/2-1][numTiles/2+1].maincircle = 8;
-    tiles[numTiles/2][numTiles/2+1].maincircle = 9;
-    tiles[numTiles/2+1][numTiles/2+1].maincircle = 10;
+    tiles[numTiles/2-1][numTiles/2].maincircle = 3;
+    tiles[numTiles/2][numTiles/2].maincircle = 4;
+    tiles[numTiles/2+1][numTiles/2].maincircle = 5;
+    tiles[numTiles/2-1][numTiles/2+1].maincircle = 6;
+    tiles[numTiles/2][numTiles/2+1].maincircle = 7;
+    tiles[numTiles/2+1][numTiles/2+1].maincircle = 8;
     //circletile.getNeighbor(1, 1).maincircle = 9;
     /*
     let outertiles = [
@@ -399,9 +459,9 @@ function inBounds(x,y){
 
 function getRoomtype(x, y){
   if (x){
-    return wTiles[x][y];
+    return wTiles[x][y].type;
   }else{
-    return wTiles[wpos[0]][wpos[1]];
+    return wTiles[wpos[0]][wpos[1]].type;
   }
 }
 
@@ -483,11 +543,31 @@ function getMonsters(){
 }
 
 
-function placeGems(){
-  
+//function placeRunes(){
+function placeGems(wx=wpos[0], wy=wpos[1]){
+  //console.log("placing Gems/Runes");
+  //if ("worldtile rune list has runes for this time"){}
+  //let runes = wTiles[wx][wy].runes;//I don't think we'd ever want wx,wy to not be wpos[0],wpos[1] here
+  let roomRunes = wTiles[wpos[0]][wpos[1]].runes;
+  if (roomRunes.length > 0) {
+    console.log("placing Gems/Runes");
+    roomRunes.forEach((item, i) => {
+      if(item.timer == 0) {
+        if(item.holder == false) {
+          console.log("placing rune "+i+" to random tile.");
+          randomPassableTile(0, mapRNG).gem = getTPW(gemid);
+          gemid++;
+          //randomPassableTile(0, mapRNG).rune = getTPW(gemid);
+        }else{
+          console.log("rune "+i+" is held by "+item.holder+"(todo).");
+          // TODO: 
+        }
+      }else console.log("rune "+i+" won't be placed for "+item.timer+" turns.");
+    });
+  }else console.log("no runes to place here.");
   for(let i=0;i<8;i++){
     //randomPassableTile(0, mapRNG).gem = 1;
-    randomPassableTile(0, mapRNG).gem = getTPW(gemid);
-    gemid++;
+    //randomPassableTile(0, mapRNG).gem = getTPW(gemid);
+    //gemid++;
   }
 }
