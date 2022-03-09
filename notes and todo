@@ -84,6 +84,7 @@ Line of Sight
 
 Slime puddles
 Spider webs
+Mirrors(make crystals actually immobile but able to spawn mirrors that they shoot at to attack you)
 Different floor after destroyed wall
 would crystal being able to swap with you using woop be too much?
 running
@@ -93,7 +94,28 @@ outer circle locations and discovery
 circle warps
 adjust spells to work in a way where each spell has a dedicated slot.
 warp to main and lose all runes if outside at the end of day?
-make score count total charge of all circles(is there anything besides time that could differentiate score of one winning run from another? Deals/Contracts if I get around to adding them. Some other collectable(gems once I've changed runes to not be gems). Monster interactions... Actually damage taken might be an easy one though that being 0 shouldn't be too hard so would need something else too.)
+make score count total charge of all circles
+  (is there anything besides time that could differentiate score of one winning run from another? Deals/Contracts if I get around to adding them. Some other collectable(gems once I've changed runes to not be gems). Monster interactions... Actually damage taken might be an easy one though that being 0 shouldn't be too hard so would need something else too.)
+line building after finding all outer circles?
+no stun on attack?
+"cantrip" spells that don't cost runes(but maybe energy)
+  perhaps get these based from monsters in some way.
+    push, 
+      push back 1 enemy by 1 tile
+    spawn mirror,
+      (in front of you, possibly 2 or 3 tiles away though if it's say a corridor it could go straight until there's actually something to either side of it)
+    web, 
+      create web that stuns enemies for 1 turn
+    jump/blink/glide, 
+      move 2 or 3 (flyable) tiles straight instantly
+    slimeslide, (slimepuddle)
+      dash but crawling and no attack and leave behind a line of slime puddles or just spawn slime puddle(s) nearby.
+  
+Something edible that gives energy. Shrooms?
+Decide what to do with pits,
+  are they just walls that allow flying creatures/things to pass and don't block vision or is there a way to fall into them and what happens if you do? Fall(or just warp) back into the room at random spot and take damage would be easy, could also do lower levels but that reminds me that I might want the world gen to not require entirely blank rooms to prevent exits in that direction since making lower areas match pits at higher level... I could just check for a room below before spawning pits couldn't I?
+Banish/Seal spell
+Haste spell
 
 
 done:

@@ -158,7 +158,7 @@ class Monster{
         if(this.isPlayer != newTile.monster.isPlayer && !newTile.monster.resting && !this.peaceful){
           console.log(""+this.constructor.name+"("+this.hp+") attacks "+newTile.monster.constructor.name+"("+newTile.hp+").");
           this.attackedThisTurn = true;
-          newTile.monster.stunned = true;
+          if(this.stunning) newTile.monster.stunned = true;
           newTile.monster.hit(1 + this.bonusAttack, this);
           this.bonusAttack = 0;
           
