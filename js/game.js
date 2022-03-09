@@ -95,7 +95,7 @@ function tick(){
     gameState = "dead";
   }
   /* spawn monsters, should adjust for knocking out and breeding */
-  spawnCounter--;
+  //spawnCounter--;//disabled at least for now.
   if(spawnCounter <= 0){
       spawnMonster();
       spawnCounter = spawnRate;
@@ -103,7 +103,7 @@ function tick(){
   }
   turn++;
   levelturn++;
-  gemMax = charges + usedCharges.length + gemCount();
+  gemMax = runeinv.length + usedCharges.length + gemCount();
   
   
   
@@ -129,6 +129,7 @@ function passTime(){
   switch(Math.floor((time/timeInDay)*10)) {
     case 0://
       darkness = 0;
+      //spawnMonster(Fleshegg);
       break;
     case 1: darkness = 0; break;
     case 2: darkness = 0; break;
@@ -141,8 +142,15 @@ function passTime(){
     case 9: darkness = 0.75; break;
     case 10: darkness = 1; break;
   }
+  if(time == timeInDay/2+3){
+    //cast QUAKE
+    //spawnMonster(Fleshegg, 0, tile = randomPassableTile(0, gRNG);
+    spawnMonster(Fleshegg, 0, randomWaterTile(gRNG));
+  }
+  //if(time == 21) spawnMonster(Fleshegg, 0, randomWaterTile(gRNG));
   console.log("time phase:"+ Math.floor((time/timeInDay)*10) +", darkness is at "+ darkness);
 }
+
 
 function showTitle(){
   ctx.fillStyle = 'rgba(0,0,0,.50)';
@@ -206,7 +214,7 @@ function startLevel(entryDir, playerHp=3){
   
   gameState = "running";
   levelturn = 0;
-  gemMax = charges + gemCount();
+  gemMax = runeinv.length + gemCount();
 }
 
 function drawText(text, size, centered, textY, color){

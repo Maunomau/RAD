@@ -62,6 +62,7 @@ function generateWorld(){
       if(wTiles[i][j] > 0);{
         //let type = wTiles[i][j];
         let type = JSON.parse(JSON.stringify(wTiles[i][j]))//just in case
+        let monAmount = type-1;//could be better
         wTiles[i][j] = {
           type:type,
           runes:[
@@ -80,6 +81,8 @@ function generateWorld(){
               timer:0,
             },
           ],
+          mainMonster:0,
+          monsterAmount:monAmount,
           monsters:[],
           otherstuff:{},
           //lastBeenTo://day+":"+time;
@@ -485,6 +488,17 @@ function randomPassableTile(cond, rng = gRNG){
   return tile;
 }
 
+function randomWaterTile(rng = gRNG, liquidType="water"){
+  let tile;
+  tryTo('get random water tile', function(){
+    let x = randomRange(0,numTiles-1, rng);
+    let y = randomRange(0,numTiles-1, rng);
+    tile = getTile(x, y);
+    return tile.liquid == liquidType && !tile.monster;// !tile[cond] is true when cond isn't supplied?
+  });
+  return tile;
+}
+
 function randomTileWithinDistance(sourceTile, distance, type="", cond, rng = gRNG){
   let tile;
   tryTo('get tile('+type+') within a distance('+distance+')', function(){
@@ -503,19 +517,31 @@ function randomTileWithinDistance(sourceTile, distance, type="", cond, rng = gRN
 
 function generateMonsters(){
   monsters = [];
-  let numMonsters = level+1;
-  monsterType = shuffle([Slime, Spider, Wolf, Crystal, Wasp, Goblin, Hobgoblin, Fleshegg, Rabbit], mapRNG)[0];
-  for(let i=0;i<numMonsters;i++){
-      spawnMonster(monsterType, 1);
+  let monsterType
+  let room = wTiles[wpos[0]][wpos[1]];
+  let numMonsters = day+room.monsterAmount+randomRange(0,3, mapRNG);
+  if(room.mainMonster) monsterType = room.mainMonster;
+  else {
+    monsterType = shuffle([Slime, Spider, Wolf, Crystal, Wasp, Goblin, Hobgoblin, Rabbit], mapRNG)[0];
+    room.mainMonster = monsterType;
   }
+  
+  for(let i=0;i<numMonsters;i++){
+      spawnMonster(monsterType, 1, tile = randomPassableTile(0, mapRNG), mapRNG);
+  }
+  //random monsters
+  for(let i=0;i<numMonsters;i++){
+      spawnMonster(0, 1, tile = randomPassableTile(0, mapRNG), mapRNG);
+  }
+  room.monsters = monsters;
 }
 
-function spawnMonster(type = 0, delay = -1, tile = randomPassableTile()){
+function spawnMonster(type = 0, delay = -1, tile = randomPassableTile(), rng=gRNG){
   let monsterType
   if (type){
     monsterType = type
   }else{
-    monsterType = shuffle([Slime, Spider, Wolf, Crystal, Wasp, Goblin, Hobgoblin, Fleshegg, Rabbit])[0];
+    monsterType = shuffle([Slime, Spider, Wolf, Crystal, Wasp, Goblin, Hobgoblin, Rabbit], rng)[0];
   }
   let monster = new monsterType(tile);
   if (delay >= 0) monster.teleportCounter = delay;
