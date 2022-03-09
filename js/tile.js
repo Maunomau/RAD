@@ -106,9 +106,13 @@ class Tile{
 		if(this.maincircle >= 0){
 			let c = circle[this.maincircle];
 			if(c.found || this.maincircle == 4){
-				if(true){
+				if(c.charge <= 0){
 					drawTile(this.maincircle, this.x, this.y, maincircleSheet, 3);
-				}else if (circlesFound >= 9) {//should main circle count for circlesFound?
+				}else if (circlesFound < 8 && c.charge >= c.maxCharge) {
+					drawTile(this.maincircle, this.x, this.y, maincircleUnConChargedSheet, 3);
+				}else if (circlesFound < 8 && c.charge > 0) {
+					drawTile(this.maincircle, this.x, this.y, maincircleUnConChargedSheet, 3);
+				}else if (circlesFound >= 8) {//should main circle count for circlesFound?
 					drawTile(this.maincircle, this.x, this.y, maincircleConnectedSheet, 3);
 				}
 				else if(c.charge > 0){
@@ -160,6 +164,11 @@ class Tile{
 				if(!c.found){
 					playSound("circleFound", monster.Tile);
 					c.found = true;
+					
+			    if("spell slots not full or something"){
+			      numSpells++;
+			      player.addSpell(c.spell);
+			    }
 				}
 	    }
 			//The way I'm doing this assumes a lot about player's spritesheet, mainly that runes and belt are handled some other way.
@@ -194,6 +203,10 @@ class Tile{
 	    }
 			if(this.maincircle){
 				let i = this.maincircle;
+				
+				if(circle[i].maxCharge <= circle[i].Charge) {//before charging to avoid accidents
+					//warp to outside circle
+				}
 				let count = 0;
 				while(circle[i].charge < circle[i].maxCharge && runeinv.length > 0){
 					circle[i].charge++
@@ -201,6 +214,16 @@ class Tile{
 					//runeinv.pop()
 					circle[i].runesChargedWith.push(runeinv.pop());//pop return the last item too!
 					count++// TODO: play sound based on count
+					if(circle[i].charge <= circle[i].maxCharge && !player.spells.includes(circle[i].spell2)){
+			      numSpells++;
+			      player.addSpell(circle[i].spell2);
+					}
+				}
+			}
+			if(this.circle){
+				let c = circle[this.circle];
+				if(c.maxCharge <= c.Charge) {
+					//warp to main circle
 				}
 			}
 		}

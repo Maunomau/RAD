@@ -91,6 +91,34 @@ function generateWorld(){
               element:"none",
               timer:0,
             },
+            {
+              word:"alasa",
+              spritesrc:"art/runes/alasa.png",
+              holder:false,
+              element:"none",
+              timer:0,
+            },
+            {
+              word:"ale",
+              spritesrc:"art/runes/ala.png",
+              holder:false,
+              element:"none",
+              timer:0,
+            },
+            {
+              word:"anpa",
+              spritesrc:"art/runes/ala.png",
+              holder:false,
+              element:"none",
+              timer:0,
+            },
+            {
+              word:"ante",
+              spritesrc:"art/runes/ala.png",
+              holder:false,
+              element:"none",
+              timer:0,
+            },
           ],
           //circleArea:circlearea,
           mainMonster:0,
@@ -423,9 +451,9 @@ function generateTiles(roomtype=2){
   }
   
   */
+  console.groupEnd()
   if(roomtype != 1){
     
-    console.groupEnd()
     console.groupCollapsed("mapgen p2(%cwater%c).", "color:cyan", "color:");
     let count = 0;
     let types = [Pool, Puddle, Water, DeepWater];
@@ -548,6 +576,7 @@ function randomWaterTile(rng = gRNG, liquidType="water"){
 
 function randomTileWithinDistance(sourceTile, distance, type="", cond, rng = gRNG){
   let tile;
+  distance = Math.floor(distance);
   tryTo('get tile('+type+') within a distance('+distance+')', function(){
     
     let x = sourceTile.x + randomRange(-distance,distance);

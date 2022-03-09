@@ -34,6 +34,7 @@ text
   monstersheet.src = 'monsters.png';
 
   playersheet = new Image();
+  //no longer used but there might be some machines or configurations where these would be preferable so...
   playersheet.src = 'art/player16x16belt-runed4.png';
   playersheet.src = 'art/player16x16belt-runed3.png';
   playersheet.src = 'art/player16x16belt-runed2.png';
@@ -44,6 +45,8 @@ text
   playersheet.src = 'art/player16x16-runed2.png';
   playersheet.src = 'art/player16x16-runed1.png';
   playersheet.src = 'art/player16x16.png';
+  
+  //player overlay images
   playersheet.src = 'art/pol-.png';
 
   beltsheet = new Image();
@@ -74,6 +77,10 @@ text
   maincircleSheet.src = 'art/maincircle1.png';
   //maincircleFadedSheet = new Image();
   //maincircleFadedSheet.src = 'art/maincircle1.png';
+  maincircleUnConChargedSheet = new Image();
+  maincircleUnConChargedSheet.src = 'art/maincircle1c.png';
+  maincircleUnConChargingSheet = new Image();
+  maincircleUnConChargingSheet.src = 'art/maincircle1b.png';
   maincircleConnectedSheet = new Image();
   maincircleConnectedSheet.src = 'art/maincircle2.png';
   maincircleChargedSheet = new Image();
@@ -138,8 +145,10 @@ text
   //runeTypesTotal = 136;
   maxHp = 10; 
   seenMons = new Set();
+  sealedMons = [];
   circlesFound = 0;
-  advanceTimeOnDefeat = true;
+  //advanceTimeOnDefeat = true;
+  advanceTimeOnDefeat = false;
   
   gameState = "loading";
 
@@ -189,8 +198,11 @@ text
     if(gameState == "title"){
       startGame();
     }else if(gameState == "dead"){
-      showTitle();
-      if(advanceTimeOnDefeat) day++;
+      if(e.key=="esc") showTitle();
+      else{
+        resumeGame();
+        if(advanceTimeOnDefeat) day++;
+      }
     }else if(gameState == "running"){
       //turn ending keys... not sure how I feel about doing this.
       if(e.key=="w"||e.key=="a"||e.key=="s"||e.key=="d"||e.key=="z"||(e.key=="c"&&player.small||e.key>=1 && e.key<=9)){

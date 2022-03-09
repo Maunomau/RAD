@@ -52,6 +52,9 @@ class Monster{
       this.KO();
       console.error(""+this.constructor.name+" wasn't resting for some reason despite having "+ this.hp +" hp.");
     }
+    if(this.dead) {
+      //this.die();//not sure if this is needed(tick() might expect it since update used to call die())
+    }
     this.doStuff();
   }
 
@@ -176,6 +179,11 @@ class Monster{
       return true;
     }
   }
+  
+  //get tile in front
+  getFrontTile(){
+    return getTile(this.lastMove[0], this.lastMove[1]);
+  }
 
   castSpell(index){
     let spellName = this.spells[index];
@@ -275,7 +283,8 @@ class Player extends Monster{
     //Not how I want stuff to work.
     //this.spells = shuffle(Object.keys(spells)).splice(0,numSpells);
     //this.spells = new Set(Object.keys(spells))//Sets are meh
-    this.spells = Object.keys(spells).splice(0,numSpells);
+    //this.spells = Object.keys(spells).splice(0,numSpells);
+    this.spells = spellSlots;
     //this.spells = [];
     this.TUs = 0;//Timeunits(or "Turningunits"), to track "free" actions such as turning(not sure I'll use them for anything).
     this.restspeed = 2;//rest turns to gain 1 hp
@@ -348,7 +357,9 @@ class Player extends Monster{
   
   addSpell(newSpell){                                                       
     //let newSpell = shuffle(Object.keys(spells))[0];
-    this.spells.push(newSpell);
+    //this.spells.push(newSpell);
+    spellSlots.push(newSpell);
+    spellSlots.push(SEAL);
   }
 
   castSpell(index){

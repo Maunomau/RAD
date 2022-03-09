@@ -94,8 +94,15 @@ function tick(){
   if(player.dead){
     while(runeinv.length){
       usedRunes.push([0, numTiles/3, player.tile, runeinv.pop()]);
+      //console.warn("Dropped a rune!"+"");
     }
     dropRunes();
+    //Unseal sealedMons
+    while(sealedMons.length > 0){
+      let tile = randomPassableTile();
+      sealedMons[sealedMons.length-1].tile = tile;
+      monsters.push(sealedMons.pop());
+    }
     //addRecords(runeinv.length, false);
     gameState = "dead";
   }
@@ -211,6 +218,7 @@ function startGame(){
   level = 1;//TBR
   charges = 0;//TBR
   runeinv = [];
+  spellSlots = [];//player.spells are set to this.
   turn = 0;
   levelturn = 0;
   numSpells = 0;

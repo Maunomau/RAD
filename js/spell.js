@@ -218,6 +218,22 @@ spells = {
         newTile.monster.hit(1);
       }
     }
+  },
+  //Seal/Vanish/Banish
+  SEAL: {
+    cost: 1,
+    dropdistance: 2,
+    droptime: 3,
+    f: function(caster){
+      //if(sealedMons == undefined) sealedMons = [];//not good enough apparently,
+      //let tile = caster.getFrontTile();
+      let tile = caster.tile;
+      let testTile = tile.getNeighbor(caster.lastMove[0],caster.lastMove[1]);
+      if(testTile.monster){
+        sealedMons.push(testTile.monster);
+        testTile.monster.die()
+      }
+    }
   }
 };
 
@@ -245,10 +261,9 @@ function pickupRune(rune){
     runeinv.push(rune);
     //are elemntal charges separate pickup or do runes double as them? Add charge here if latter.
     
-    //adjust to something better.
     if(runeinv.length % 1 == 0 && numSpells < 9){
-      numSpells++;
-      player.addSpell(Object.keys(spells)[numSpells-1]);
+      //numSpells++;
+      //player.addSpell(Object.keys(spells)[numSpells-1]);
     }
     
     //spawnMonster();
@@ -301,7 +316,7 @@ function dropRunes(){
           rtile.setEffect(13);
           //randomPassableTile().gem = 1;
         } catch (error){
-          console.log(error+" couldn't find gemless tile. Trying again next turn.");
+          console.log(error+" couldn't find gemless tile? Trying again next turn.");
         }
       }
       usedRunes.splice(k,1);
