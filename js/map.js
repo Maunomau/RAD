@@ -32,9 +32,9 @@ function generateWorld(){
   ];
   
   circle = [] ;
-  let spellOptions = shuffle(Object.keys(spells), mapRNG);
-  //let spellOptions = shuffle(["WOOP", "BRAVERY", "MAELSTROM", "DASH", "BOLT", "SWAP", "CROSS", "SLEEPMORE", "POWER", "EX", "DIG"], mapRNG);//Object.keys(spells) after removals
-  for (var i = 0; i < 10; i++) {
+  let spellOptions = shuffle(Object.keys(spells), worldRNG);
+  //let spellOptions = shuffle(["WOOP", "BRAVERY", "MAELSTROM", "DASH", "BOLT", "SWAP", "CROSS", "SLEEPMORE", "POWER", "EX", "DIG"], worldRNG);//Object.keys(spells) after removals
+  for (var i = 0; i < 9; i++) {
     if (i != 4){
       
       circle[i] = {
@@ -73,7 +73,7 @@ function generateWorld(){
           let circlearea = JSON.parse(tileStr[1]);//get the 2nd number
           circle[circlearea].wTileOptions.push([i,j]);
         }
-        let monAmount = randomRange(-1,1, mapRNG);
+        let monAmount = randomRange(-1,1, worldRNG);
         wTiles[i][j] = {
           type:type,
           runes:[
@@ -109,7 +109,8 @@ function generateWorld(){
 
 function setCircleLocations(){
   circle.forEach((c, i) => {
-    c.wTile = c.wTileOptions[randomRange(0,c.wTileOptions.length, mapRNG)];
+    c.wTile = c.wTileOptions[randomRange(0,c.wTileOptions.length-1, worldRNG)];
+    console.log("%cCircle "+i+" position set to ["+c.wTile[0]+"]["+c.wTile[1]+"]", "color:pink");
   });
   /*
   wTiles.forEach(el, wx => {
@@ -173,6 +174,7 @@ function generateLevel(entryDir=-1, playerHp=3){
     console.groupEnd()
   }
   
+  
   //Save the resulting map 
   //for leaving and re-entering 
   //and to make it easier to check that the seed always generates the same map.
@@ -190,6 +192,17 @@ function generateLevel(entryDir=-1, playerHp=3){
     clonedMaps.push({seed:currentSeed, map:test2, mons:test});
     console.info("cloned map "+ (clonedMaps.length-1) +"");
   }
+  
+  circle.forEach((c, i) => {
+    if(c.wTile != undefined){
+      if(wpos[0] == c.wTile[0] && wpos[1] == c.wTile[1]){
+        if(i != 4) {//not the main circle
+          randomPassableTile("exit", mapRNG).circle = i;
+        }
+        console.log("Circle "+i+" here("+wpos[0]+","+wpos[1]+" )!");
+      }//else console.warn("no circle "+i+" here("+wpos[0]+","+wpos[1]+" vs "+c.wTile[0]+","+c.wTile[1]+")!");
+    }else console.error("circle "+i+" has no circle position(wTile) defined!"+ JSON.stringify(c));
+  });
   
   placeExitsAndPlayer(entryDir, playerHp);
   

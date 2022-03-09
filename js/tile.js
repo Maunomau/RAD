@@ -119,12 +119,15 @@ class Tile{
 			}
     }
 		if(this.circle >= 0){
+			let c = circle[this.circle];
 			if(this.charge >= this.maxCharge){
 				drawTile((this.circle+1)*3-1, this.x, this.y, circlesSheet, 3);
 			}else if(this.charge > 0){
 				drawTile((this.circle+1)*2-1, this.x, this.y, circlesSheet, 2);
-			}else{
+			}else if(c.found){
 				drawTile(this.circle, this.x, this.y, circlesSheet, 1);
+			}else{
+				drawTile((this.circle+1)*4-1, this.x, this.y, circlesSheet, 4);
 			}
     }
 		if(this.liquid == "slime" && depth >= 1){
@@ -149,6 +152,15 @@ class Tile{
 			if(this.gem){
 				if(pickupRune(this.gem)) this.gem = false;
 	      //spawnMonster();
+	    }
+			
+			//mark circle as found
+			if(this.circle >= 0){
+				let c = circle[this.circle];
+				if(!c.found){
+					playSound("circleFound", monster.Tile);
+					c.found = true;
+				}
 	    }
 			//The way I'm doing this assumes a lot about player's spritesheet, mainly that runes and belt are handled some other way.
 			if (this.liquid && this.depth){

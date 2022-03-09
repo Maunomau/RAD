@@ -147,8 +147,24 @@ function passTime(){
     case 9: darkness = 0.75; break;
     case 10: darkness = 1; break;
   }
-  if(time == timeInDay/2+3){
-    //cast QUAKE
+  if(time >= timeInDay/2 && time % 45 == 0){
+    //cast QUAKE, or I could just copy what it does here
+    for(let i=0; i<numTiles; i++){
+      for(let j=0; j<numTiles; j++){
+        let tile = getTile(i,j);
+        if(tile.constructor.name == "Wall"){
+          //tile.replace(Floor);
+          let numWalls = 4 - tile.getAdjacentPassableNeighbors().length;
+          if (numWalls < 3 && gRNG.getUniform() < 0.25){
+            tile.replace(Floor);
+          }
+        }else if(tile.monster && !tile.monster.flying){
+          tile.monster.stunned = true;
+          if(gRNG.getUniform < 0.5) tile.monster.hit(1) = true;//Chance of breaking flesheggs already around.
+        }
+      }
+    }
+    shakeAmount = 20;
     //spawnMonster(Fleshegg, 0, tile = randomPassableTile(0, gRNG);
     spawnMonster(Fleshegg, 0, randomWaterTile(gRNG));
   }
@@ -203,6 +219,26 @@ function startGame(){
   day = 1;
   time = 0;
   lastCircle = -1;//Last circle player was on(for warping to in some situations)
+  
+  lastGemCount = -1;
+  gemid = 0;
+  
+  startLevel(-1, startingHp);
+  //gameState = "mapgen";
+}
+
+//hmm, not sure about this trying to be stripped down startGame, might be better to just warp player to home and advance time if that's enabled
+function resumeGame(){
+  //playSound("newLevel");
+  sounds["newLevel"].play();
+  wpos = [14,14,10,0];//world position, x,y,z,plane
+  //wpos = lastCircle ??? //not sure how to do this
+  lastCircle = -1;//Last circle player was on(for warping to in some situations)
+  runeinv = [];
+  if(advanceTimeOnDefeat) turn = 0;
+  levelturn = 0;
+  if(advanceTimeOnDefeat) day = 1;
+  if(advanceTimeOnDefeat) time = 0;
   
   lastGemCount = -1;
   gemid = 0;
@@ -315,6 +351,10 @@ function initSounds(){
     buzz: new Audio('sounds/buzz2.wav'),
     growl: new Audio('sounds/grr.wav'),
     no: new Audio('sounds/no.wav'),
+    circleFound: new Audio('sounds/circleFound.wav'),
+    circleCharge1: new Audio('sounds/circleCharge1.wav'),
+    circleCharge2: new Audio('sounds/circleCharge2.wav'),
+    circleCharge3: new Audio('sounds/circleCharge3.wav'),
   };
 
   let mons = ["Slime", "Spider", "Wolfpup", "Wolf", "Crystal", "Wasp", "Goblin", "Hobgoblin", "Fleshball", "Fleshegg", "Rabbit", "Bunny", "Shade", "Snake"];

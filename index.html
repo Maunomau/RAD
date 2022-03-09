@@ -69,9 +69,11 @@ text
 
   tileset = new Image();
   tileset.src = 'tiles.png';
-
+  
   maincircleSheet = new Image();
   maincircleSheet.src = 'art/maincircle1.png';
+  //maincircleFadedSheet = new Image();
+  //maincircleFadedSheet.src = 'art/maincircle1.png';
   maincircleConnectedSheet = new Image();
   maincircleConnectedSheet.src = 'art/maincircle2.png';
   maincircleChargedSheet = new Image();
@@ -137,6 +139,7 @@ text
   maxHp = 10; 
   seenMons = new Set();
   circlesFound = 0;
+  advanceTimeOnDefeat = true;
   
   gameState = "loading";
 
@@ -187,6 +190,7 @@ text
       startGame();
     }else if(gameState == "dead"){
       showTitle();
+      if(advanceTimeOnDefeat) day++;
     }else if(gameState == "running"){
       //turn ending keys... not sure how I feel about doing this.
       if(e.key=="w"||e.key=="a"||e.key=="s"||e.key=="d"||e.key=="z"||(e.key=="c"&&player.small||e.key>=1 && e.key<=9)){

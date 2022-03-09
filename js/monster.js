@@ -200,6 +200,7 @@ class Monster{
       this.hp = 0;
     }
     
+    //Wake on damage if enough hp
     if(this.resting && this.hp >= 1) {
       this.resting = false;
       this.rp = 0;
