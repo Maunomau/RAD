@@ -104,9 +104,31 @@ class Tile{
       drawTile(5, this.x, this.y);
     }
 		if(this.maincircle >= 0){
-			if("have activated specific circle" || this.maincircle == 4){
-				drawTile(this.maincircle, this.x, this.y, maincircle, 3);
+			let c = circle[this.maincircle];
+			if(c.found || this.maincircle == 4){
+				if(true){
+					drawTile(this.maincircle, this.x, this.y, maincircleSheet, 3);
+				}else if (circlesFound >= 9) {//should main circle count for circlesFound?
+					drawTile(this.maincircle, this.x, this.y, maincircleConnectedSheet, 3);
+				}
+				else if(c.charge > 0){
+					drawTile(this.maincircle, this.x, this.y, maincircleChargingSheet, 3);
+				}else if (c.charge >= c.maxCharge) {
+					drawTile(this.maincircle, this.x, this.y, maincircleChargedSheet, 3);
+				}
 			}
+    }
+		if(this.circle >= 0){
+			if(this.charge >= this.maxCharge){
+				drawTile((this.circle+1)*3-1, this.x, this.y, circlesSheet, 3);
+			}else if(this.charge > 0){
+				drawTile((this.circle+1)*2-1, this.x, this.y, circlesSheet, 2);
+			}else{
+				drawTile(this.circle, this.x, this.y, circlesSheet, 1);
+			}
+    }
+		if(this.liquid == "slime" && depth >= 1){
+			drawTile(16, this.x, this.y);
     }
 		if(this.effectCounter){                    
       this.effectCounter--;
@@ -186,6 +208,7 @@ class Exit extends Tile{
     this.wx = wx;
     this.wy = wy;
     this.entryDir = entryDir;
+    this.exit = true;
 		//console.info("Exit's entryDir="+entryDir);
   }
 
@@ -193,9 +216,9 @@ class Exit extends Tile{
   interactWith(monster){
     if(monster.isPlayer){
 			playSound("newLevel");
-      if(level == numLevels){
+      if(level == numLevels){//TBR
 				console.log("Win.");
-				addRecords(charges, true);
+				//addRecords(runeinv.length, true);
         showTitle();
       }else{
         //level++;
@@ -255,9 +278,18 @@ class DeepWater extends Tile{
   };
 }
 
+//maybe do as var instead of tile?
 class Slimepuddle extends Tile{
   constructor(x,y){
     super(x, y, 16, true, true, true, "slime", 1);
+		
+  };
+}
+
+//maybe do as var instead of tile?
+class Circle1 extends Tile{
+  constructor(x,y){
+    super(x, y, 32, true, true, true, "magic", 0);
 		
   };
 }

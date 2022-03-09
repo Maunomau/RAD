@@ -354,11 +354,13 @@ class Player extends Monster{
     let spellName = this.spells[index];
     let cost = spells[spellName].cost;
     console.log("Casting spell "+index+" "+spellName+".");
-    if(spellName && cost <= charges){
+    if(spellName && cost <= runeinv.length){
       //delete this.spells[index];
       console.log("It costs "+cost);
-      charges -= cost;
-      usedCharges.push([spells[spellName].droptime, spells[spellName].dropdistance, this.tile, 1])
+      while(cost > 0){
+        usedRunes.push([spells[spellName].droptime, spells[spellName].dropdistance, this.tile, runeinv.pop()]);
+        cost--;
+      }
       //useCharge(this.tile, spells[spellName].droptime, spells[spellName].dropdistance);
       spells[spellName].f(this);
       playSound("spell");
@@ -389,7 +391,7 @@ class Player extends Monster{
     }else{
       drawSprite(this.sprite, this.getDisplayX(),  this.getDisplayY(), this.sheet, this.dir);
       //if(this.belt)
-      //if(charges || runes)
+      //if(runeinv.length || runes)
       drawSprite(this.sprite, this.getDisplayX(),  this.getDisplayY(), beltsheet, this.dir);
       drawSprite(this.sprite, this.getDisplayX(),  this.getDisplayY(), belt2sheet, this.dir);
       for(let i=0 ; i < runesprites.length ; i++){
@@ -442,14 +444,14 @@ class Player extends Monster{
     let belt = ""
     if (player.belt) belt = "belt";
     
-    if (charges >= 16 && playersheet.src != 'art/player16x16'+belt+'-runed3.png'){
+    if (runeinv.length >= 16 && playersheet.src != 'art/player16x16'+belt+'-runed3.png'){
       playersheet.src = 'art/player16x16'+belt+'-runed3.png';
-    }else if (charges >= 8 && playersheet.src != 'art/player16x16'+belt+'-runed2.png'){
+    }else if (runeinv.length >= 8 && playersheet.src != 'art/player16x16'+belt+'-runed2.png'){
       playersheet.src = 'art/player16x16'+belt+'-runed2.png';
-    }else if (charges >= 4 && playersheet.src != 'art/player16x16'+belt+'-runed1.png'){
+    }else if (runeinv.length >= 4 && playersheet.src != 'art/player16x16'+belt+'-runed1.png'){
       playersheet.src = 'art/player16x16'+belt+'-runed1.png';
       console.log("Runed1.");
-    }else if (charges >= 2 && playersheet.src != 'art/player16x16'+belt+'-runed0.png'){
+    }else if (runeinv.length >= 2 && playersheet.src != 'art/player16x16'+belt+'-runed0.png'){
       playersheet.src = 'art/player16x16'+belt+'-runed0.png';
       console.log("Runed0.");
     }else if (playersheet.src != 'art/player16x16'+belt+'.png'){

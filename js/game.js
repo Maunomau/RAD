@@ -53,6 +53,8 @@ function draw(){
       ctx.fillStyle = 'rgba(0, 0, 0, '+darkness+')';
       ctx.fillRect(0, 0, numTiles*tileSize, numTiles*tileSize);
     }
+    
+    
     if (monsters[0]){
       for(let i=0;i<monsters.length;i++){
         monsters[i].draw();
@@ -62,7 +64,6 @@ function draw(){
     player.draw();
     
     drawText("Level:"+level+" t:"+levelturn+"", 18, false, 40, "violet");
-    //drawText("Runes:"+charges+"/"+gemMax, 18, false, 70, "violet");
     drawText("Runes:"+runeinv.length+"/"+gemMax, 18, false, 70, "violet");
     
     for(let i=0; i<player.spells.length; i++){
@@ -79,7 +80,7 @@ function tick(){
   //iterate over monsters(including player) (importantly in reverse so they can be safely deleted)
   //adjust for knocking out
   passTime();
-  dropCharges();
+  dropRunes();
   for(let k=monsters.length-1;k>=0;k--){
     if(!monsters[k].dead){
       monsters[k].update();
@@ -91,7 +92,11 @@ function tick(){
   player.update();
   
   if(player.dead){
-    addRecords(charges, false);
+    while(runeinv.length){
+      usedRunes.push([0, numTiles/3, player.tile, runeinv.pop()]);
+    }
+    dropRunes();
+    //addRecords(runeinv.length, false);
     gameState = "dead";
   }
   /* spawn monsters, should adjust for knocking out and breeding */
@@ -103,7 +108,7 @@ function tick(){
   }
   turn++;
   levelturn++;
-  gemMax = runeinv.length + usedCharges.length + gemCount();
+  gemMax = runeinv.length + usedRunes.length + gemCount();
   
   
   
@@ -194,14 +199,15 @@ function startGame(){
   levelturn = 0;
   numSpells = 0;
   seenMons = new Set();
-  usedCharges = []
+  usedRunes = []
   day = 1;
   time = 0;
+  lastCircle = -1;//Last circle player was on(for warping to in some situations)
   
   lastGemCount = -1;
   gemid = 0;
   
-  startLevel(-1);
+  startLevel(-1, startingHp);
   //gameState = "mapgen";
 }
 
@@ -238,9 +244,9 @@ function getRecords(){
   }
 }
 
-function addRecords(charges, won){
+function addRecords(runesInCircles, won, defeatedBy = false){
   let records = getRecords();
-  let recordObject = {runes: charges, loop: 1, depth: level, turn: turn, casts: 0, totalScore: charges+level, active: won, run: records.length+1};
+  let recordObject = {runes: runesInCircles, loop: 1, depth: level, turn: turn, casts: 0, totalScore: runesInCircles+level, active: won, run: records.length+1};
   let lastRecord = records.pop();
 
   if(lastRecord){

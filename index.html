@@ -28,6 +28,7 @@ text
 <script src="js/spell.js"></script>
 <script>
 
+  //put all of these into imgs or sprites or whateveer object so I can remove sheet from them without causing confusion
 
   monstersheet = new Image();
   monstersheet.src = 'monsters.png';
@@ -69,14 +70,17 @@ text
   tileset = new Image();
   tileset.src = 'tiles.png';
 
-  maincircle = new Image();
-  maincircle.src = 'art/maincircle2c.png';
-  maincircle.src = 'art/maincircle2b.png';
-  maincircle.src = 'art/maincircle2.png';
-  maincircle.src = 'art/maincircle1.png';
+  maincircleSheet = new Image();
+  maincircleSheet.src = 'art/maincircle1.png';
+  maincircleConnectedSheet = new Image();
+  maincircleConnectedSheet.src = 'art/maincircle2.png';
+  maincircleChargedSheet = new Image();
+  maincircleChargedSheet.src = 'art/maincircle2c.png';
+  maincircleChargingSheet = new Image();
+  maincircleChargingSheet.src = 'art/maincircle2b.png';
 
-  circles = new Image();
-  circles.src = 'art/circles.png';
+  circlesSheet = new Image();
+  circlesSheet.src = 'art/circles.png';
 
   //There's a better way to do this I assume.
   pipred = new Image();
@@ -132,10 +136,11 @@ text
   //runeTypesTotal = 136;
   maxHp = 10; 
   seenMons = new Set();
+  circlesFound = 0;
   
   gameState = "loading";
 
-  startingHp = 3;
+  startingHp = 5;
   numLevels = 8;
   
   shakeAmount = 0;
@@ -243,7 +248,7 @@ text
         generateTiles();
       }
       if(e.key=="g") {
-        usedCharges.push([0, 1, player.tile, 1]);
+        usedRunes.push([0, 1, player.tile, 1]);
       }
       if(e.key=="l") {
         tiles[player.tile.x][player.tile.y].monster = undefined;

@@ -9,6 +9,17 @@ spells = {
       console.log("WOOPed to "+wooptile.x+","+wooptile.y);
     }
   },
+  //limit to being cast from water tiles somehow(by caster)
+  WATERWOOP: {
+    cost: 1,
+    dropdistance: 0,
+    droptime: 0,
+    f: function(caster){
+      let wooptile = randomWaterTile();
+      caster.move(wooptile);
+      console.log("WATERWOOPed to "+wooptile.x+","+wooptile.y);
+    }
+  },
   BRAVERY: {
     cost: 1,
     dropdistance: 2,
@@ -173,7 +184,7 @@ spells = {
     droptime: 1,
     f: function(){
       let newTile = player.tile;
-      for(let i=0;i<=charges;i++){
+      for(let i=0;i<=runeinv.length;i++){
         let testTile = newTile.getNeighbor(player.lastMove[0],player.lastMove[1]);
         if(testTile.passable){
           testTile.replace(Pool);
@@ -231,7 +242,6 @@ function boltTravel(direction, effect, damage){
 function pickupRune(rune){
   let maxRunes = 10// TODO: set max based on spells/circles equipped
   if(runeinv.length < maxRunes){
-    charges++;
     runeinv.push(rune);
     //are elemntal charges separate pickup or do runes double as them? Add charge here if latter.
     
@@ -265,16 +275,16 @@ function pickupRune(rune){
 /*
 Do I want an array that has runes to be respawned in it or what?
 
-Should stacks of charges be a thing or how should I handle spells using more than 1?
+Should stacks of charges/runes be a thing or how should I handle spells using more than 1?
 */
 
 
-function dropCharges(){
-  for(let k=usedCharges.length-1;k>=0;k--){
-    let delay = usedCharges[k][0];
-    let distance = usedCharges[k][1];
-    let tile = usedCharges[k][2];
-    let type = usedCharges[k][3];
+function dropRunes(){
+  for(let k=usedRunes.length-1;k>=0;k--){
+    let delay = usedRunes[k][0];
+    let distance = usedRunes[k][1];
+    let tile = usedRunes[k][2];
+    let type = usedRunes[k][3];
     console.log("Respawning a rune gem near "+tile.x+","+tile.y);
     if (delay <= 0){
       // spawn charge within el[1] distance from el[2]
@@ -294,14 +304,14 @@ function dropCharges(){
           console.log(error+" couldn't find gemless tile. Trying again next turn.");
         }
       }
-      usedCharges.splice(k,1);
+      usedRunes.splice(k,1);
     }else{
-      usedCharges[k][0] -= 1;
+      usedRunes[k][0] -= 1;
     }
     
   }
   /*
-  usedCharges.forEach(el, index){
+  usedRunes.forEach(el, index){
     if (el[0] <= 0){
       // spawn charge within el[1] distance from el[2]
       if (el[1] == 0){
