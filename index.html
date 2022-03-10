@@ -151,8 +151,8 @@ text
   haste = 0;
   circlesFound = 0;
   cwarp = 4;
-  //advanceTimeOnDefeat = true;
   advanceTimeOnDefeat = false;
+  advanceTimeOnDefeat = true;
   savedPlayer = {small:false, hp:3};
   
   gameState = "loading";
@@ -203,10 +203,13 @@ text
     if(gameState == "title"){
       startGame();
     }else if(gameState == "dead"){
-      if(e.key=="esc") showTitle();
-      else{
+      if(e.key=="c") {
         resumeGame();
         if(advanceTimeOnDefeat) day++;
+      }else if(e.key=="z") {
+        tick();
+      }else{
+        showTitle();
       }
     }else if(gameState == "running"){
       //turn ending keys... not sure how I feel about doing this.

@@ -63,7 +63,7 @@ function draw(){
     //drawSprite(0, x, y);
     player.draw();
     
-    drawText("Level:"+level+" t:"+levelturn+"", 18, false, 40, "violet");
+    drawText("Day:"+day+" t:"+time+"", 18, false, 40, "violet");
     drawText("Runes:"+runeinv.length+"/"+gemMax, 18, false, 70, "violet");
     
     for(let i=0; i<player.spells.length; i++){
@@ -71,7 +71,12 @@ function draw(){
       drawText(spellText, 20, false, 110+i*40, "aqua");
     }
     
-    
+    if(gameState == "dead") {
+      drawText("You have been defeated.", 30, true, canvas.height/2 - 55, "white");
+      drawText("Press C to continue on the next day,", 20, true, canvas.height/2 - 25, "white");
+      drawText("Press Z to pass a turn.", 20, true, canvas.height/2, "white");
+      drawText("Press anything else to restart the game.", 20, true, canvas.height/2 + 25, "white");
+    }
   }
 }
 
@@ -207,7 +212,7 @@ function showTitle(){
   
   
   //mapRNG.setSeed(12345);
-  worldRNG.setSeed(999);
+  //worldRNG.setSeed(999);
   
   
   RWord = ROT.RNG.getItem(["Raging", "Rampant", "Ravenous", "Rough", "Rowdy", "Rugged", "Ruthless"]);
@@ -232,7 +237,10 @@ function startGame(){
   sounds["newLevel"].play();
   wTiles = [];
   generateWorld()
-  wpos = [14,14,10,0];//world position, x,y,z,plane
+  wpos = [14,10,10,0];//world position, x,y,z,plane
+  savedMaps = {};
+  circlesFound = 0;
+  cwarp = 4;
   //wpos = [14,14,10,0];
   level = 1;//TBR
   charges = 0;//TBR

@@ -192,7 +192,7 @@ function generateLevel(entryDir=-1, playerHp=3){
   
   if(getRoomtype() == 1){
     monsters = [];
-    placeGems();
+    //placeGems();
     
   }else{
     console.groupCollapsed("mapgen p5(%cmonsters%c).", "color:brown", "color:");
