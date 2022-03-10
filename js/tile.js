@@ -202,11 +202,27 @@ class Tile{
 				if(pickupRune(this.gem)) this.gem = false;
 	      //spawnMonster();
 	    }
-			if(this.maincircle){
+			if(this.maincircle >= 0){
+				let c = circle[this.maincircle];//should replace circle[i] with c
 				let i = this.maincircle;
 				
-				if(circle[i].maxCharge <= circle[i].Charge) {//before charging to avoid accidents
+				//these just make warping in go to correct tile
+				c.maincircleTileX = this.x;
+				c.maincircleTileY = this.y;
+				
+				console.log("warp? "+c.maxCharge+"=="+c.charge);
+				if(c.maxCharge <= c.charge || (c.charge > 0 && runeinv.length <= 0)) {//before charging to avoid accidents
+					console.log("warp! "+c.maxCharge+"=="+c.charge);
 					//warp to outside circle
+					//or something, warping probably should be much easier.
+					wpos[0] = circle[i].wTile[0];
+					wpos[1] = circle[i].wTile[1];
+					cwarp = this.maincircle;
+					savedPlayer = player;
+					this.monster = null;
+	        startLevel(4, player.hp);
+					console.table(wpos);
+	        //startLevel([this.wx, this.wy, wpos[2], wpos[3]].join(''));
 				}
 				let count = 0;
 				while(circle[i].charge < circle[i].maxCharge && runeinv.length > 0){
@@ -223,11 +239,25 @@ class Tile{
 				if(count >= 8) playSound("circleCharge3", monster.Tile);
 				else if(count >= 4) playSound("circleCharge2", monster.Tile);
 				else if(count >= 1) playSound("circleCharge1", monster.Tile);
+				else if(c.charge <= 0) playSound("no", monster.Tile);
 			}
-			if(this.circle){
+			if(this.circle >= 0){
 				let c = circle[this.circle];
-				if(c.maxCharge <= c.Charge) {
+				console.log("warp? "+c.maxCharge+"=="+c.charge);
+				if(c.maxCharge <= c.charge || c.charge > 0 || monster.small && runeinv.length <= 0) {
+					console.log("warp! "+c.maxCharge+"=="+c.charge);
 					//warp to main circle
+					//or something, warping probably should be much easier.
+					//circle[4] should give the main circle even if it's moved away from 14,14
+					wpos[0] = circle[4].wTile[0];
+					wpos[1] = circle[4].wTile[1];
+					cwarp = this.circle;
+					savedPlayer = player;
+					this.monster = null;
+	        startLevel(5, player.hp);
+				}else{
+					
+					playSound("no", monster.Tile);
 				}
 			}
 		}
@@ -261,6 +291,7 @@ class Exit extends Tile{
         showTitle();
       }else{
         //level++;
+				savedPlayer = player;
 				wpos[0] += this.wx
 				wpos[1] += this.wy
         startLevel(this.entryDir, player.hp);

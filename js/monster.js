@@ -294,6 +294,7 @@ class Player extends Monster{
     //this.spells = [];
     this.TUs = 0;//Timeunits(or "Turningunits"), to track "free" actions such as turning(not sure I'll use them for anything).
     this.restspeed = 2;//rest turns to gain 1 hp
+    loadPlayerState(this);
 
   }
   

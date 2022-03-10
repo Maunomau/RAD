@@ -24,7 +24,7 @@ spells = {
   BRAVERY: {
     cost: 1,
     dropdistance: 2,
-    droptime: 3,
+    droptime: 10,
     f: function(){
       player.shield = 3;
       for(let i=0;i<monsters.length;i++){
@@ -35,7 +35,7 @@ spells = {
   MAELSTROM: {
     cost: 1,
     dropdistance: 10,
-    droptime: 1,
+    droptime: 10,
     f: function(caster){
       for(let i=0;i<monsters.length;i++){
         if (monsters[i].tile.dist(caster.tile) < 13){
@@ -47,8 +47,8 @@ spells = {
   },
   DASH: {
     cost: 1,
-    dropdistance: 3,
-    droptime: 3,
+    dropdistance: 1,
+    droptime: 10,
     f: function(caster){
       let newTile = caster.tile;
       while(true){
@@ -73,8 +73,8 @@ spells = {
   },
   BOLT: {
     cost: 1,
-    dropdistance: 5,
-    droptime: 2,
+    dropdistance: 1,
+    droptime: 10,
     f: function(){
       boltTravel(player.lastMove, 16 - Math.abs(player.lastMove[1]), 4);
     }
@@ -101,8 +101,8 @@ spells = {
   },
   CROSS: {
     cost: 1,
-    dropdistance: 5,
-    droptime: 2,
+    dropdistance: 1,
+    droptime: 10,
     f: function(){
       let directions = [
         [0, -1],
@@ -117,8 +117,8 @@ spells = {
   },
   SLEEPMORE: {
     cost: 1,
-    dropdistance: 10,
-    droptime: 2,
+    dropdistance: 1,
+    droptime: 10,
     f: function(){
       for(let i=0;i<monsters.length;i++){
         if (monsters[i].resting){
@@ -130,8 +130,8 @@ spells = {
   },
   POWER: {
     cost: 1,
-    dropdistance: 3,
-    droptime: 2,
+    dropdistance: 1,
+    droptime: 10,
     f: function(){
       player.bonusAttack=5;
     }
@@ -144,7 +144,7 @@ spells = {
   QUAKE: {
     cost: 1,
     dropdistance: 16,
-    droptime: 1,
+    droptime: 10,
     f: function(){
       for(let i=0; i<numTiles; i++){
         for(let j=0; j<numTiles; j++){
@@ -181,8 +181,8 @@ spells = {
   },
   DIG: {
     cost: 1,
-    dropdistance: 5,
-    droptime: 1,
+    dropdistance: 0,
+    droptime: 10,
     f: function(){
       let newTile = player.tile;
       for(let i=0;i<=runeinv.length;i++){
@@ -199,8 +199,8 @@ spells = {
   },
   DRAG: {
     cost: 1,
-    dropdistance: 1,
-    droptime: 1,
+    dropdistance: 0,
+    droptime: 10,
     f: function(caster){
       let dragRange = 3;
       let newTile = caster.tile;
@@ -349,7 +349,7 @@ function boltTravel(direction, effect, damage){
 
 
 function pickupRune(rune){
-  let maxRunes = 10// TODO: set max based on spells/circles equipped
+  let maxRunes = 200// TODO: set max based on spells/circles equipped
   if(runeinv.length < maxRunes){
     runeinv.push(rune);
     //are elemntal charges separate pickup or do runes double as them? Add charge here if latter.

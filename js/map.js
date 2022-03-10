@@ -227,7 +227,10 @@ function generateLevel(entryDir=-1, playerHp=3){
     if(c.wTile != undefined){
       if(wpos[0] == c.wTile[0] && wpos[1] == c.wTile[1]){
         if(i != 4) {//not the main circle
-          randomPassableTile("exit", mapRNG).circle = i;
+          let tile = randomPassableTile("exit", mapRNG);
+          tile.circle = i;
+          c.roomTileX = tile.x;
+          c.roomTileY = tile.y;
         }
         console.log("Circle "+i+" here("+wpos[0]+","+wpos[1]+" )!");
       }//else console.warn("no circle "+i+" here("+wpos[0]+","+wpos[1]+" vs "+c.wTile[0]+","+c.wTile[1]+")!");
@@ -289,6 +292,7 @@ function placeExitsAndPlayer(entryDir=-1, playerHp=3, rng=mapRNG){
         m.tile = newPos;
         newPos.monster = m;
       } //else console.warn("no monster on exit!");
+      if(tiles[tile.x][tile.y].circle) console.warn("Circle on exit! Do something?");
       //add the exit
       tiles[tile.x][tile.y] = new Exit(tile.x, tile.y, dirmap[i][0], dirmap[i][1], i);
       console.log("spawned exit in direction "+i+" leading to room type "+wtile2+" (wTiles["+(wpos[0]+dirmap[i][0])+","+(wpos[1]+dirmap[i][1])+"])");
@@ -314,11 +318,18 @@ function placeExitsAndPlayer(entryDir=-1, playerHp=3, rng=mapRNG){
     }
     
   }
-  if (entryDir < 0 || entryDir > 3){
+  if (entryDir < 0 || entryDir > 5){
     console.log("didn't use edge exit("+entryDir+").");
     player = new Player(randomPassableTile("gem", mapRNG));
     player.hp = playerHp;
+  }else if(entryDir == 4){
+    player = new Player(getTile(circle[cwarp].roomTileX, circle[cwarp].roomTileY));
+    player.hp = playerHp;
+  }else if(entryDir == 5){
+    player = new Player(getTile(circle[cwarp].maincircleTileX, circle[cwarp].maincircleTileY));
+    player.hp = playerHp;
   }
+  
   console.groupEnd();
   
 }
@@ -660,7 +671,11 @@ function placeGems(wx=wpos[0], wy=wpos[1]){
         if(item.holder == false) {
           console.log("placing rune "+i+" to random tile.");
           randomPassableTile(0, mapRNG).gem = getTPW(gemid);
+          randomPassableTile(0, mapRNG).rune = {word:roomRunes.word, img:roomRunes.spritesrc};//or something like that once I switch to doing it like this.
           gemid++;
+          //roomRunes.pop();//prevent day changes from replacing runes.
+          //// TODO: add dropped runes to wTiles[][].runes
+          wTiles[wpos[0]][wpos[1]].runes.pop();
           //randomPassableTile(0, mapRNG).rune = getTPW(gemid);
         }else{
           console.log("rune "+i+" is held by "+item.holder+"(todo).");
@@ -674,4 +689,12 @@ function placeGems(wx=wpos[0], wy=wpos[1]){
     //randomPassableTile(0, mapRNG).gem = getTPW(gemid);
     //gemid++;
   }
+}
+
+function loadPlayerState(pl = player){
+  if(time > 2){
+    //pl.small = savedPlayer.small;
+    pl.hp = savedPlayer.hp;
+  }
+  if(savedPlayer.small) pl.crouch();
 }

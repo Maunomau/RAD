@@ -89,7 +89,6 @@ would crystal being able to swap with you using woop be too much?
 running
 max spells and spell swapping
 make enmies spawn better(based on room type and world time)
-circle warps
 adjust spells to work in a way where each spell has a dedicated slot.
 warp to main and lose all runes if outside at the end of day?
 make score count total charge of all circles
@@ -113,10 +112,13 @@ Something edible that gives energy/hp. Shrooms?
 Decide what to do with pits,
   are they just walls that allow flying creatures/things to pass and don't block vision or is there a way to fall into them and what happens if you do? Fall(or just warp) back into the room at random spot and take damage would be easy, could also do lower levels but that reminds me that I might want the world gen to not require entirely blank rooms to prevent exits in that direction since making lower areas match pits at higher level... I could just check for a room below before spawning pits couldn't I?
 Golem monster that uses current crystal behaviour aside from wooping
-fix haste breking on map change
+fix haste breaking on map change
+indicate future rune drop spots?
+resting hpup time counter
 
 
 done:
+circle warps
 make usedRunes level based
 Haste spell
 outer circle locations and discovery

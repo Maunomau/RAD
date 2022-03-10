@@ -188,6 +188,12 @@ function passTime(){
     //spawnMonster(Fleshegg, 0, tile = randomPassableTile(0, gRNG);
     spawnMonster(Fleshegg, 0, randomWaterTile(gRNG));
   }
+  if(time == 2){
+    //spellSlots.push("SEAL");
+    //spellSlots.push("CAPTURE");
+    //spellSlots.push("HASTE");
+    //spellSlots.push("RELOCATE");
+  }
   //if(time == 21) spawnMonster(Fleshegg, 0, randomWaterTile(gRNG));
   console.log("time phase:"+ Math.floor((time/timeInDay)*10) +", darkness is at "+ darkness);
 }
