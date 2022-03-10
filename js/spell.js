@@ -1,3 +1,4 @@
+timeInDay = 500;//Uhh... I guess this runs before index.html is fully done or something
 spells = {
   WOOP: {
     cost: 1,
@@ -219,22 +220,114 @@ spells = {
       }
     }
   },
-  //Seal/Vanish/Banish
-  SEAL: {
+  //More like stop time since I didn't feel like figuring out how to do that every other turn or so.
+  HASTE: {
     cost: 1,
-    dropdistance: 2,
-    droptime: 3,
+    dropdistance: 1,
+    droptime: 5,
     f: function(caster){
+      for(let i=0;i<monsters.length;i++){
+        if(monsters[i] != caster) monsters[i].stunned = true;
+      }
+      haste = 3;
+      caster.hasted = 3;
+      caster.posthaste = 2;
+    }
+  },
+  //Seal/Vanish/Banish
+  //just increased cost and drop time to balance
+  SEAL: {
+    cost: 5,
+    dropdistance: 8,
+    droptime: timeInDay,
+    f: function(caster){
+      //Nonplayer casting? Would need monster specific sealedMons easyish way might be to just sealedMons[caster.constructor.name][monster] but not sure I really need that.
       //if(sealedMons == undefined) sealedMons = [];//not good enough apparently,
       //let tile = caster.getFrontTile();
       let tile = caster.tile;
       let testTile = tile.getNeighbor(caster.lastMove[0],caster.lastMove[1]);
       if(testTile.monster){
+        console.log("sealing monster "+ testTile.monster.constructor.name +".");
         sealedMons.push(testTile.monster);
         testTile.monster.die()
       }
     }
+  },
+  //less OP SEAL that refuses to work
+  //Why does releasing them on death seem to work so easily? Because it doesn't... It just shows them for 1 turn before they disappear.
+  //I guess I could settle for just spawning new monsters, presumably they've got time to rest while sealed and if they need to carry over some stats those can be handled case by case
+  CAPTURE: {
+    cost: 1,
+    dropdistance: 2,
+    droptime: 3,
+    worksnot: true,
+    f: function(caster){
+      let tile = caster.tile;
+      let testTile = tile.getNeighbor(caster.lastMove[0],caster.lastMove[1]);
+      if(capturedMons.length >= 1){
+        if(!testTile.monster){
+          console.log("releasing monster "+ capturedMons[0].constructor.name +".");
+          spawnMonster(eval(capturedMons.shift().constructor.name), 0, testTile, gRNG);
+        }else{
+          console.warn("releasing "+ capturedMons[0].constructor.name +" and capturing "+testTile.monster.constructor.name +".");
+          capturedMons.push(testTile.monster);
+          testTile.monster.die()
+          spawnMonster(eval(capturedMons.shift().constructor.name), 0, testTile, gRNG);
+        }
+      }else{
+        if(testTile.monster){
+          console.log("sealing monster "+ testTile.monster.constructor.name +".");
+          capturedMons.push(testTile.monster);
+          testTile.monster.die()
+        }
+        
+      }
+    }
   }
+  //Can't get SEAL to work like I want it to but managed to get it to do this though even this doesn't really work nicely
+  //Idea was to "mark" monster and then on casting again monster is relocated but issue is the original isn't removed if doing it in another room.
+  /*
+  RELOCATE: {
+    cost: 1,
+    dropdistance: 2,
+    droptime: 3,
+    worksnot: true,
+    f: function(caster){
+      let tile = caster.tile;
+      let testTile = tile.getNeighbor(caster.lastMove[0],caster.lastMove[1]);
+      if(rehomeMons.length >= 1){
+        if(!testTile.monster){
+          console.log("rehoming/relocating monster("+ rehomeMons[0].constructor.name +").");
+          //while(sealedMons.length > 0){
+          //let testTile = randomPassableTile();
+          //sealedMons[sealedMons.length-1].tile = testTile;
+          //monsters.push(sealedMons.pop());
+          rehomeMons[0].tile = testTile;
+          tiles[testTile.x][testTile.y].monster = rehomeMons[0];
+          monsters.push(rehomeMons.shift());
+          //tiles[testTile.x][testTile.y].monster = monsters[monsters.length-1];
+          console.warn("latest monster in area "+ monsters[monsters.length-1].constructor.name +" "+".");
+          console.warn("monster in tile "+testTile.x+","+testTile.y+" is "+ testTile.monster +" "+".");
+        }else if(1<1){
+          console.warn("rehoming "+ rehomeMons[rehomeMons.length-1].constructor.name +" and setting "+ testTile.monster.constructor.name +".");
+          rehomeMons.push(testTile.monster);
+          //testTile.monster.die();
+          rehomeMons[0].tile = testTile;
+          monsters.push(rehomeMons.shift());
+          tiles[testTile.x][testTile.y].monster = monsters[monsters.length-1];
+          
+        }
+      }else{
+        if(testTile.monster){
+          console.log("setting monster("+ testTile.monster.constructor.name +") for rehoming/relocating.");
+          rehomeMons.push(testTile.monster);
+          //testTile.monster.die()
+        }
+        
+      }
+    }
+  }
+  */
 };
 
 
@@ -300,28 +393,32 @@ function dropRunes(){
     let distance = usedRunes[k][1];
     let tile = usedRunes[k][2];
     let type = usedRunes[k][3];
-    console.log("Respawning a rune gem near "+tile.x+","+tile.y);
-    if (delay <= 0){
-      // spawn charge within el[1] distance from el[2]
-      if (distance == 0){
-        if (!tile.gem){
-          tile.gem = type;
-          tile.setEffect(13);
+    let wx = usedRunes[k][4];
+    let wy = usedRunes[k][5];
+    if(wpos[0] == wx && wpos[1] == wy){
+      console.log("Respawning a rune gem near "+tile.x+","+tile.y);
+      if (delay <= 0){
+        // spawn charge within el[1] distance from el[2]
+        if (distance == 0){
+          if (!tile.gem){
+            tile.gem = type;
+            tile.setEffect(13);
+          }
+        }else{
+          //Spawn somewhere
+          try{
+            rtile = randomTileWithinDistance(tile, distance, "", "gem");
+            rtile.gem = type;
+            rtile.setEffect(13);
+            //randomPassableTile().gem = 1;
+          } catch (error){
+            console.log(error+" couldn't find gemless tile? Trying again next turn.");
+          }
         }
+        usedRunes.splice(k,1);
       }else{
-        //Spawn somewhere
-        try{
-          rtile = randomTileWithinDistance(tile, distance, "", "gem");
-          rtile.gem = type;
-          rtile.setEffect(13);
-          //randomPassableTile().gem = 1;
-        } catch (error){
-          console.log(error+" couldn't find gemless tile? Trying again next turn.");
-        }
+        usedRunes[k][0] -= 1;
       }
-      usedRunes.splice(k,1);
-    }else{
-      usedRunes[k][0] -= 1;
     }
     
   }

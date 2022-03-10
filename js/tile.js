@@ -100,9 +100,6 @@ class Tile{
 
 	draw(){
     drawTile(this.sprite, this.x, this.y);
-		if(this.gem){
-      drawTile(5, this.x, this.y);
-    }
 		if(this.maincircle >= 0){
 			let c = circle[this.maincircle];
 			if(c.found || this.maincircle == 4){
@@ -111,7 +108,7 @@ class Tile{
 				}else if (circlesFound < 8 && c.charge >= c.maxCharge) {
 					drawTile(this.maincircle, this.x, this.y, maincircleUnConChargedSheet, 3);
 				}else if (circlesFound < 8 && c.charge > 0) {
-					drawTile(this.maincircle, this.x, this.y, maincircleUnConChargedSheet, 3);
+					drawTile(this.maincircle, this.x, this.y, maincircleUnConChargingSheet, 3);
 				}else if (circlesFound >= 8) {//should main circle count for circlesFound?
 					drawTile(this.maincircle, this.x, this.y, maincircleConnectedSheet, 3);
 				}
@@ -136,6 +133,9 @@ class Tile{
     }
 		if(this.liquid == "slime" && depth >= 1){
 			drawTile(16, this.x, this.y);
+    }
+		if(this.gem){
+      drawTile(5, this.x, this.y);
     }
 		if(this.effectCounter){                    
       this.effectCounter--;
@@ -164,6 +164,7 @@ class Tile{
 				if(!c.found){
 					playSound("circleFound", monster.Tile);
 					c.found = true;
+					circlesFound++;
 					
 			    if("spell slots not full or something"){
 			      numSpells++;
@@ -214,11 +215,14 @@ class Tile{
 					//runeinv.pop()
 					circle[i].runesChargedWith.push(runeinv.pop());//pop return the last item too!
 					count++// TODO: play sound based on count
-					if(circle[i].charge <= circle[i].maxCharge && !player.spells.includes(circle[i].spell2)){
+					if(circle[i].charge == circle[i].maxCharge && !player.spells.includes(circle[i].spell2)){
 			      numSpells++;
 			      player.addSpell(circle[i].spell2);
 					}
 				}
+				if(count >= 8) playSound("circleCharge3", monster.Tile);
+				else if(count >= 4) playSound("circleCharge2", monster.Tile);
+				else if(count >= 1) playSound("circleCharge1", monster.Tile);
 			}
 			if(this.circle){
 				let c = circle[this.circle];

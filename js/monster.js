@@ -24,38 +24,41 @@ class Monster{
   }
 
   update(){
-    if(this.shield) this.shield--;
-    if(this.resting){
-      //Not sure if I really need the rp variable. I suppose I might want situations where rest happens without healing or such(such as SLEEPMORE spell).
-      if(this.rp < this.fullHp*this.restspeed || this.hp < 1){
-        this.rp++;
-        //this.hp = Math.floor(this.rp/this.restspeed);
-        if(this.rp % this.restspeed == 0 && this.hp < this.rp/this.restspeed && this.hp < this.fullHp) this.hp += 1;
-      }else{
-        this.resting = false;
-        this.rp = 0;
-        this.stunned = false;
-        this.restspeed++ //Increase resting time so that repeatedly beating enemies isn't total waste
-        console.log(""+this.constructor.name+" got up. hp:"+this.hp);
+    if(!haste && !this.posthaste|| haste && this.hasted){
+      if(this.hasted) this.hasted--;
+      if(this.shield) this.shield--;
+      if(this.resting){
+        //Not sure if I really need the rp variable. I suppose I might want situations where rest happens without healing or such(such as SLEEPMORE spell).
+        if(this.rp < this.fullHp*this.restspeed || this.hp < 1){
+          this.rp++;
+          //this.hp = Math.floor(this.rp/this.restspeed);
+          if(this.rp % this.restspeed == 0 && this.hp < this.rp/this.restspeed && this.hp < this.fullHp) this.hp += 1;
+        }else{
+          this.resting = false;
+          this.rp = 0;
+          this.stunned = false;
+          this.restspeed++ //Increase resting time so that repeatedly beating enemies isn't total waste
+          console.log(""+this.constructor.name+" got up. hp:"+this.hp);
+        }
+        console.log(""+this.constructor.name+" rested (rp:"+this.rp+" hp:"+this.hp+")");
+        if(this.teleportCounter) this.teleportCounter--;
+        return
       }
-      console.log(""+this.constructor.name+" rested (rp:"+this.rp+" hp:"+this.hp+")");
-      if(this.teleportCounter) this.teleportCounter--;
-      return
+      if(this.stunned || this.teleportCounter > 0){    
+        this.stunned = false;
+        this.teleportCounter--;
+        console.log(""+this.constructor.name+" is stunned.");
+        return;
+      }
+      if(Math.floor(this.hp) < 1) {
+        this.KO();
+        console.error(""+this.constructor.name+" wasn't resting for some reason despite having "+ this.hp +" hp.");
+      }
+      if(this.dead) {
+        //this.die();//not sure if this is needed(tick() might expect it since update used to call die())
+      }
+      this.doStuff();
     }
-    if(this.stunned || this.teleportCounter > 0){    
-      this.stunned = false;
-      this.teleportCounter--;
-      console.log(""+this.constructor.name+" is stunned.");
-      return;
-    }
-    if(Math.floor(this.hp) < 1) {
-      this.KO();
-      console.error(""+this.constructor.name+" wasn't resting for some reason despite having "+ this.hp +" hp.");
-    }
-    if(this.dead) {
-      //this.die();//not sure if this is needed(tick() might expect it since update used to call die())
-    }
-    this.doStuff();
   }
 
   doStuff(){
@@ -182,7 +185,10 @@ class Monster{
   
   //get tile in front
   getFrontTile(){
-    return getTile(this.lastMove[0], this.lastMove[1]);
+    let tile = this.tile;
+    let frontTile = tile.getNeighbor(this.lastMove[0],this.lastMove[1]);
+    return frontTile;
+    //return getTile(this.lastMove[0], this.lastMove[1]);
   }
 
   castSpell(index){
@@ -292,6 +298,13 @@ class Player extends Monster{
   }
   
   update(){
+    if(!haste && !this.posthaste|| haste && this.hasted){
+      if(this.hasted) this.hasted--;
+    }else{
+      if(this.posthaste) this.posthaste--;
+      //Somehow wait a bit? And prevent doing stuff while doing that.
+      tick();
+    }
     if (this.shield) this.shield--;
     this.stunned = false;//get player out of stun state(could do earlier if grey pips after damage is issue also might want player able to actually get stunned at some point)
     this.TUs = 0;
@@ -359,7 +372,7 @@ class Player extends Monster{
     //let newSpell = shuffle(Object.keys(spells))[0];
     //this.spells.push(newSpell);
     spellSlots.push(newSpell);
-    spellSlots.push(SEAL);
+    //spellSlots.push("HASTE");
   }
 
   castSpell(index){
@@ -370,7 +383,7 @@ class Player extends Monster{
       //delete this.spells[index];
       console.log("It costs "+cost);
       while(cost > 0){
-        usedRunes.push([spells[spellName].droptime, spells[spellName].dropdistance, this.tile, runeinv.pop()]);
+        usedRunes.push([spells[spellName].droptime, spells[spellName].dropdistance, this.tile, runeinv.pop(), wpos[0], wpos[1]]);
         cost--;
       }
       //useCharge(this.tile, spells[spellName].droptime, spells[spellName].dropdistance);
@@ -632,6 +645,7 @@ Prefer resting on gems?
 class Fleshball extends Monster{ // Eater Devourer
   constructor(tile){
       super(tile, 8, 6);
+      this.spells = ['DRAG', 'WATERWOOP'];
   }
 }
 

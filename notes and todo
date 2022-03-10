@@ -79,7 +79,6 @@ time until next spawn counter
 line to new spawn?
 Remove/Change spawning, while the game is kind of fun with it I want a different feel.
 
-make usedRunes level based
 Line of Sight
 
 Slime puddles
@@ -98,6 +97,7 @@ make score count total charge of all circles
 line building after finding all outer circles?
 "cantrip" spells that don't cost runes(but maybe energy)
   perhaps get these based from monsters in some way.
+  or have them be crouched versions of normal spells
     push, 
       push back 1 enemy by 1 tile
     spawn mirror,
@@ -109,14 +109,16 @@ line building after finding all outer circles?
     slimeslide, (slimepuddle)
       dash but crawling and no attack and leave behind a line of slime puddles or just spawn slime puddle(s) nearby.
   
-Something edible that gives energy. Shrooms?
+Something edible that gives energy/hp. Shrooms?
 Decide what to do with pits,
   are they just walls that allow flying creatures/things to pass and don't block vision or is there a way to fall into them and what happens if you do? Fall(or just warp) back into the room at random spot and take damage would be easy, could also do lower levels but that reminds me that I might want the world gen to not require entirely blank rooms to prevent exits in that direction since making lower areas match pits at higher level... I could just check for a room below before spawning pits couldn't I?
-Haste spell
 Golem monster that uses current crystal behaviour aside from wooping
+fix haste breking on map change
 
 
 done:
+make usedRunes level based
+Haste spell
 outer circle locations and discovery
 Banish/Seal spell
 no stun on attack?

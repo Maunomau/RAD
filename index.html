@@ -146,6 +146,9 @@ text
   maxHp = 10; 
   seenMons = new Set();
   sealedMons = [];
+  //unsealMons = [];//Ugh, I hoped to not need to do this, did something even worse and just spawned new monsters
+  capturedMons = [];
+  haste = 0;
   circlesFound = 0;
   //advanceTimeOnDefeat = true;
   advanceTimeOnDefeat = false;
@@ -264,7 +267,7 @@ text
         generateTiles();
       }
       if(e.key=="g") {
-        usedRunes.push([0, 1, player.tile, 1]);
+        usedRunes.push([0, 1, player.tile, 1, wpos[0], wpos[1]]);
       }
       if(e.key=="l") {
         tiles[player.tile.x][player.tile.y].monster = undefined;
@@ -297,4 +300,4 @@ text
 
 </script>
 <br>
-text2 <script>//gameState</script>
+text2 <script>sealedMons//gameState</script>

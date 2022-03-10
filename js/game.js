@@ -79,8 +79,10 @@ function tick(){
   soundsplayed = {} //(soundname: distance)Used to avoid more distant sounds replacing closer ones.
   //iterate over monsters(including player) (importantly in reverse so they can be safely deleted)
   //adjust for knocking out
-  passTime();
-  dropRunes();
+  if(!haste){
+    passTime();
+    dropRunes();
+  }
   for(let k=monsters.length-1;k>=0;k--){
     if(!monsters[k].dead){
       monsters[k].update();
@@ -93,15 +95,24 @@ function tick(){
   
   if(player.dead){
     while(runeinv.length){
-      usedRunes.push([0, numTiles/3, player.tile, runeinv.pop()]);
+      usedRunes.push([0, numTiles/3, player.tile, runeinv.pop(), wpos[0], wpos[1]]);
       //console.warn("Dropped a rune!"+"");
     }
     dropRunes();
     //Unseal sealedMons
-    while(sealedMons.length > 0){
-      let tile = randomPassableTile();
-      sealedMons[sealedMons.length-1].tile = tile;
-      monsters.push(sealedMons.pop());
+    if(sealedMons){
+      while(sealedMons.length > 0){
+        //let tile = randomPassableTile();
+        //sealedMons[sealedMons.length-1].tile = tile;
+        //monsters.push(sealedMons.pop());//This just look like it works for the turn
+        spawnMonster(eval(sealedMons[0].constructor.name), 1, tile = randomPassableTile("exit", gRNG), gRNG);
+        sealedMons.shift()
+      }
+    }
+    if (capturedMons) {
+      while(capturedMons.length > 0){
+        spawnMonster(eval(capturedMons.shift().constructor.name), 1, tile = randomPassableTile("exit", gRNG), gRNG);
+      }
     }
     //addRecords(runeinv.length, false);
     gameState = "dead";
@@ -113,6 +124,8 @@ function tick(){
       spawnCounter = spawnRate;
       spawnRate--;
   }
+  if(haste) haste--
+  
   turn++;
   levelturn++;
   gemMax = runeinv.length + usedRunes.length + gemCount();

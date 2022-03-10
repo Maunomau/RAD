@@ -146,6 +146,7 @@ function setCircleLocations(){
     })
   });
   */
+  //console.log("%cRandom worldRNG number: "+ worldRNG.getUniformInt(0, 99)+","+ "", "color:lime");
   
 }
 
@@ -191,6 +192,7 @@ function generateLevel(entryDir=-1, playerHp=3){
   
   if(getRoomtype() == 1){
     monsters = [];
+    placeGems();
     
   }else{
     console.groupCollapsed("mapgen p5(%cmonsters%c).", "color:brown", "color:");
