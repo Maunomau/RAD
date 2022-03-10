@@ -258,10 +258,10 @@ function placeExitsAndPlayer(entryDir=-1, playerHp=3, rng=mapRNG){
   ];
     */
   dirs = [
-    tiles[numTiles/2][numTiles-2],
-    tiles[0+1][numTiles/2],
-    tiles[numTiles/2][0+1],
-    tiles[numTiles-2][numTiles/2],
+    tiles[Math.floor(numTiles/2)][numTiles-2],
+    tiles[0+1][Math.floor(numTiles/2)],
+    tiles[Math.floor(numTiles/2)][0+1],
+    tiles[numTiles-2][Math.floor(numTiles/2)],
   ];
   let wtile1 = wTiles[wpos[0]][wpos[1]];
   console.log("This rooms type is "+wtile1.type+" and it's position is ["+wpos[0]+"]["+wpos[1]+"]");
@@ -368,25 +368,37 @@ function generateTiles(roomtype=2){
       //SHOW(ROT.Util.format("Value %s generated at [%s,%s]", value, x, y));
       //console.log("mapgen stuff:"+value+" "+x+" "+y+" ");
       if (value == 0) {
-        tiles[x][y] = new Floor(x,y);
-        floorTiles++;
+        //if(Math.abs(numtiles-x))
+        let pd = 3;
+        if(
+            (x==pd && y>=pd && y<= numTiles-pd-1) ||
+            (y==pd && x>=pd && x<= numTiles-pd-1) ||
+            (x==numTiles-pd-1 && y>=pd && y<= numTiles-pd-1) ||
+            (y==numTiles-pd-1 && x>=pd && x<= numTiles-pd-1)
+          ){
+          tiles[x][y] = new Pool(x,y);
+          floorTiles++;//?
+        }else{
+          tiles[x][y] = new Floor(x,y);
+          floorTiles++;
+        }
       }
       if (value == 1) tiles[x][y] = new Wall(x,y);
     }
     mapTiles.create(userCallback);
-    let circletile = tiles[numTiles/2][numTiles/2];
+    let circletile = tiles[Math.floor(numTiles/2)][Math.floor(numTiles/2)];
     console.log("test"+ circletile.getAdjacentNeighbors(mapRNG, "diagonal") +"");
     //let outertiles = getAdjacentNeighbors(mapRNG, "diagonal");//actually no shuffling or anything
     //if I felt like it I could actually make the specific circles positions random as long as corner ones and non-corner ones stay that way but that'd mean figuring out pixel offsets and doing this in a different way instead of this easy method, probably not doing that(oh, it'd also potentially mean somehow matching the circles in other rooms so yeah no).
-    tiles[(numTiles/2-1)][(numTiles/2-1)].maincircle = 0;
-    tiles[numTiles/2][numTiles/2-1].maincircle = 1;
-    tiles[numTiles/2+1][numTiles/2-1].maincircle = 2;
-    tiles[numTiles/2-1][numTiles/2].maincircle = 3;
-    tiles[numTiles/2][numTiles/2].maincircle = 4;
-    tiles[numTiles/2+1][numTiles/2].maincircle = 5;
-    tiles[numTiles/2-1][numTiles/2+1].maincircle = 6;
-    tiles[numTiles/2][numTiles/2+1].maincircle = 7;
-    tiles[numTiles/2+1][numTiles/2+1].maincircle = 8;
+    tiles[(Math.floor(numTiles/2)-1)][(Math.floor(numTiles/2)-1)].maincircle = 0;
+    tiles[Math.floor(numTiles/2)][Math.floor(numTiles/2)-1].maincircle = 1;
+    tiles[Math.floor(numTiles/2)+1][Math.floor(numTiles/2)-1].maincircle = 2;
+    tiles[Math.floor(numTiles/2)-1][Math.floor(numTiles/2)].maincircle = 3;
+    tiles[Math.floor(numTiles/2)][Math.floor(numTiles/2)].maincircle = 4;
+    tiles[Math.floor(numTiles/2)+1][Math.floor(numTiles/2)].maincircle = 5;
+    tiles[Math.floor(numTiles/2)-1][Math.floor(numTiles/2)+1].maincircle = 6;
+    tiles[Math.floor(numTiles/2)][Math.floor(numTiles/2)+1].maincircle = 7;
+    tiles[Math.floor(numTiles/2)+1][Math.floor(numTiles/2)+1].maincircle = 8;
     //circletile.getNeighbor(1, 1).maincircle = 9;
     /*
     let outertiles = [

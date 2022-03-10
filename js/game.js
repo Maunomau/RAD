@@ -95,7 +95,7 @@ function tick(){
   
   if(player.dead){
     while(runeinv.length){
-      usedRunes.push([0, numTiles/3, player.tile, runeinv.pop(), wpos[0], wpos[1]]);
+      usedRunes.push([0, Math.floor(numTiles/3), player.tile, runeinv.pop(), wpos[0], wpos[1]]);
       //console.warn("Dropped a rune!"+"");
     }
     dropRunes();
