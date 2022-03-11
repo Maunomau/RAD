@@ -94,6 +94,9 @@ function generateWorld(){
           otherstuff:{},
           //lastBeenTo://day+":"+time;
         };
+        if(type = 1){
+          
+        }
         wTileCoordList.push([i,j]);
         wTileList.push(wTiles[i][j]);
         //console.table(wTiles[i][j]);

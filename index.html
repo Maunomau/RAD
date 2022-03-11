@@ -258,6 +258,15 @@ text
       if(e.key=="c") {
         player.crouch();
       }
+      if(e.key=="i") {
+        //quite buggy
+        //tileSize += 16;
+        //setupCanvas();
+      }
+      if(e.key=="l" && tileSize > 16) {
+        //tileSize -= 16;
+        //setupCanvas();
+      }
       
       //Not how I'd like to do this but will do for now.
       if(e.key>=1 && e.key<=9) player.castSpell(e.key-1);

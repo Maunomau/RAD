@@ -437,43 +437,6 @@ function dropRunes(){
     if(r.timer) r.timer--;
     
   });
-  /*
-  for(let k=runes.length-1;k>=0;k--){
-    //
-    let delay = runes[k].timer;
-    let distance = 0;
-    let tilex = runes[k].x;
-    let tiley = runes[k].y;
-    let tile = tiles[tilex][tiley];
-    let type = 0;
-    let wx = runes[k].wx;
-    let wy = runes[k].wy;
-    if(wpos[0] == wx && wpos[1] == wy){
-      if(tile.crawlable && !(tile.circle >= 0) && !tile.exit && !tile.rune) {//if valid location
-        console.log("rune("+runes[k].word+") at "+tilex+","+tiley);
-        
-      }else{
-        console.log("rune near "+tilex+","+tiley);
-        let whileindex = 1;
-        while(!tile.crawlable || tile.circle >= 0 || tile.exit || tile.rune){
-          try{ tile = randomTileWithinDistance(tile, whileindex);
-          } catch (error){console.log("("+error+") Couldn't find suitable tile within distance "+whileindex+", expanding search area.");}
-          whileindex++;
-        }
-      }
-      if (delay <= 0){
-        tile.setEffect(13);
-        wTiles[wx][wy].runes
-        tile.rune = type;
-        //usedRunes.splice(k,1);
-      }else{
-        runes[k].timer -= 1;
-      }
-    }
-    //if(runes[k].timer) runes[k].timer--;
-    
-  }
-  */
 }
 
 function gemCount(){

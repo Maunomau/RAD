@@ -100,8 +100,6 @@ Decide what to do with pits,
 Golem monster that uses current crystal behaviour aside from wooping
 Hogoblins/Orcs sometimes knock you back
 Goblins very rarely crawl into neighbouring vents(they also can't attack while doing that)
-indicate future rune drop spots?
-hiding in water and vents(distance 3+ enemies move randomly)
 
 bugs:
 passing in water messes with player sprite sometimes
@@ -111,13 +109,15 @@ pressing spell keys with no spells gives error
 quakes can't break flesh eggs
 leaving a room after day has changed will leave any runes dropped after day changed thinking that they're on the new day's room.(update day only on mapchange or something?). Oh, forced return to base would solve that wouldn't it?
 
-not done nut no longer as important:
+not done but no longer as important:
   due to no stun on hit:
     resting hpup time counter
     Magic circles that allow casting (any or specific?) spells for free?
       Or some other way to make playing frugally/optimally more interesting, as is you do interesting stuff only when it's the only way to avoid taking damage.
 
 done:
+indicate future rune drop spots?(sort of, I set an effect each turn and tiles have an unused runehint flag)
+hiding in water and vents(distance 3+ enemies move randomly)
 circle warps
 make usedRunes level based
 Haste spell

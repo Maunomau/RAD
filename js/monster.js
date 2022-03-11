@@ -65,9 +65,14 @@ class Monster{
     //replace with A* from rot.js?
     //make rabbits move away
     //random moves if player isn't visible
-    if ("cansee" == "cansee" && !this.smart){
+    let neighbors;
+    if(this.small) neighbors = this.tile.getAdjacentCrawlable();
+    else neighbors = this.tile.getAdjacentPassableNeighbors();
+    
+    let playerDistance = this.tile.dist(player.tile);
+    //if ("cansee" == "cansee" && !this.smart){
+    if (playerDistance <= 2 || player.tile.constructor.name != "Vent" || (player.tile.depth < 4 && !player.small) || player.tile.depth < 2){
       
-      let neighbors = this.tile.getAdjacentPassableNeighbors();
 
       neighbors = neighbors.filter(t => !t.monster || t.monster.isPlayer || t.monster.resting);
 
@@ -77,7 +82,6 @@ class Monster{
         this.tryMove(newTile.x - this.tile.x, newTile.y - this.tile.y);
       }
     }else{
-      let neighbors = this.tile.getAdjacentPassableNeighbors();
       if(neighbors.length){
         this.tryMove(neighbors[0].x - this.tile.x, neighbors[0].y - this.tile.y);
       }
@@ -304,6 +308,7 @@ class Player extends Monster{
     if(!haste && !this.posthaste|| haste && this.hasted){
       if(this.hasted) this.hasted--;
     }else{
+      //if(!player.small && player.tile.depth < 4 && "or flying or such") player.peaceful = false;
       if(this.posthaste) this.posthaste--;
       //Somehow wait a bit? And prevent doing stuff while doing that.
       tick();

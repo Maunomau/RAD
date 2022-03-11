@@ -181,10 +181,10 @@ class Tile{
 	    }
 			//The way I'm doing this assumes a lot about player's spritesheet, mainly that runes and belt are handled some other way.
 			if (this.liquid && this.depth){
-			 	if(
-					player.sprite != Math.min(0+this.depth, 3) || 
-					player.sprite != Math.min(4+this.depth, 6)
-				){
+				if(this.depth >= 4) {
+					player.sprite = 6;
+					player.peaceful = true;
+				}else if(player.sprite != Math.min(0+this.depth, 3) || player.sprite != Math.min(4+this.depth, 6) ){
 					//player.sprite = player.sprite+this.depth
 					//How do I change from one depth to another nicely?
 					//Oh, right, crouching has just 2 depth graphics
@@ -198,6 +198,7 @@ class Tile{
 				if (player.small) player.sprite = 4;
 				else player.sprite = 0;
 			}
+			if(!player.small && this.depth < 4) player.peaceful = false;
 		}
 		//
 		playSound("step", monster.Tile);
