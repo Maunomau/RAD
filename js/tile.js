@@ -224,7 +224,7 @@ class Tile{
 				c.maincircleTileY = this.y;
 				
 				console.log("warp? "+c.maxCharge+"=="+charge);
-				if(c.maxCharge <= c.charge || (c.charge > 0 && runeinv.length <= 0)) {//before charging to avoid accidents
+				if((c.maxCharge <= c.charge || (c.charge > 0 && runeinv.length <= 0)) && this.maincircle != 4) {//before charging to avoid accidents
 					console.log("warp! "+c.maxCharge+"=="+charge);
 					//warp to outside circle
 					//or something, warping probably should be much easier.
@@ -240,6 +240,7 @@ class Tile{
 				let count = 0;
 				while(charge < circle[i].maxCharge && runeinv.length > 0){
 					circle[i].charge++//TBR
+					totalCharge++;
 					runes[runeinv[runeinv.length-1]].holder = "circle "+i;
 					circle[i].runesChargedWith.push(runeinv.pop());//pop return the last item too!
 					count++

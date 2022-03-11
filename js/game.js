@@ -63,8 +63,9 @@ function draw(){
     //drawSprite(0, x, y);
     player.draw();
     
-    drawText("Day:"+day+" t:"+time+"", 18, false, 40, "violet");
-    drawText("Runes:"+runeinv.length+"/"+gemMax, 18, false, 70, "violet");
+    drawText("Score:"+totalCharge+" (-"+dmgTaken+")", tileSize/2, false, 25, "violet");
+    drawText("Day:"+day+" t:"+time+"", tileSize/2, false, 45, "violet");
+    drawText("Runes:"+runeinv.length+"/"+gemMax, tileSize/2, false, 65, "violet");
     
     for(let i=0; i<player.spells.length; i++){
       let spellText = (i+1) + ") " + (player.spells[i] || "");
@@ -169,7 +170,7 @@ function passTime(){
     case 6: darkness = 0.5; break;
     case 7: darkness = 0.5; break;
     case 8: darkness = 0.75; break;
-    case 9: darkness = 0.75; break;
+    case 9: darkness = 1; break;
     case 10: darkness = 1; break;
   }
   if(time >= timeInDay/2 && time % 45 == 0){
@@ -245,6 +246,7 @@ function startGame(){
   level = 1;//TBR
   charges = 0;//TBR
   runeinv = [];
+  totalCharge = 0;
   spellSlots = [];//player.spells are set to this.
   turn = 0;
   levelturn = 0;

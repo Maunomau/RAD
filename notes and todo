@@ -54,33 +54,7 @@ Shrinking
 Building "a rail way" that you can use to "teleport" along it (when shrunk).
   Potentially just have preexisting lines that indicate tiny pathways and such.
 
-
-
-todo:
-make fast monsters animate nicely(the 1st move is instant atm.)
-  WOOP works fine so somehow getting it to do the two tile move in one step would work
-limited free turning?
-  Should try having it so you can look in only 2 or 3 directions, otherwise once I add facing based FoV you'd want to spin around every turn, or maybe just have one direction(behind) you can't see and no free turning. Or I could just not have turning affect FoV.
-  Maybe have a bar or such with 3 or 4 free actions and have picking up stuff take 1, getting up take 2, start crawling 1 or 2. Should actually doing full turn actions take 1 so that turn ends once you get to 4?
-Wake up sounds(wasps esp.)
-Runedrop indicator? Show rune icons on UI, fancy way would be to show runes moving from count to drop indicator and then to level.
-Oh, runes could be just the icon to avoid needing to call them runes.
-Sound panning, stereo sound based on if sound source is to left or right
-Soundmap.
-Soundmap focus, passing a turn should show sounds on the main map instead of less accurate sound map.
-Line of Sight(or just "fake" one by hiding stuff based on distance)
-Slime puddles
-Spider webs
-Mirrors(make crystals actually immobile but able to spawn mirrors that they shoot at to attack you)
-Different floor after destroyed wall
-would crystal being able to swap with you using woop be too much?
-running
-max spells and spell swapping
-adjust spells to work in a way where each spell has a dedicated slot.
-warp to main and lose all runes if outside at the end of day?
-make score count total charge of all circles
-  (is there anything besides time that could differentiate score of one winning run from another? Deals/Contracts if I get around to adding them. Some other collectable(gems once I've changed runes to not be gems). Monster interactions... Actually damage taken might be an easy one though that being 0 shouldn't be too hard so would need something else too.)
-line building after finding all outer circles?
+  
 "cantrip" spells that don't cost runes(but maybe energy)
   perhaps get these based from monsters in some way.
   or have them be crouched versions of normal spells
@@ -94,28 +68,67 @@ line building after finding all outer circles?
       move 2 or 3 (flyable) tiles straight instantly
     slimeslide, (slimepuddle)
       dash but crawling and no attack and leave behind a line of slime puddles or just spawn slime puddle(s) nearby.
-Something edible that gives energy/hp. Shrooms?
+
+      
 Decide what to do with pits,
   are they just walls that allow flying creatures/things to pass and don't block vision or is there a way to fall into them and what happens if you do? Fall(or just warp) back into the room at random spot and take damage would be easy, could also do lower levels but that reminds me that I might want the world gen to not require entirely blank rooms to prevent exits in that direction since making lower areas match pits at higher level... I could just check for a room below before spawning pits couldn't I?
-Golem monster that uses current crystal behaviour aside from wooping
-Hogoblins/Orcs sometimes knock you back
-Goblins very rarely crawl into neighbouring vents(they also can't attack while doing that)
+make fast monsters animate nicely(the 1st move is instant atm.)
+  WOOP works fine so somehow getting it to do the two tile move in one step would work
+limited free turning?
+  Should try having it so you can look in only 2 or 3 directions, otherwise once I add facing based FoV you'd want to spin around every turn, or maybe just have one direction(behind) you can't see and no free turning. Or I could just not have turning affect FoV.
+  Maybe have a bar or such with 3 or 4 free actions and have picking up stuff take 1, getting up take 2, start crawling 1 or 2. Should actually doing full turn actions take 1 so that turn ends once you get to 4?
+Wake up sounds(wasps esp.)
+Runes could be just the icon to avoid needing to call them runes.
+Sound panning, stereo sound based on if sound source is to left or right
+Soundmap.
+Soundmap focus, passing a turn should show sounds on the main map instead of less accurate sound map.
+Different floor after destroyed wall
+would crystal being able to swap with you using woop be too much?
+adjust spells to work in a way where each spell has a dedicated slot.
+line building after finding all outer circles?
+Monster that can move between rooms and appears at night.
+More involved ending scenario.
+make things glow in the dark
+
+todo:
+
+Line of Sight at night(or just "fake" one by hiding stuff based on distance)
+Monster improvements
+  Slime puddles you slip on
+  Spider webs
+  Hogoblins/Orcs sometimes knock you back
+  Goblins very rarely crawl into neighbouring vents(they also can't attack while doing that)
+  Mirrors(make crystals actually immobile but able to spawn mirrors that they shoot at to attack you)
+  Golem monster that uses current crystal behaviour aside from wooping
+  Make fleshball use DRAG and WATERWOOP spells, rest on it's own and whatever else to make it more dangerous
+Running(shift + direction to automove) making it follow corridors until something interesting would be nice but probably too much work.
+max spells and spell swapping(currently you get more than 10 spells but have no way to use them)
+  or I could do shift + 1-9 to cast more(would have to adjust the UI though)
+warp to main and lose all runes if outside at the end of day.
+make score count total charge of all circles
+  (is there anything besides time that could differentiate score of one winning run from another? Deals/Contracts if I get around to adding them. Some other collectable(gems once I've changed runes to not be gems). Monster interactions... Actually damage taken might be an easy one though that being 0 shouldn't be too hard so would need something else too.)
+Make fully charging the circle actually end the game.
+Something that gives max energy/hp. Mushrooms?
+More spells
 
 bugs:
 passing in water messes with player sprite sometimes
-move toward player has passability check or something that prevents small creatures from attacking.
-haste breaks things on map change
-pressing spell keys with no spells gives error
+haste breaks things badly on map change
+pressing spell keys with no spells gives harmless error
 quakes can't break flesh eggs
-leaving a room after day has changed will leave any runes dropped after day changed thinking that they're on the new day's room.(update day only on mapchange or something?). Oh, forced return to base would solve that wouldn't it?
+leaving a room after day has changed will leave any runes dropped after day changed thinking that they're on the new day's room.(update day only on mapchange or something?). Oh, forced return to base would solve that wouldn't it? But that's still potentially not that fun, allowing you to stay in the room but changing all exits to go to main room might be better but dunno how hard that'd be to do.
 
 not done but no longer as important:
+  Show rune icons on UI, fancy way would be to show runes moving from count to drop indicator and then to level.
   due to no stun on hit:
     resting hpup time counter
     Magic circles that allow casting (any or specific?) spells for free?
       Or some other way to make playing frugally/optimally more interesting, as is you do interesting stuff only when it's the only way to avoid taking damage.
 
 done:
+Make players rune sprite depend on spells learned and not carried runes.
+move toward player has passability check or something that prevents small creatures from attacking.
+
 indicate future rune drop spots?(sort of, I set an effect each turn and tiles have an unused runehint flag)
 hiding in water and vents(distance 3+ enemies move randomly)
 circle warps

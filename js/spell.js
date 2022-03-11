@@ -367,7 +367,7 @@ function pickupRune(rune){
     let useSingleSpriteForPlayer = false
     if (useSingleSpriteForPlayer) player.runed();
     else {
-      if("add more runes to player sprite" && (runeinv.length/4) >= runesprites.length){
+      if("add more runes to player sprite" && (player.spells.length/2) >= runesprites.length){
         let runeSpriteOptions = [runes0sheet,runes1sheet,runes2sheet,runes3sheet,runes4sheet];
         if(runesprites.length < runeSpriteOptions.length){
           let i = randomRange(0, runeSpriteOptions.length-1);

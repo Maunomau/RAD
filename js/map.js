@@ -1,4 +1,6 @@
 function generateWorld(){
+  //console.groupCollapsed("worldgen(seed:%c"+ worldRNG.getSeed() +"%c)", "color:green", "color:");
+  console.group("worldgen(seed:%c"+ worldRNG.getSeed() +"%c)", "color:green", "color:");
   makeRuneList();
   makeRuneList2();
   wTiles = [
@@ -74,7 +76,7 @@ function generateWorld(){
       let tileStr = JSON.stringify(wTiles[i][j])
       let tileInt = wTiles[i][j]
       if(tileInt > 0){
-        console.log("%cwTile "+i+","+j+" to list, it's type is "+wTiles[i][j]+" ", "color:red");
+        //console.log("%cwTile "+i+","+j+" to list, it's type is "+wTiles[i][j]+" ", "color:brown");
         //let type = wTiles[i][j];
         let type = JSON.parse(JSON.stringify(wTiles[i][j])[0])//get the 1st number
         if(tileStr.length > 1) {
@@ -108,7 +110,7 @@ function generateWorld(){
   while (unassignedRunes.length > 0) {
     worldRNG.getItem(wTileList).runes.push(unassignedRunes.shift());
   }
-  
+  console.groupEnd()
   
 }
 
