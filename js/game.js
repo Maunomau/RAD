@@ -237,7 +237,7 @@ function startGame(){
   sounds["newLevel"].play();
   wTiles = [];
   generateWorld()
-  wpos = [14,10,10,0];//world position, x,y,z,plane
+  wpos = [14,11,10,0];//world position, x,y,z,plane
   savedMaps = {};
   circlesFound = 0;
   cwarp = 4;

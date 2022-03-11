@@ -135,6 +135,9 @@ class Tile{
 			drawTile(16, this.x, this.y);
     }
 		if(this.gem){
+      drawTile(47, this.x, this.y);
+    }
+		if(this.rune){
       drawTile(5, this.x, this.y);
     }
 		if(this.effectCounter){                    
@@ -155,6 +158,10 @@ class Tile{
     if(monster.isPlayer){
 			if(this.gem){
 				if(pickupRune(this.gem)) this.gem = false;
+	      //spawnMonster();
+	    }
+			if(this.rune){
+				if(pickupRune(this.rune)) this.rune = false;
 	      //spawnMonster();
 	    }
 			
@@ -202,17 +209,22 @@ class Tile{
 				if(pickupRune(this.gem)) this.gem = false;
 	      //spawnMonster();
 	    }
+			if(this.rune){
+				if(pickupRune(this.rune)) this.rune = false;
+	      //spawnMonster();
+	    }
 			if(this.maincircle >= 0){
 				let c = circle[this.maincircle];//should replace circle[i] with c
 				let i = this.maincircle;
+				let charge = c.runesChargedWith.length;
 				
 				//these just make warping in go to correct tile
 				c.maincircleTileX = this.x;
 				c.maincircleTileY = this.y;
 				
-				console.log("warp? "+c.maxCharge+"=="+c.charge);
+				console.log("warp? "+c.maxCharge+"=="+charge);
 				if(c.maxCharge <= c.charge || (c.charge > 0 && runeinv.length <= 0)) {//before charging to avoid accidents
-					console.log("warp! "+c.maxCharge+"=="+c.charge);
+					console.log("warp! "+c.maxCharge+"=="+charge);
 					//warp to outside circle
 					//or something, warping probably should be much easier.
 					wpos[0] = circle[i].wTile[0];
@@ -225,14 +237,13 @@ class Tile{
 	        //startLevel([this.wx, this.wy, wpos[2], wpos[3]].join(''));
 				}
 				let count = 0;
-				while(circle[i].charge < circle[i].maxCharge && runeinv.length > 0){
-					circle[i].charge++
-					//circle[i].runesChargedWith.push(runeinv[runeinv.length-1])
-					//runeinv.pop()
+				while(charge < circle[i].maxCharge && runeinv.length > 0){
+					circle[i].charge++//TBR
+					runes[runeinv[runeinv.length-1]].holder = "circle "+i;
 					circle[i].runesChargedWith.push(runeinv.pop());//pop return the last item too!
-					count++// TODO: play sound based on count
+					count++
 					if(circle[i].charge == circle[i].maxCharge && !player.spells.includes(circle[i].spell2)){
-			      numSpells++;
+			      numSpells++;//TBR?
 			      player.addSpell(circle[i].spell2);
 					}
 				}

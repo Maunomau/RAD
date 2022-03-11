@@ -1,4 +1,6 @@
 function generateWorld(){
+  makeRuneList();
+  makeRuneList2();
   wTiles = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//0
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//1
@@ -14,7 +16,7 @@ function generateWorld(){
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 00, 00, 00, 00, 00, 00, 00, 00, 00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//11
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 00, 00, 00, 00, 30, 23, 00, 00, 00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//12
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 00, 00, 00, 00, 00, 23, 26, 36, 00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//13
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 00, 91, 21, 21, 21, 14, 27, 27, 00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//14
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 00, 00, 91, 21, 21, 14, 27, 27, 00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//14
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 00, 00, 00, 00, 00, 25, 38, 00, 00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//15
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 00, 00, 00, 22, 32, 25, 00, 00, 00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//16
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 00, 00, 00, 00, 00, 00, 00, 00, 00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//17
@@ -40,7 +42,7 @@ function generateWorld(){
       circle[i] = {
         charge:0,
         maxCharge:16,
-        runesChargedWith:[],
+        runesChargedWith:[],//should prefer length of this to charge
         spell:spellOptions[i],
         spell2:spellOptions[i+8],// need 2 unique spells per circle
         found:false,
@@ -62,64 +64,29 @@ function generateWorld(){
   }
   
   
+  //replace map numbers with objects and figure out possible rooms for different circles
+  //Assign runes
+  wTileCoordList = [];//make a list of wTiles actually in use.
+  wTileList = [];
   for(let i=0;i<wTiles.length;i++){
     //tiles[i] = [];
     for(let j=0;j<wTiles[0].length;j++){
-      if(wTiles[i][j] > 0);{
+      let tileStr = JSON.stringify(wTiles[i][j])
+      let tileInt = wTiles[i][j]
+      if(tileInt > 0){
+        console.log("%cwTile "+i+","+j+" to list, it's type is "+wTiles[i][j]+" ", "color:red");
         //let type = wTiles[i][j];
-        let tileStr = JSON.stringify(wTiles[i][j])
         let type = JSON.parse(JSON.stringify(wTiles[i][j])[0])//get the 1st number
         if(tileStr.length > 1) {
           let circlearea = JSON.parse(tileStr[1]);//get the 2nd number
           circle[circlearea].wTileOptions.push([i,j]);
+          //Could do this automatically based on main circle location, should be easy if it's a dumb north circle is straight north.
         }
         let monAmount = randomRange(-1,1, worldRNG);
         wTiles[i][j] = {
           type:type,
-          runes:[
-            {
-              word:"akesi",//should be redundant
-              spritesrc:"art/runes/akesi.png",
-              holder:false,
-              element:"none",
-              timer:0,
-            },
-            {
-              word:"ala",
-              spritesrc:"art/runes/ala.png",
-              holder:false,
-              element:"none",
-              timer:0,
-            },
-            {
-              word:"alasa",
-              spritesrc:"art/runes/alasa.png",
-              holder:false,
-              element:"none",
-              timer:0,
-            },
-            {
-              word:"ale",
-              spritesrc:"art/runes/ala.png",
-              holder:false,
-              element:"none",
-              timer:0,
-            },
-            {
-              word:"anpa",
-              spritesrc:"art/runes/ala.png",
-              holder:false,
-              element:"none",
-              timer:0,
-            },
-            {
-              word:"ante",
-              spritesrc:"art/runes/ala.png",
-              holder:false,
-              element:"none",
-              timer:0,
-            },
-          ],
+          //runes:[worldRNG.getItem(unassignedRunes)], //unassignedRunes is already shuffled so no need.
+          runes:[unassignedRunes.shift()], //ie. ["akesi","ala","ante"] or possibly(unlikely) [{w:akesi,p2,p3},{w:ale,p2,p3},{w:ante,p2,p3}] 
           //circleArea:circlearea,
           mainMonster:0,
           monsterAmount:monAmount,
@@ -127,11 +94,18 @@ function generateWorld(){
           otherstuff:{},
           //lastBeenTo://day+":"+time;
         };
+        wTileCoordList.push([i,j]);
+        wTileList.push(wTiles[i][j]);
         //console.table(wTiles[i][j]);
       }
     }
   }
   setCircleLocations();
+  
+  while (unassignedRunes.length > 0) {
+    worldRNG.getItem(wTileList).runes.push(unassignedRunes.shift());
+  }
+  
   
 }
 
@@ -192,15 +166,15 @@ function generateLevel(entryDir=-1, playerHp=3){
   
   if(getRoomtype() == 1){
     monsters = [];
-    //placeGems();
+    //placeRunes();
     
   }else{
     console.groupCollapsed("mapgen p5(%cmonsters%c).", "color:brown", "color:");
     generateMonsters();
     console.groupEnd()
     
-    console.groupCollapsed("mapgen p6(%cgems%c).", "color:violet", "color:");
-    placeGems();
+    console.groupCollapsed("mapgen p6(%crunes%c).", "color:violet", "color:");
+    placeRunes();
     console.groupEnd()
   }
   
@@ -292,7 +266,7 @@ function placeExitsAndPlayer(entryDir=-1, playerHp=3, rng=mapRNG){
         m.tile = newPos;
         newPos.monster = m;
       } //else console.warn("no monster on exit!");
-      if(tiles[tile.x][tile.y].circle) console.warn("Circle on exit! Do something?");
+      if(tiles[tile.x][tile.y].circle >= 0) console.warn("Circle on exit! Do something?");
       //add the exit
       tiles[tile.x][tile.y] = new Exit(tile.x, tile.y, dirmap[i][0], dirmap[i][1], i);
       console.log("spawned exit in direction "+i+" leading to room type "+wtile2+" (wTiles["+(wpos[0]+dirmap[i][0])+","+(wpos[1]+dirmap[i][1])+"])");
@@ -313,7 +287,7 @@ function placeExitsAndPlayer(entryDir=-1, playerHp=3, rng=mapRNG){
         //player = new Player(tiles[frontTile.x][frontTile.y]);
         player = new Player(tiles[tile.x][tile.y]);
         player.hp = playerHp;
-        //player = new Player(randomPassableTile("gem", mapRNG));
+        //player = new Player(randomPassableTile("rune", mapRNG));
       }
     }
     
@@ -588,6 +562,17 @@ function randomPassableTile(cond, rng = gRNG){
   return tile;
 }
 
+function randomCrawlableTile(cond, rng = gRNG){
+  let tile;
+  tryTo('get random crawlable tile', function(){
+    let x = randomRange(0,numTiles-1, rng);
+    let y = randomRange(0,numTiles-1, rng);
+    tile = getTile(x, y);
+    return tile.crawlable && !tile.monster && !tile[cond];// !tile[cond] is true when cond isn't supplied?
+  });
+  return tile;
+}
+
 function randomWaterTile(rng = gRNG, liquidType="water"){
   let tile;
   tryTo('get random water tile', function(){
@@ -611,7 +596,7 @@ function randomTileWithinDistance(sourceTile, distance, type="", cond, rng = gRN
       console.log("asdWIP");
     }
     
-    return tile.passable && !tile.gem;
+    return tile.crawlable && !tile.gem && !tile.rune;
   });
   return tile;
 }
@@ -671,7 +656,8 @@ function getMonsters(){
 
 
 //function placeRunes(){
-function placeGems(wx=wpos[0], wy=wpos[1]){
+//merge with drop runes? This is meant to run just once(no checking for if runes are already in the room) so for now no merge
+function placeRunes(wx=wpos[0], wy=wpos[1]){
   //console.log("placing Gems/Runes");
   //if ("worldtile rune list has runes for this time"){}
   //let runes = wTiles[wx][wy].runes;//I don't think we'd ever want wx,wy to not be wpos[0],wpos[1] here
@@ -679,16 +665,19 @@ function placeGems(wx=wpos[0], wy=wpos[1]){
   if (roomRunes.length > 0) {
     console.log("placing Gems/Runes");
     roomRunes.forEach((item, i) => {
-      if(item.timer == 0) {
-        if(item.holder == false) {
-          console.log("placing rune "+i+" to random tile.");
-          randomPassableTile(0, mapRNG).gem = getTPW(gemid);
-          randomPassableTile(0, mapRNG).rune = {word:roomRunes.word, img:roomRunes.spritesrc};//or something like that once I switch to doing it like this.
-          gemid++;
-          //roomRunes.pop();//prevent day changes from replacing runes.
-          //// TODO: add dropped runes to wTiles[][].runes
-          wTiles[wpos[0]][wpos[1]].runes.pop();
-          //randomPassableTile(0, mapRNG).rune = getTPW(gemid);
+      //console.log("placing "+item+" rune");
+      let r = runes[item];
+      if(r.timer == 0) {
+        if(r.holder == false) {
+          console.log("placing rune "+i+"(%c"+item+"%c) to random tile.", "color:cyan", "color:");
+          //let tile = randomPassableTile(0, mapRNG);
+          let tile = randomCrawlableTile(0, mapRNG);
+          //tile.gem = item;
+          tile.rune = item;
+          r.x = tile.x
+          r.y = tile.y
+          r.setday == day;
+          tile.setEffect(13);//if not the first turn of 1st visit? Lack would serve as indicator that you've never picked it up but no need I think.
         }else{
           console.log("rune "+i+" is held by "+item.holder+"(todo).");
           // TODO: 
@@ -696,11 +685,7 @@ function placeGems(wx=wpos[0], wy=wpos[1]){
       }else console.log("rune "+i+" won't be placed for "+item.timer+" turns.");
     });
   }else console.log("no runes to place here.");
-  for(let i=0;i<8;i++){
-    //randomPassableTile(0, mapRNG).gem = 1;
-    //randomPassableTile(0, mapRNG).gem = getTPW(gemid);
-    //gemid++;
-  }
+  //reduce timer here or where?
 }
 
 function loadPlayerState(pl = player){

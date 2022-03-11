@@ -1,6 +1,6 @@
 function tryTo(description, callback){
   //console.log("Trying to "+description+".");
-  for(let timeout=4000;timeout>0;timeout--){
+  for(let timeout=1000;timeout>0;timeout--){
     if(callback()){
       //console.log("Succeeded at "+description+" after "+(4001-timeout)+" attempt(s).");
       console.log("Succeeded at "+description+".");
@@ -29,6 +29,42 @@ function rightPad(textArray){
     finalText += text;
   });
   return finalText;
+}
+
+function makeRuneList(){
+  runes = {};
+  let i = 0;
+  while (true) {
+    let w = getTPW(i)
+    runes[w] = {
+      word:w,//should be redundant
+      spritesrc:"art/runes/"+w+".png",
+      element:"none",
+      timer:0,
+      holder:false,
+      wx:false,
+      wy:false,
+      x:false,
+      y:false,
+      setday:false,
+      //cx:false,//current xy to save close enough position picked.
+      //cy:false,
+      hintday:false,//day the rune hint was set
+    };
+    i++;
+    if(i >= runeTypesTotal) break;
+  }
+}
+
+function makeRuneList2(){
+  unassignedRunes = [];
+  let i = 0;
+  while (true) {
+    unassignedRunes.push(getTPW(i));
+    i++;
+    if(i >= runeTypesTotal) break;
+  }
+  unassignedRunes = shuffle(unassignedRunes, worldRNG);
 }
 
 function getTPW(num){

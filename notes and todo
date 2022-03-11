@@ -31,8 +31,8 @@ Rabbits are deadly, sure they won't try to attack you but being within 2 tiles o
 
 
 plans, ideas and hopeful todo:
-Idea: put 0 to 3 flesh eggs into water each level, stepping on water has a chance of disturbing an egg, quakes (on turns 50+ or so?) also do that and also expand water tiles.
-  Also water required for healing or something?
+stepping on water has a chance of disturbing fleshegg
+quakes expand water tiles.
   Nighttime start event?
   
 UI
@@ -53,34 +53,22 @@ Shrinking
   Some explanation for how you achieve shrinking(power of belt or something)
 Building "a rail way" that you can use to "teleport" along it (when shrunk).
   Potentially just have preexisting lines that indicate tiny pathways and such.
-Level edge exits
-  For base building(esp. a home base of sorts), if you've got just up or down as directions to go there's limited reasons for building stuff(prep for ascension would be good one though).
-  Start off in a (seemingly?) dead end and need to go few levels in one direction before reaching ideal central base location where there are multiple exits
-    if defensibility is a concern the base spot could be just before the crossing.
-Day-night cycle.
-  No light at night, so at least limited LoS, could go all the way and make you effectively blind and move based on memory and sounds.
+
+
 
 todo:
 make fast monsters animate nicely(the 1st move is instant atm.)
   WOOP works fine so somehow getting it to do the two tile move in one step would work
-limited free turning? Should try having it so you can look in only 2 or 3 directions, otherwise once I add facing based FoV you'd want to spin around every turn, or maybe just have one direction(behind) you can't see and no free turning. Or I could just not have turning affect FoV.
+limited free turning?
+  Should try having it so you can look in only 2 or 3 directions, otherwise once I add facing based FoV you'd want to spin around every turn, or maybe just have one direction(behind) you can't see and no free turning. Or I could just not have turning affect FoV.
   Maybe have a bar or such with 3 or 4 free actions and have picking up stuff take 1, getting up take 2, start crawling 1 or 2. Should actually doing full turn actions take 1 so that turn ends once you get to 4?
-Magic circles that allow casting (any or specific?) spells for free?
-  Or some other way to make playing frugally/optimally more interesting, as is you do interesting stuff only when it's the only way to avoid taking damage.
 Wake up sounds(wasps esp.)
 Runedrop indicator? Show rune icons on UI, fancy way would be to show runes moving from count to drop indicator and then to level.
 Oh, runes could be just the icon to avoid needing to call them runes.
 Sound panning, stereo sound based on if sound source is to left or right
 Soundmap.
 Soundmap focus, passing a turn should show sounds on the main map instead of less accurate sound map.
-
-communicate runes causing new spawns better if I don't change how spawns work(I will)
-time until next spawn counter
-line to new spawn?
-Remove/Change spawning, while the game is kind of fun with it I want a different feel.
-
-Line of Sight
-
+Line of Sight(or just "fake" one by hiding stuff based on distance)
 Slime puddles
 Spider webs
 Mirrors(make crystals actually immobile but able to spawn mirrors that they shoot at to attack you)
@@ -88,7 +76,6 @@ Different floor after destroyed wall
 would crystal being able to swap with you using woop be too much?
 running
 max spells and spell swapping
-make enmies spawn better(based on room type and world time)
 adjust spells to work in a way where each spell has a dedicated slot.
 warp to main and lose all runes if outside at the end of day?
 make score count total charge of all circles
@@ -107,15 +94,28 @@ line building after finding all outer circles?
       move 2 or 3 (flyable) tiles straight instantly
     slimeslide, (slimepuddle)
       dash but crawling and no attack and leave behind a line of slime puddles or just spawn slime puddle(s) nearby.
-  
 Something edible that gives energy/hp. Shrooms?
 Decide what to do with pits,
   are they just walls that allow flying creatures/things to pass and don't block vision or is there a way to fall into them and what happens if you do? Fall(or just warp) back into the room at random spot and take damage would be easy, could also do lower levels but that reminds me that I might want the world gen to not require entirely blank rooms to prevent exits in that direction since making lower areas match pits at higher level... I could just check for a room below before spawning pits couldn't I?
 Golem monster that uses current crystal behaviour aside from wooping
-fix haste breaking on map change
+Hogoblins/Orcs sometimes knock you back
+Goblins very rarely crawl into neighbouring vents(they also can't attack while doing that)
 indicate future rune drop spots?
-resting hpup time counter
+hiding in water and vents(distance 3+ enemies move randomly)
 
+bugs:
+passing in water messes with player sprite sometimes
+move toward player has passability check or something that prevents small creatures from attacking.
+haste breaks things on map change
+pressing spell keys with no spells gives error
+quakes can't break flesh eggs
+leaving a room after day has changed will leave any runes dropped after day changed thinking that they're on the new day's room.(update day only on mapchange or something?). Oh, forced return to base would solve that wouldn't it?
+
+not done nut no longer as important:
+  due to no stun on hit:
+    resting hpup time counter
+    Magic circles that allow casting (any or specific?) spells for free?
+      Or some other way to make playing frugally/optimally more interesting, as is you do interesting stuff only when it's the only way to avoid taking damage.
 
 done:
 circle warps
@@ -126,13 +126,19 @@ Banish/Seal spell
 no stun on attack?
 need some way to track collected gems on a worldmap level.
 Doing damage to resting enemies can break their hp display or something.
-daynight
+put 0 to 3 flesh eggs into water each level, quakes (on turns 50+ or so?)
+daynight cycle.
+  No light at night, so at least limited LoS, could go all the way and make you effectively blind and move based on memory and sounds.
 going back to previous areas
 Level edge exits
+  For base building(esp. a home base of sorts), if you've got just up or down as directions to go there's limited reasons for building stuff(prep for ascension would be good one though).
+  Start off in a (seemingly?) dead end and need to go few levels in one direction before reaching ideal central base location where there are multiple exits
+    if defensibility is a concern the base spot could be just before the crossing.
 mapgen RNG separate from normal RNG
 seeded mapgen
 getConnectedTiles doesn't work correctly?(inBounds checks fixed it)
 Fix turning sometimes failing to show your sprite.(Issue was type coercion sometimes detecting that for a reason no longer relevant I had set player.dir to be a string of a number)
+water required for healing
 water
 pits are water
 submergion

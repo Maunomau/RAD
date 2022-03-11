@@ -352,14 +352,18 @@ function pickupRune(rune){
   let maxRunes = 200// TODO: set max based on spells/circles equipped
   if(runeinv.length < maxRunes){
     runeinv.push(rune);
-    //are elemntal charges separate pickup or do runes double as them? Add charge here if latter.
-    
-    if(runeinv.length % 1 == 0 && numSpells < 9){
-      //numSpells++;
-      //player.addSpell(Object.keys(spells)[numSpells-1]);
-    }
-    
+    let wTRs = wTiles[wpos[0]][wpos[1]].runes
+    wTRs.splice(wTRs.indexOf(rune), 1)//remove rune from wTile runes array
+    //optional stuff we might use.
+    runes[rune].holder = "player";
+    runes[rune].wx = false;
+    runes[rune].wy = false;
+    runes[rune].x = false;
+    runes[rune].y = false;
+    runes[rune].setday = false;
+    runes[rune].hintday = false;
     //spawnMonster();
+    
     let useSingleSpriteForPlayer = false
     if (useSingleSpriteForPlayer) player.runed();
     else {
@@ -384,55 +388,92 @@ function pickupRune(rune){
 Do I want an array that has runes to be respawned in it or what?
 
 Should stacks of charges/runes be a thing or how should I handle spells using more than 1?
+
+
+
+
+
+  for (var rune in object) {
+    if (object.hasOwnProperty(rune)) {
+      
+    }
+  }
+
+
 */
 
 
+//
 function dropRunes(){
-  for(let k=usedRunes.length-1;k>=0;k--){
-    let delay = usedRunes[k][0];
-    let distance = usedRunes[k][1];
-    let tile = usedRunes[k][2];
-    let type = usedRunes[k][3];
-    let wx = usedRunes[k][4];
-    let wy = usedRunes[k][5];
-    if(wpos[0] == wx && wpos[1] == wy){
-      console.log("Respawning a rune gem near "+tile.x+","+tile.y);
-      if (delay <= 0){
-        // spawn charge within el[1] distance from el[2]
-        if (distance == 0){
-          if (!tile.gem){
-            tile.gem = type;
-            tile.setEffect(13);
-          }
-        }else{
-          //Spawn somewhere
-          try{
-            rtile = randomTileWithinDistance(tile, distance, "", "gem");
-            rtile.gem = type;
-            rtile.setEffect(13);
-            //randomPassableTile().gem = 1;
-          } catch (error){
-            console.log(error+" couldn't find gemless tile? Trying again next turn.");
-          }
-        }
-        usedRunes.splice(k,1);
+  Object.keys(runes).forEach((rune, i) => {
+    //let r = runes[rune.getOwnPropertyNames()[0]]; //a bit ehh but should work(ie. r = runes["ale"])
+    let r = runes[rune];
+    if(wpos[0] == r.wx && wpos[1] == r.wy && r.setday != day){
+      let tile = tiles[r.x][r.y];
+      if(tile.crawlable && (!tile.circle >= 0) && !tile.exit && !tile.rune) {//if valid location
+        console.log("rune("+rune+") at "+r.x+","+r.y);
+        
       }else{
-        usedRunes[k][0] -= 1;
+        console.log("rune("+rune+") near "+r.x+","+r.y);
+        let whileindex = 1;
+        //this'll go over all the tiles possible over multiple turns...
+        while(!tile.crawlable || tile.circle >= 0 || tile.exit || tile.rune){
+          try{ tile = randomTileWithinDistance(tile, whileindex);
+          } catch (error){console.log("("+error+") Couldn't find suitable tile within distance "+whileindex+", expanding search area.");}
+          whileindex++;
+        }
+      }
+      if (r.timer <= 0){
+        tile.setEffect(13);
+        tile.rune = r.word;
+        if(tile.runehint) tile.runehint = false;
+        r.setday = day;
+      }else if(r.hintday != day){
+        tile.setEffect(13);
+        tile.runehint = r.word;
+        r.hintday = day;
+      }else tile.setEffect(12);
+    }
+    if(r.timer) r.timer--;
+    
+  });
+  /*
+  for(let k=runes.length-1;k>=0;k--){
+    //
+    let delay = runes[k].timer;
+    let distance = 0;
+    let tilex = runes[k].x;
+    let tiley = runes[k].y;
+    let tile = tiles[tilex][tiley];
+    let type = 0;
+    let wx = runes[k].wx;
+    let wy = runes[k].wy;
+    if(wpos[0] == wx && wpos[1] == wy){
+      if(tile.crawlable && !(tile.circle >= 0) && !tile.exit && !tile.rune) {//if valid location
+        console.log("rune("+runes[k].word+") at "+tilex+","+tiley);
+        
+      }else{
+        console.log("rune near "+tilex+","+tiley);
+        let whileindex = 1;
+        while(!tile.crawlable || tile.circle >= 0 || tile.exit || tile.rune){
+          try{ tile = randomTileWithinDistance(tile, whileindex);
+          } catch (error){console.log("("+error+") Couldn't find suitable tile within distance "+whileindex+", expanding search area.");}
+          whileindex++;
+        }
+      }
+      if (delay <= 0){
+        tile.setEffect(13);
+        wTiles[wx][wy].runes
+        tile.rune = type;
+        //usedRunes.splice(k,1);
+      }else{
+        runes[k].timer -= 1;
       }
     }
+    //if(runes[k].timer) runes[k].timer--;
     
   }
-  /*
-  usedRunes.forEach(el, index){
-    if (el[0] <= 0){
-      // spawn charge within el[1] distance from el[2]
-      if (el[1] == 0){
-        getTile(el[2].x, el[2].y).gem = 1
-      }
-    }
-  }
   */
-  
 }
 
 function gemCount(){

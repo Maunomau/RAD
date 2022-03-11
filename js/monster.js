@@ -97,13 +97,15 @@ class Monster{
     }else if(this.teleportCounter == 1 || this.stunned){
       //drawSprite(30, this.tile.x, this.tile.y, this.sheet);
       //drawSprite(this.sprite, this.tile.x, this.tile.y, this.sheet);
-      drawSprite(this.sprite, this.getDisplayX(),  this.getDisplayY(), this.sheet, this.dir);
+      if(this.resting) drawSprite(this.sprite, this.getDisplayX(), this.getDisplayY(), monsterKOdsheet, this.dir);
+      else drawSprite(this.sprite, this.getDisplayX(), this.getDisplayY(), this.sheet, this.dir);
       this.drawHp(pipgray);
       if(this.isPlayer){
           //console.log("Player stunned is "+this.stunned+".");
       }
     }else{
-      drawSprite(this.sprite, this.getDisplayX(),  this.getDisplayY(), this.sheet, this.dir);
+      if(this.resting) drawSprite(this.sprite, this.getDisplayX(), this.getDisplayY(), monsterKOdsheet, this.dir);
+      else drawSprite(this.sprite, this.getDisplayX(), this.getDisplayY(), this.sheet, this.dir);
       this.drawHp(this.piptype);
     }
     this.offsetX -= Math.sign(this.offsetX)*(1/4);
@@ -384,7 +386,16 @@ class Player extends Monster{
       //delete this.spells[index];
       console.log("It costs "+cost);
       while(cost > 0){
-        usedRunes.push([spells[spellName].droptime, spells[spellName].dropdistance, this.tile, runeinv.pop(), wpos[0], wpos[1]]);
+        //usedRunes.push([spells[spellName].droptime, spells[spellName].dropdistance, this.tile, runeinv.pop(), wpos[0], wpos[1]]);
+        //runes[runeinv[cost-1]].timer = spells[spellName].droptime;// shift() takes care of cost-1
+        runes[runeinv[0]].timer = spells[spellName].droptime;
+        runes[runeinv[0]].x = this.tile.x;
+        runes[runeinv[0]].y = this.tile.y;
+        runes[runeinv[0]].wx = wpos[0];
+        runes[runeinv[0]].wy = wpos[1];
+        runes[runeinv[0]].holder = false;
+        wTiles[wpos[0]][wpos[1]].runes.push(runeinv.shift());
+        // TODO: ability to use a specific rune instead of first one in runeinv
         cost--;
       }
       //useCharge(this.tile, spells[spellName].droptime, spells[spellName].dropdistance);
@@ -392,7 +403,7 @@ class Player extends Monster{
       playSound("spell");
       tick();
     }else if(this.hp > cost){
-      console.log("Used energy instead, it cost "+cost);
+      console.log("Used energy/hp instead, it cost "+cost);
       this.hp -= cost
       spells[spellName].f(this);
       playSound("spell");

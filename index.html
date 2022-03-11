@@ -31,7 +31,9 @@ text
   //put all of these into imgs or sprites or whateveer object so I can remove sheet from them without causing confusion
 
   monstersheet = new Image();
-  monstersheet.src = 'monsters.png';
+  monstersheet.src = 'art/monsters.png';
+  monsterKOdsheet = new Image();
+  monsterKOdsheet.src = 'art/monstersKOd.png';
 
   playersheet = new Image();
   //no longer used but there might be some machines or configurations where these would be preferable so...
@@ -272,13 +274,13 @@ text
         generateTiles();
       }
       if(e.key=="g") {
-        usedRunes.push([0, 1, player.tile, 1, wpos[0], wpos[1]]);
+        //usedRunes.push([0, 1, player.tile, 1, wpos[0], wpos[1]]);
       }
       if(e.key=="l") {
         tiles[player.tile.x][player.tile.y].monster = undefined;
         player = undefined;
         tiles = savedMaps[level-1].map ;//If I don't clone the map before saving this loads the map from when I left that particular level, that's potentially nice.
-        player = new Player(randomPassableTile("gem", gRNG));
+        player = new Player(randomPassableTile("rune", gRNG));
         //getMonsters();
         monsters = savedMaps[level-1].mons ;
         console.log("Loading saved map "+ level-1 +".");
