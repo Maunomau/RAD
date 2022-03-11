@@ -85,15 +85,17 @@ Soundmap focus, passing a turn should show sounds on the main map instead of les
 Different floor after destroyed wall
 would crystal being able to swap with you using woop be too much?
 adjust spells to work in a way where each spell has a dedicated slot.
-line building after finding all outer circles?
 Monster that can move between rooms and appears at night.
 More involved ending scenario.
 make things glow in the dark
 spell swapping
+allow you to staying in a room at the end of day but change all exits to go to main room.
+Running(shift + direction to automove) making it follow corridors until something interesting would be nice but probably too much work.
+  Needs serious rework of how input is handled so not doing it for now
 
 todo:
 
-Line of Sight at night(or just "fake" one by hiding stuff based on distance)
+line building after finding all outer circles?
 Monster improvements
   Slime puddles you slip on
   Spider webs
@@ -102,16 +104,13 @@ Monster improvements
   Mirrors(make crystals actually immobile but able to spawn mirrors that they shoot at to attack you)
   Golem monster that uses current crystal behaviour aside from wooping
   Make fleshball use DRAG and WATERWOOP spells, rest on it's own and whatever else to make it more dangerous
-Running(shift + direction to automove) making it follow corridors until something interesting would be nice but probably too much work.
 Something that gives max energy/hp. Mushrooms?
-More spells
 
 bugs:
 passing in water messes with player sprite sometimes
 haste breaks things badly on map change
 pressing spell keys with no spells gives harmless error
 quakes can't break flesh eggs
-leaving a room after day has changed will leave any runes dropped after day changed thinking that they're on the new day's room.(update day only on mapchange or something?). Oh, forced return to base would solve that wouldn't it? But that's still potentially not that fun, allowing you to stay in the room but changing all exits to go to main room might be better but dunno how hard that'd be to do.
 something wrong with rng.
 
 not done but no longer as important:
@@ -122,6 +121,8 @@ not done but no longer as important:
       Or some other way to make playing frugally/optimally more interesting, as is you do interesting stuff only when it's the only way to avoid taking damage.
 
 done:
+More spells
+Line of Sight at night(or just "fake" one by hiding stuff based on distance)
 currently you get more than 10 spells but have no way to use them, I could do shift + 1-9 to cast more(would have to adjust the UI though)
 warp to main and lose all runes if outside at the end of day.
 Make fully charging the circle actually end the game.

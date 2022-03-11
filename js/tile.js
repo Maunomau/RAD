@@ -100,6 +100,17 @@ class Tile{
 
 	draw(){
     drawTile(this.sprite, this.x, this.y);
+		let playerDistance = this.dist(player.tile);
+    ctx.fillStyle = 'rgba(0, 0, 0, '+darkness+')';
+    ctx.fillRect(this.x*tileSize+shakeX, this.y*tileSize+shakeY, tileSize, tileSize);
+		if (darkness>0.25 && playerDistance > 10-(darkness*10)) {
+      ctx.fillStyle = 'rgba(0, 0, 0, '+1+')';
+      ctx.fillRect(this.x*tileSize+shakeX, this.y*tileSize+shakeY, tileSize, tileSize);
+    }
+		if (player.tile.constructor.name == "Vent" && playerDistance > 2) {
+      ctx.fillStyle = 'rgba(0, 0, 0, '+0.25+')';
+      ctx.fillRect(this.x*tileSize+shakeX, this.y*tileSize+shakeY, tileSize, tileSize);
+    }
 		if(this.maincircle >= 0){
 			let c = circle[this.maincircle];
 			if(c.found || this.maincircle == 4){

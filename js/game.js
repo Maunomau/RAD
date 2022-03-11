@@ -51,7 +51,7 @@ function draw(){
     */
     if (darkness) {
       ctx.fillStyle = 'rgba(0, 0, 0, '+darkness+')';
-      ctx.fillRect(0, 0, numTiles*tileSize, numTiles*tileSize);
+      //ctx.fillRect(0, 0, numTiles*tileSize, numTiles*tileSize);
     }
     
     
@@ -187,10 +187,10 @@ function passTime(){
   //darkness = Math.floor(time/8) / Math.floor(timeInDay/8)
   switch(Math.floor((time/timeInDay)*10)) {
     case 0://
-      darkness = 0;
+      darkness = 0.25;
       //spawnMonster(Fleshegg);
       break;
-    case 1: darkness = 0.25; break;
+    case 1: darkness = 0; break;
     case 2: darkness = 0; break;
     case 3: darkness = 0; break;
     case 4: darkness = 0; break;
@@ -198,7 +198,7 @@ function passTime(){
     case 6: darkness = 0.5; break;
     case 7: darkness = 0.5; break;
     case 8: darkness = 0.65; break;
-    case 9: darkness = 1; break;
+    case 9: darkness = 0.8; break;
     case 10: darkness = 1; break;
   }
   if(time >= timeInDay/2 && time % 45 == 0){
