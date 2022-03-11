@@ -1,6 +1,6 @@
 function generateWorld(){
   //console.groupCollapsed("worldgen(seed:%c"+ worldRNG.getSeed() +"%c)", "color:green", "color:");
-  worldRNG.setSeed(122)
+  //worldRNG.setSeed(122)
   console.group("worldgen(seed:%c"+ worldRNG.getSeed() +"%c)", "color:green", "color:");
   makeRuneList();
   makeRuneList2();
@@ -139,8 +139,10 @@ function generateLevel(entryDir=-1, playerHp=3){
   
   //currentSeed = parseInt(day+""+parseInt(+wpos[0]+""+(wpos[1])+""+(wpos[2]))+""+worldRNG.getSeed());
   //currentSeed = Math.sqrt(Math.sqrt(currentSeed))+worldRNG.getSeed()
-  currentSeed = (day+(wpos[0]/100)+(wpos[1]*10)+(wpos[2])+worldRNG.getSeed());
-  currentSeed = ([day, wpos[0], wpos[1], wpos[2], wpos[3], worldRNG.getSeed()].join(''));
+  //currentSeed = (day+(wpos[0]/100)+(wpos[1]*10)+(wpos[2])+worldRNG.getSeed());
+  currentSeed = ([day, wpos[0], wpos[1], worldRNG.getSeed(), wpos[2], wpos[3]].join(''));
+  //while(currentSeed.length)
+  currentSeed = parseInt([day, wpos[0], wpos[1], worldRNG.getSeed(), wpos[2], wpos[3]].join(''));
   if (savedMaps.hasOwnProperty(currentSeed)){
     console.log("map already visited "+currentSeed);
     tiles = savedMaps[currentSeed].map;

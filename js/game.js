@@ -104,8 +104,14 @@ function tick(){
   
   if(player.dead){
     while(runeinv.length){
-      usedRunes.push([0, Math.floor(numTiles/3), player.tile, runeinv.pop(), wpos[0], wpos[1]]);
-      //console.warn("Dropped a rune!"+"");
+      runes[runeinv[0]].timer = 0;
+      let rtile = randomCrawlableTile(0)
+      runes[runeinv[0]].x = rtile.x;
+      runes[runeinv[0]].y = rtile.y;
+      runes[runeinv[0]].wx = wpos[0];
+      runes[runeinv[0]].wy = wpos[1];
+      runes[runeinv[0]].holder = false;
+      wTiles[wpos[0]][wpos[1]].runes.push(runeinv.shift());
     }
     dropRunes();
     //Unseal sealedMons
@@ -153,6 +159,19 @@ function passTime(){
   time++;
   
   if (time > timeInDay) {
+    
+    //drop runes
+    while(runeinv.length){
+      runes[runeinv[0]].timer = 2;
+      let rtile = randomCrawlableTile(0)
+      runes[runeinv[0]].x = rtile.x;
+      runes[runeinv[0]].y = rtile.y;
+      runes[runeinv[0]].wx = wpos[0];
+      runes[runeinv[0]].wy = wpos[1];
+      runes[runeinv[0]].holder = false;
+      wTiles[wpos[0]][wpos[1]].runes.push(runeinv.shift());
+      //console.warn("Dropped a rune!"+"");
+    }
     
     wpos[0] = 14;
     wpos[1] = 14;
