@@ -230,8 +230,10 @@ class Monster{
       //playSound("hit1");
       playSound("hit2"+dealer.constructor.name);
       //console.log("Took damage from "+dealer.constructor.name+".");
+      dmgTaken += damage;
     }else{
       playSound("hit1"+this.constructor.name);
+      console.log(""+this.constructor.name+" took %c"+damage+" damage"+"", "color:orange");
     }
   }
 
@@ -385,8 +387,8 @@ class Player extends Monster{
 
   castSpell(index){
     let spellName = this.spells[index];
-    let cost = spells[spellName].cost;
     console.log("Casting spell "+index+" "+spellName+".");
+    let cost = spells[spellName].cost;
     if(spellName && cost <= runeinv.length){
       //delete this.spells[index];
       console.log("It costs "+cost);
@@ -406,6 +408,7 @@ class Player extends Monster{
       //useCharge(this.tile, spells[spellName].droptime, spells[spellName].dropdistance);
       spells[spellName].f(this);
       playSound("spell");
+      spellsCast++;
       tick();
     }else if(this.hp > cost){
       console.log("Used energy/hp instead, it cost "+cost);

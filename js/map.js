@@ -1,5 +1,6 @@
 function generateWorld(){
   //console.groupCollapsed("worldgen(seed:%c"+ worldRNG.getSeed() +"%c)", "color:green", "color:");
+  worldRNG.setSeed(122)
   console.group("worldgen(seed:%c"+ worldRNG.getSeed() +"%c)", "color:green", "color:");
   makeRuneList();
   makeRuneList2();
@@ -43,7 +44,7 @@ function generateWorld(){
       
       circle[i] = {
         charge:0,
-        maxCharge:16,
+        maxCharge: Math.floor(runeTypesTotal/8),
         runesChargedWith:[],//should prefer length of this to charge
         spell:spellOptions[i],
         spell2:spellOptions[i+8],// need 2 unique spells per circle
@@ -54,7 +55,7 @@ function generateWorld(){
     }else{
       circle[i] = {
         charge:0,
-        maxCharge:8,
+        maxCharge:runeTypesTotal%8,
         runesChargedWith:[],
         spell:spellOptions[16],
         spell2:spellOptions[17],

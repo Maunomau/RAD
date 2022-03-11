@@ -63,13 +63,16 @@ function draw(){
     //drawSprite(0, x, y);
     player.draw();
     
-    drawText("Score:"+totalCharge+" (-"+dmgTaken+")", tileSize/2, false, 25, "violet");
+    drawText("Score:"+totalCharge+" "+""+"", tileSize/2, false, 25, "violet");
     drawText("Day:"+day+" t:"+time+"", tileSize/2, false, 45, "violet");
     drawText("Runes:"+runeinv.length+"/"+gemMax, tileSize/2, false, 65, "violet");
     
+    let spellColor = "aqua";
     for(let i=0; i<player.spells.length; i++){
-      let spellText = (i+1) + ") " + (player.spells[i] || "");
-      drawText(spellText, 20, false, 110+i*40, "aqua");
+      if((shiftMode && i <= 9) || (!shiftMode && i > 9)) spellColor = "grey";
+      else spellColor = "aqua";
+      let spellText = (i+1) + "." + (player.spells[i] + "("+spells[player.spells[i]].cost+","+spells[player.spells[i]].droptime+")" || "");
+      drawText(spellText, tileSize/2, false, 85+i*(tileSize-10), spellColor);
     }
     
     if(gameState == "dead") {
@@ -120,7 +123,7 @@ function tick(){
         spawnMonster(eval(capturedMons.shift().constructor.name), 1, tile = randomPassableTile("exit", gRNG), gRNG);
       }
     }
-    //addRecords(runeinv.length, false);
+    addRecords(runeinv.length, false);
     gameState = "dead";
   }
   /* spawn monsters, should adjust for knocking out and breeding */
@@ -151,6 +154,12 @@ function passTime(){
   
   if (time > timeInDay) {
     
+    wpos[0] = 14;
+    wpos[1] = 14;
+    savedPlayer = player;
+    this.monster = null;
+    startLevel(-1, player.hp);
+    
     day++;
     time = 0;
     darkness = 0;
@@ -162,14 +171,14 @@ function passTime(){
       darkness = 0;
       //spawnMonster(Fleshegg);
       break;
-    case 1: darkness = 0; break;
+    case 1: darkness = 0.25; break;
     case 2: darkness = 0; break;
     case 3: darkness = 0; break;
     case 4: darkness = 0; break;
     case 5: darkness = 0.25; break;
     case 6: darkness = 0.5; break;
     case 7: darkness = 0.5; break;
-    case 8: darkness = 0.75; break;
+    case 8: darkness = 0.65; break;
     case 9: darkness = 1; break;
     case 10: darkness = 1; break;
   }
@@ -185,8 +194,8 @@ function passTime(){
             tile.replace(Floor);
           }
         }else if(tile.monster && !tile.monster.flying){
-          tile.monster.stunned = true;
           if(gRNG.getUniform < 0.5) tile.monster.hit(1) = true;//Chance of breaking flesheggs already around.
+          tile.monster.stunned = true;
         }
       }
     }
@@ -199,6 +208,9 @@ function passTime(){
     //spellSlots.push("CAPTURE");
     //spellSlots.push("HASTE");
     //spellSlots.push("RELOCATE");
+    //spellSlots.push("BLINK");
+    //spellSlots.push("WALL");
+    //spellSlots.push("SHOVE");
   }
   //if(time == 21) spawnMonster(Fleshegg, 0, randomWaterTile(gRNG));
   console.log("time phase:"+ Math.floor((time/timeInDay)*10) +", darkness is at "+ darkness);
@@ -248,6 +260,7 @@ function startGame(){
   runeinv = [];
   totalCharge = 0;
   spellSlots = [];//player.spells are set to this.
+  spellsCast = 0;
   turn = 0;
   levelturn = 0;
   numSpells = 0;
@@ -317,9 +330,10 @@ function getRecords(){
   }
 }
 
-function addRecords(runesInCircles, won, defeatedBy = false){
+function addRecords(runei, won, defeatedBy = false){
+  console.log("%cAdding a record.", "color:yellow");
   let records = getRecords();
-  let recordObject = {runes: runesInCircles, loop: 1, depth: level, turn: turn, casts: 0, totalScore: runesInCircles+level, active: won, run: records.length+1};
+  let recordObject = {runes: totalCharge, loop: 1, day: day, turn: turn, casts: spellsCast, totalScore: totalCharge-day, dmg: dmgTaken, active: won, run: records.length+1};
   let lastRecord = records.pop();
 
   if(lastRecord){
@@ -331,6 +345,8 @@ function addRecords(runesInCircles, won, defeatedBy = false){
       records.push(lastRecord);
     }
   }
+  //console.log("hello?"+recordObject);
+  //console.table(recordObject);
   records.push(recordObject);
 
   localStorage["records"] = JSON.stringify(records);
@@ -338,9 +354,11 @@ function addRecords(runesInCircles, won, defeatedBy = false){
 
 function drawScores(){
   let records = getRecords();
+  //console.table(records);
+  //console.log("hello?"+records);
   if(records.length){
     drawText(
-      rightPad(["RUN","LOOP","RUNES","LEVEL","TOTAL","TURNS"]),
+      rightPad(["RUN","LOOP","RUNES","DAY","TOTAL","TURNS","CASTS","DMG"]),
       18,
       true,
       canvas.height/2,
@@ -354,7 +372,7 @@ function drawScores(){
     records.unshift(newestScore);
 
     for(let i=0;i<Math.min(10,records.length);i++){
-      let scoreText = rightPad([records[i].run, records[i].loop, records[i].runes, records[i].depth, records[i].totalScore, records[i].turn]);
+      let scoreText = rightPad([records[i].run, records[i].loop, records[i].runes, records[i].day, records[i].totalScore, records[i].turn, records[i].casts, records[i].dmg]);
       drawText(
         scoreText,
         18,

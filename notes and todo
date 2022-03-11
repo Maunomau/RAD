@@ -105,8 +105,6 @@ Running(shift + direction to automove) making it follow corridors until somethin
 max spells and spell swapping(currently you get more than 10 spells but have no way to use them)
   or I could do shift + 1-9 to cast more(would have to adjust the UI though)
 warp to main and lose all runes if outside at the end of day.
-make score count total charge of all circles
-  (is there anything besides time that could differentiate score of one winning run from another? Deals/Contracts if I get around to adding them. Some other collectable(gems once I've changed runes to not be gems). Monster interactions... Actually damage taken might be an easy one though that being 0 shouldn't be too hard so would need something else too.)
 Make fully charging the circle actually end the game.
 Something that gives max energy/hp. Mushrooms?
 More spells
@@ -126,9 +124,11 @@ not done but no longer as important:
       Or some other way to make playing frugally/optimally more interesting, as is you do interesting stuff only when it's the only way to avoid taking damage.
 
 done:
+BLINK spell
+make score count total charge of all circles
+(is there anything besides time that could differentiate score of one winning run from another? Deals/Contracts if I get around to adding them. Some other collectable(gems once I've changed runes to not be gems). Monster interactions... Actually damage taken might be an easy one though that being 0 shouldn't be too hard(and it kind of sucked when I tried it) so would need something else too.)
 Make players rune sprite depend on spells learned and not carried runes.
 move toward player has passability check or something that prevents small creatures from attacking.
-
 indicate future rune drop spots?(sort of, I set an effect each turn and tiles have an unused runehint flag)
 hiding in water and vents(distance 3+ enemies move randomly)
 circle warps

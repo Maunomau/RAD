@@ -200,6 +200,67 @@ text
   
   logUncollapseMode = "mapgen";
   logUncollapseMode = "turns";
+  downkey = "";
+  keyspressed = [];
+  //shiftKeyPressed = false;//instanceOfKeyboardEvent.shiftKey;
+  
+  /*
+  
+  https://stackoverflow.com/questions/53405049/javascript-multiple-keydown
+  var down = false;
+
+  
+  var keys;
+
+  document.addEventListener("keydown", function (e) {
+    keys = (keys || []);
+    keys[e.keyCode]=true;
+    if (keys[16]){
+      console.log("1");
+
+    }
+
+    if (keys[49]){
+      console.log("2");
+    }
+
+    if (keys[16] && keys[49]){
+      console.log("sucessfull");
+    }
+    console.log(e.keyCode);
+  } , false);
+
+  document.addEventListener("keyup", function (e) {
+    keys[e.keyCode]=false;
+    stop();
+  }, false);
+
+  
+  */
+  /**/
+  var shiftMode;
+  var shiftModeLock;
+  
+  document.querySelector("html").onkeydown = function(d){
+    if(d.key == "r" || d.key == "Shift" && !shiftModeLock) {
+      console.log("R or Shift Key down.");
+      downkey = d.key;
+      //shiftKeyPressed = true;
+      if(shiftMode) shiftMode = false;
+      else shiftMode = true;
+      shiftModeLock = true;
+    }
+  }
+  
+  document.querySelector("html").onkeyup = function(u){
+    //console.log("Key up "+e.key+".");
+    if(u.key == "r" || u.key == "Shift") {
+      downkey = "";
+      //shiftKeyPressed = false;
+      shiftModeLock = false;
+      console.log("R or Shift key up.");
+    }
+  }
   
   document.querySelector("html").onkeypress = function(e){
     //console.log("Pressed "+e.key+".");
@@ -261,33 +322,47 @@ text
         player.crouch();
       }
       if(e.key=="i") {
-        //quite buggy
-        //tileSize += 16;
-        //setupCanvas();
+        tileSize += 16;
+        setupCanvas();
       }
       if(e.key=="l" && tileSize > 16) {
-        //tileSize -= 16;
-        //setupCanvas();
+        tileSize -= 16;
+        setupCanvas();
       }
       
       //Not how I'd like to do this but will do for now.
-      if(e.key>=1 && e.key<=9) player.castSpell(e.key-1);
-      if(e.key=="0") player.castSpell(9);
+      if(e.key>=1 && e.key<=9) {
+        if(!shiftMode) {
+          console.log("Casting spell "+parseInt(e.key)-1+" "+".");
+          player.castSpell(parseInt(e.key)-1);
+        }else{
+          console.log("Casting spell "+parseInt(e.key)+10-1+" "+".");
+          player.castSpell(parseInt(e.key)+10-1);
+        }
+          
+      }
+      if(e.key=="0" && !shiftMode) player.castSpell(9);
+      if(e.key=="0" && shiftMode) player.castSpell(19);
+      
+      //if(shiftKeyPressed){
+      //  player.castSpell(e.key-1);
+      //}
       
       //Debug keys
-      if(e.key=="r") {
+      if(e.key=="ä") {
         //startLevel(0, 0, 0, 0, day);
         //startLevel(worldPos[0], worldPos[1], worldPos[2], worldPos[3], day);
         //startLevel(wpos.join(''));
         startLevel(0);
       }
-      if(e.key=="t") {
+      if(e.key=="å") {
         generateTiles();
       }
       if(e.key=="g") {
         //usedRunes.push([0, 1, player.tile, 1, wpos[0], wpos[1]]);
+        player.spells = shuffle(Object.keys(spells));
       }
-      if(e.key=="l") {
+      if(e.key=="ö") {
         tiles[player.tile.x][player.tile.y].monster = undefined;
         player = undefined;
         tiles = savedMaps[level-1].map ;//If I don't clone the map before saving this loads the map from when I left that particular level, that's potentially nice.
@@ -301,14 +376,6 @@ text
       console.groupEnd()
     }
   };
-  
-  document.querySelector("html").onkeydown = function(e){
-    //console.log("Key down "+e.key+".");
-  }
-  
-  document.querySelector("html").onkeyup = function(e){
-    //console.log("Key up "+e.key+".");
-  }
 
 
   setInterval(draw, 15);

@@ -72,7 +72,7 @@ spells = {
     }
   },
   BOLT: {
-    cost: 1,
+    cost: 2,
     dropdistance: 1,
     droptime: 10,
     f: function(){
@@ -100,7 +100,7 @@ spells = {
     }
   },
   CROSS: {
-    cost: 1,
+    cost: 2,
     dropdistance: 1,
     droptime: 10,
     f: function(){
@@ -166,7 +166,7 @@ spells = {
   EX: {
     cost: 1,
     dropdistance: 5,
-    droptime: 2,
+    droptime: 10,
     f: function(){
       let directions = [
         [-1, -1],
@@ -217,6 +217,113 @@ spells = {
         testTile.monster.move(newTile);
         newTile.monster.stunned = true;
         newTile.monster.hit(1);
+      }
+    }
+  },
+  //move to a passable tile 6 or less tiles ahead and stun enemies.
+  BLINK: {
+    cost: 1,
+    dropdistance: 1,
+    droptime: 2,
+    f: function(caster){
+      let newTile = caster.tile;
+      let testTile = newTile.getNeighbor(caster.lastMove[0]*6,caster.lastMove[1]*6);
+      newTile = testTile;
+      for (let i = 0; i < 8; i++) {
+        //a bit scuffed way to move back towards player
+        if(caster.lastMove[0] == 0 && testTile.y > caster.tile.y){
+          testTile = tiles[testTile.x][testTile.y-1];
+        }else if(caster.lastMove[0] == 0 && testTile.y < caster.tile.y){
+          testTile = tiles[testTile.x][testTile.y+1];
+        }else if(testTile.x > caster.tile.x && caster.lastMove[1] == 0){
+          testTile = tiles[testTile.x-1][testTile.y];
+        }else if(testTile.x < caster.tile.x && caster.lastMove[1] == 0){
+          testTile = tiles[testTile.x+1][testTile.y];
+        }
+        if(!testTile.passable || testTile.monster){
+          newTile = testTile;
+        }else{
+          break;
+        }
+      }
+      if(caster.tile != testTile){
+        caster.move(testTile);
+        testTile.getAdjacentNeighbors().forEach(t => {
+          if(t.monster){
+            t.monster.stunned = true;
+          }
+        });
+      }
+    }
+  },
+  //Why does this refuse to move more than 1 monster? I give up
+  /*
+  PUSH: {
+    cost: 1,
+    dropdistance: 1,
+    droptime: 2,
+    f: function(caster){
+      let newTile = caster.tile;
+      let testTile = newTile.getNeighbor(caster.lastMove[0]*7,caster.lastMove[1]*7);
+      let pushTiles = [];
+      newTile = testTile;
+      for (let i = 0; i < 6; i++) {
+        //a bit scuffed way to move back towards player
+        if(caster.lastMove[0] == 0 && testTile.y > caster.tile.y){
+          testTile = tiles[testTile.x][testTile.y-1];
+        }else if(caster.lastMove[0] == 0 && testTile.y < caster.tile.y){
+          testTile = tiles[testTile.x][testTile.y+1];
+        }else if(testTile.x > caster.tile.x && caster.lastMove[1] == 0){
+          testTile = tiles[testTile.x-1][testTile.y];
+        }else if(testTile.x < caster.tile.x && caster.lastMove[1] == 0){
+          testTile = tiles[testTile.x+1][testTile.y];
+        }
+        if(testTile.monster){
+          pushTiles.push(testTile)
+          //newTile = testTile;
+        }
+        testTile.setEffect(11);
+        newTile = testTile;
+        
+      }
+      pushTiles.forEach((item, i) => {
+        item.setEffect(14);
+        item.monster.tryMove(caster.lastMove[0],caster.lastMove[1]);
+        //item.monster.move(caster.lastMove[0],caster.lastMove[1]);
+        item.monster.stunned = true;
+        
+      });
+    }
+  },
+  */
+  SHOVE: {
+    cost: 1,
+    dropdistance: 1,
+    droptime: 10,
+    f: function(caster){
+      let newTile = caster.tile;
+      let testTile = newTile.getNeighbor(caster.lastMove[0],caster.lastMove[1]);
+      if(testTile.monster){
+        testTile.monster.hit(1, player)
+        testTile.monster.tryMove(caster.lastMove[0],caster.lastMove[1]);
+        testTile.monster.stunned = true;
+      }
+    }
+  },
+  WALL: {
+    cost: 1,
+    dropdistance: 8,
+    droptime: 10,
+    f: function(caster){
+      //Nonplayer casting? Would need monster specific sealedMons easyish way might be to just sealedMons[caster.constructor.name][monster] but not sure I really need that.
+      //if(sealedMons == undefined) sealedMons = [];//not good enough apparently,
+      //let tile = caster.getFrontTile();
+      let tile = caster.tile;
+      let testTile = tile.getNeighbor(caster.lastMove[0],caster.lastMove[1]);
+      testTile.replace(Wall);
+      if(testTile.monster){
+        //testTile.monster.die()
+        testTile.monster.move(testTile.getAdjacentPassableNeighbors()[0])//Sometimes moves to other side of player
       }
     }
   },
