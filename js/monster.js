@@ -173,6 +173,10 @@ class Monster{
           if(this.stunning) newTile.monster.stunned = true;
           newTile.monster.hit(1 + this.bonusAttack, this);
           this.bonusAttack = 0;
+          if(this.knocksback){
+            newTile.monster.tryPush(this.lastMove[0],this.lastMove[1], 2);
+            //this.knocksback = false;
+          }
           
           shakeAmount = 5;
           
@@ -185,6 +189,31 @@ class Monster{
           return false;
         }
       }
+      return true;
+    }
+  }
+  
+  tryPush(dx, dy, strength = 0){
+    let newTile = this.tile.getNeighbor(dx,dy);
+    if(newTile.passable || this.small && newTile.crawlable || this.flying && newTile.flyable){
+      console.log(this.constructor.name+"being pushed:"+dx+","+dy+".");
+      if(!newTile.monster){
+          this.move(newTile);
+      //}else if(newTile.monster.resting){
+        //this.swap(newTile, this.tile);
+      }else if(strength){
+        //push multiple
+        console.log(""+this.constructor.name+" pushes "+newTile.monster.constructor.name+" further("+strength+").");
+        newTile.monster.tryPush(dx, dy, strength-1);
+        this.tryPush(dx, dy, 0);
+        
+      }else if(newTile.monster.resting){
+        this.swap(newTile, this.tile);
+      }
+      shakeAmount = 5;
+      
+      this.offsetX = (newTile.x - this.tile.x)/2;
+      this.offsetY = (newTile.y - this.tile.y)/2;
       return true;
     }
   }
@@ -324,7 +353,7 @@ class Player extends Monster{
   tryMove(dx, dy){
     this.lastMove = [dx,dy];//Set last move even when failing to move so digging and such works.
     this.resting = false;
-    this.hpup = false;//ehh, not the best way and place to do this
+    this.hpup = false;//ehh, not the best way and place to do this, stops water healing indicator.
     if(super.tryMove(dx,dy)){
       playSound("blip");
       tick();
@@ -417,6 +446,20 @@ class Player extends Monster{
     //this.spells.push(newSpell);
     spellSlots.push(newSpell);
     //spellSlots.push("HASTE");
+    
+    let useSingleSpriteForPlayer = false;
+    if (useSingleSpriteForPlayer) player.runed();
+    else {
+      if("add more runes to player sprite" && ((player.spells.length-1)/2) >= runesprites.length){
+        let runeSpriteOptions = [runes0sheet,runes1sheet,runes2sheet,runes3sheet,runes4sheet];
+        if(runesprites.length < runeSpriteOptions.length){
+          let i = randomRange(0, runeSpriteOptions.length-1);
+          while(runesprites.includes(runeSpriteOptions[i])) i = randomRange(0, runeSpriteOptions.length-1);
+          runesprites.push(runeSpriteOptions[i]);
+          console.log("more %c runes", "color:cyan");
+        }else console.log("already fully%c runed", "color:cyan");
+      }
+    }
   }
 
   castSpell(index){
@@ -557,7 +600,7 @@ class Slime extends Monster{
   doStuff(){
     let playerDistance = this.tile.dist(player.tile);
     //consume liquid to gain hp
-    if(randomRange(0,3) == 1 && this.hp < this.fullHp && (this.tile.liquid == "water" || this.tile.liquid == "slime")){
+    if(randomRange(0,3) && this.hp < this.fullHp && (this.tile.liquid == "water" || this.tile.liquid == "slime")){
       this.hp++
       if(this.tile.depth == 1){
         this.tile.liquid = "none";
@@ -734,11 +777,37 @@ class Goblin extends Monster{
   constructor(tile){
       super(tile, 6, 2);
   }
+  doStuff(){
+    let playerDistance = this.tile.dist(player.tile);
+    //check tiles for crawl only
+    let neighbors = this.tile.getAdjacentCrawlable();
+    neighbors = neighbors.filter(t => (!t.monster || t.monster.resting));
+    if(neighbors.length) neighbors.sort((a,b) => a.dist(player.tile) - b.dist(player.tile));
+    let newTile = neighbors[0];
+    if(!this.small && !newTile.passable && playerDistance > 1){
+      this.small = true;
+      this.sprite = 29;
+      this.peaceful = true;
+      this.tryMove(newTile.x - this.tile.x, newTile.y - this.tile.y);
+    }else if(this.small && this.tile.passable){/*stand up*/
+      this.small = false;
+      this.sprite = 6;
+      this.peaceful = false;
+    }else{
+      super.doStuff();
+    }
+    
+    //super.doStuff();
+  }
 }
 
 class Hobgoblin extends Monster{
   constructor(tile){
       super(tile, 7, 4, 12);
+  }
+  doStuff(){
+    if(randomRange(0,5) <= 0) this.knocksback = true;//turns out knockback everytime seems fine
+    super.doStuff();
   }
 }
 

@@ -134,7 +134,7 @@ function tick(){
         spawnMonster(eval(capturedMons.shift().constructor.name), 1, tile = randomPassableTile("exit", gRNG), gRNG);
       }
     }
-    addRecords(runeinv.length, false);
+    //addRecords(runeinv.length, false);
     gameState = "dead";
   }
   /* spawn monsters, should adjust for knocking out and breeding */
@@ -400,7 +400,7 @@ function drawScores(){
     records.unshift(newestScore);
 
     for(let i=0;i<Math.min(10,records.length);i++){
-      let scoreText = rightPad([records[i].run, records[i].loop, records[i].runes, records[i].day, records[i].totalScore, records[i].turn, records[i].casts, records[i].dmg]);
+      let scoreText = rightPad([records[i].run, records[i].loop-1, records[i].runes, records[i].day, records[i].totalScore, records[i].turn, records[i].casts, records[i].dmg]);
       drawText(
         scoreText,
         18,
@@ -442,6 +442,7 @@ function initSounds(){
     slip: new Audio('sounds/slip3.wav'),
     weave: new Audio('sounds/weave.wav'),
     slorch: new Audio('sounds/slorch.wav'),
+    splash: new Audio('sounds/splash2.wav'),
   };
 
   let mons = ["Slime", "Spider", "Wolfpup", "Wolf", "Crystal", "Wasp", "Goblin", "Hobgoblin", "Fleshball", "Fleshegg", "Rabbit", "Bunny", "Shade", "Snake"];

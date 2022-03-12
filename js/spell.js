@@ -24,7 +24,7 @@ spells = {
   BRAVERY: {
     cost: 1,
     dropdistance: 2,
-    droptime: 10,
+    droptime: 100,
     f: function(){
       player.shield = 3;
       for(let i=0;i<monsters.length;i++){
@@ -35,7 +35,7 @@ spells = {
   MAELSTROM: {
     cost: 1,
     dropdistance: 10,
-    droptime: 10,
+    droptime: 100,
     f: function(caster){
       for(let i=0;i<monsters.length;i++){
         if (monsters[i].tile.dist(caster.tile) < 13){
@@ -48,7 +48,7 @@ spells = {
   DASH: {
     cost: 1,
     dropdistance: 1,
-    droptime: 10,
+    droptime: 100,
     f: function(caster){
       let newTile = caster.tile;
       while(true){
@@ -74,7 +74,7 @@ spells = {
   BOLT: {
     cost: 2,
     dropdistance: 1,
-    droptime: 10,
+    droptime: 100,
     f: function(){
       boltTravel(player.lastMove, 16 - Math.abs(player.lastMove[1]), 4);
     }
@@ -102,7 +102,7 @@ spells = {
   CROSS: {
     cost: 2,
     dropdistance: 1,
-    droptime: 10,
+    droptime: 100,
     f: function(){
       let directions = [
         [0, -1],
@@ -131,7 +131,7 @@ spells = {
   POWER: {
     cost: 1,
     dropdistance: 1,
-    droptime: 10,
+    droptime: 100,
     f: function(){
       player.bonusAttack=5;
     }
@@ -166,7 +166,7 @@ spells = {
   EX: {
     cost: 1,
     dropdistance: 5,
-    droptime: 10,
+    droptime: 100,
     f: function(){
       let directions = [
         [-1, -1],
@@ -182,13 +182,17 @@ spells = {
   DIG: {
     cost: 1,
     dropdistance: 0,
-    droptime: 10,
+    droptime: 20,
     f: function(){
       let newTile = player.tile;
-      for(let i=0;i<=runeinv.length;i++){
+      //for(let i=0;i<=runeinv.length;i++){
+      for(let i=0;i<=2;i++){
         let testTile = newTile.getNeighbor(player.lastMove[0],player.lastMove[1]);
         if(testTile.passable){
           testTile.replace(Pool);
+          newTile = testTile;
+        }else if(testTile.crawlable){
+          testTile.replace(Floor2);
           newTile = testTile;
         }else if(inBounds(testTile.x, testTile.y)){
           testTile.replace(Vent);
@@ -200,7 +204,7 @@ spells = {
   DRAG: {
     cost: 1,
     dropdistance: 0,
-    droptime: 10,
+    droptime: 100,
     f: function(caster){
       let dragRange = 3;
       let newTile = caster.tile;
@@ -257,45 +261,30 @@ spells = {
     }
   },
   //Why does this refuse to move more than 1 monster? I give up
-  /*
+  //tryPush() should make it much easier, getting all the pushed monsters would need more.
   PUSH: {
     cost: 1,
     dropdistance: 1,
-    droptime: 2,
+    droptime: 20,
     f: function(caster){
       let newTile = caster.tile;
-      let testTile = newTile.getNeighbor(caster.lastMove[0]*7,caster.lastMove[1]*7);
+      let testTile = newTile.getNeighbor(caster.lastMove[0],caster.lastMove[1]);
       let pushTiles = [];
       newTile = testTile;
       for (let i = 0; i < 6; i++) {
-        //a bit scuffed way to move back towards player
-        if(caster.lastMove[0] == 0 && testTile.y > caster.tile.y){
-          testTile = tiles[testTile.x][testTile.y-1];
-        }else if(caster.lastMove[0] == 0 && testTile.y < caster.tile.y){
-          testTile = tiles[testTile.x][testTile.y+1];
-        }else if(testTile.x > caster.tile.x && caster.lastMove[1] == 0){
-          testTile = tiles[testTile.x-1][testTile.y];
-        }else if(testTile.x < caster.tile.x && caster.lastMove[1] == 0){
-          testTile = tiles[testTile.x+1][testTile.y];
+        testTile = newTile.getNeighbor(caster.lastMove[0],caster.lastMove[1]);
+        if(testTile.passable && !testTile.monster){
+          newTile = testTile;
+        }else if(testTile.monster){
+          testTile.monster.stunned = true;
+          testTile.monster.tryPush(caster.lastMove[0],caster.lastMove[1], 8);
+          testTile.setEffect(11);
+          break;
         }
-        if(testTile.monster){
-          pushTiles.push(testTile)
-          //newTile = testTile;
-        }
-        testTile.setEffect(11);
-        newTile = testTile;
-        
       }
-      pushTiles.forEach((item, i) => {
-        item.setEffect(14);
-        item.monster.tryMove(caster.lastMove[0],caster.lastMove[1]);
-        //item.monster.move(caster.lastMove[0],caster.lastMove[1]);
-        item.monster.stunned = true;
-        
-      });
     }
   },
-  */
+  
   SHOVE: {
     cost: 1,
     dropdistance: 1,
@@ -304,8 +293,8 @@ spells = {
       let newTile = caster.tile;
       let testTile = newTile.getNeighbor(caster.lastMove[0],caster.lastMove[1]);
       if(testTile.monster){
-        testTile.monster.hit(1, player)
-        testTile.monster.tryMove(caster.lastMove[0],caster.lastMove[1]);
+        //testTile.monster.hit(1, player)
+        testTile.monster.tryPush(caster.lastMove[0],caster.lastMove[1]);
         //testTile.monster.stunned = true;
         tiles[testTile.x+caster.lastMove[0]][testTile.y+caster.lastMove[1]].monster.stunned = true;
       }
@@ -314,7 +303,7 @@ spells = {
   WALL: {
     cost: 1,
     dropdistance: 8,
-    droptime: 10,
+    droptime: 100,
     f: function(caster){
       //Nonplayer casting? Would need monster specific sealedMons easyish way might be to just sealedMons[caster.constructor.name][monster] but not sure I really need that.
       //if(sealedMons == undefined) sealedMons = [];//not good enough apparently,
@@ -332,7 +321,7 @@ spells = {
   HASTE: {
     cost: 1,
     dropdistance: 1,
-    droptime: 5,
+    droptime: 20,
     f: function(caster){
       for(let i=0;i<monsters.length;i++){
         if(monsters[i] != caster) monsters[i].stunned = true;
@@ -367,7 +356,7 @@ spells = {
   CAPTURE: {
     cost: 1,
     dropdistance: 2,
-    droptime: 3,
+    droptime: 5,
     worksnot: true,
     f: function(caster){
       let tile = caster.tile;
@@ -472,10 +461,12 @@ function pickupRune(rune){
     runes[rune].hintday = false;
     //spawnMonster();
     
+    //wrong place for this now that I'm basing sprite on spell amount, addSpell() should be better
+    /*
     let useSingleSpriteForPlayer = false
     if (useSingleSpriteForPlayer) player.runed();
     else {
-      if("add more runes to player sprite" && (player.spells.length/2) >= runesprites.length){
+      if("add more runes to player sprite" && ((player.spells.length-1)/2) >= runesprites.length){
         let runeSpriteOptions = [runes0sheet,runes1sheet,runes2sheet,runes3sheet,runes4sheet];
         if(runesprites.length < runeSpriteOptions.length){
           let i = randomRange(0, runeSpriteOptions.length-1);
@@ -485,6 +476,7 @@ function pickupRune(rune){
         }else console.log("already fully%c runed", "color:cyan");
       }
     }
+    */
     playSound("treasure");
     return true;//tell the tile that it can remove the rune from itself
   }
@@ -532,7 +524,7 @@ function dropRunes(){
         }
       }
       if (r.timer <= 0){
-        tile.setEffect(13);
+        tile.setEffect(11);
         tile.rune = r.word;
         if(tile.runehint) tile.runehint = false;
         r.setday = day;
@@ -540,7 +532,9 @@ function dropRunes(){
         tile.setEffect(13);
         tile.runehint = r.word;
         r.hintday = day;
-      }else tile.setEffect(12);
+      }else if(r.timer <= 50){
+        tile.setEffect(12);
+      }else tile.setEffect(0);
     }
     if(r.timer) r.timer--;
     

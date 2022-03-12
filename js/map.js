@@ -708,4 +708,9 @@ function loadPlayerState(pl = player){
     pl.hp = savedPlayer.hp;
   }
   if(savedPlayer.small) pl.crouch();
+  if(savedPlayer.hasted) {
+    pl.hasted = savedPlayer.hasted;
+    haste = savedPlayer.hasted;
+  }
+  if(savedPlayer.posthaste) pl.posthaste = savedPlayer.posthaste;
 }

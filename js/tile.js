@@ -160,6 +160,9 @@ class Tile{
 		if(this.rune){
       drawTile(5, this.x, this.y);
     }
+		if(this.runehint){
+      drawTile(46, this.x, this.y);
+    }
 		if(this.effectCounter){                    
       this.effectCounter--;
       ctx.globalAlpha = this.effectCounter/30;
@@ -231,7 +234,7 @@ class Tile{
 		}
 		
 		if(this.web && !monster.webwalker){
-			this.web = false;
+			if(!monster.resting) this.web = false;
 			monster.webbed = true;
 			if(monster.isPlayer)tick();
 			else{
@@ -239,7 +242,9 @@ class Tile{
 			}
 		}
 		
-		if(this.liquid == "slime" && !monster.slimewalker && !monster.flying){
+		//slippery slime
+		//are there any small monsters that should slip? Rabbits maybe but maybe not. Small check is mainly for the player.
+		if(this.liquid == "slime" && !monster.slimewalker && !monster.flying && !monster.small){
 			let neighbors = this.getAdjacentPassableNeighbors();
 			let newTile = tiles[this.x+monster.lastMove[0]][this.y+monster.lastMove[1]];
 			neighbors = neighbors.filter(t => !t.monster || t.monster.resting);
@@ -264,6 +269,12 @@ class Tile{
 				this.depth = 0;
 			}
 		}
+		
+		if(this.liquid == "slime" && monster.isPlayer){
+			playSound("slorch", monster.Tile);
+		}else if(this.liquid == "water" && monster.isPlayer){
+			playSound("splash", monster.Tile);
+		}else playSound("step", monster.Tile);
 		//
 		//playSound("step", monster.Tile);
   }
@@ -288,7 +299,7 @@ class Tile{
 				c.maincircleTileY = this.y;
 				
 				console.log("warp? "+c.maxCharge+"=="+charge);
-				if((c.maxCharge <= c.charge || (c.charge > 0 && runeinv.length <= 0))) {//before charging to avoid accidents
+				if((c.maxCharge <= charge || (charge > 0 && runeinv.length <= 0))) {//before charging to avoid accidents
 					console.log("warp! "+c.maxCharge+"=="+charge);
 					//warp to outside circle
 					//or something, warping probably should be much easier.
@@ -307,6 +318,7 @@ class Tile{
 					totalCharge++;
 					runes[runeinv[runeinv.length-1]].holder = "circle "+i;
 					circle[i].runesChargedWith.push(runeinv.pop());//pop return the last item too!
+					charge = c.runesChargedWith.length;
 					count++
 					if(circle[i].charge == circle[i].maxCharge && !player.spells.includes(circle[i].spell2)){
 			      numSpells++;//TBR?
@@ -316,7 +328,7 @@ class Tile{
 				if(count >= 8) playSound("circleCharge3", monster.Tile);
 				else if(count >= 4) playSound("circleCharge2", monster.Tile);
 				else if(count >= 1) playSound("circleCharge1", monster.Tile);
-				else if(c.charge <= 0) playSound("no", monster.Tile);
+				else if(charge <= 0) playSound("no", monster.Tile);
 			}
 			if(this.circle >= 0){
 				let c = circle[this.circle];

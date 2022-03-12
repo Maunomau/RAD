@@ -162,7 +162,7 @@ text
   
   gameState = "loading";
 
-  startingHp = 5;
+  startingHp = 3;
   numLevels = 8;
   
   shakeAmount = 0;
@@ -275,6 +275,7 @@ text
       }else if(e.key=="z") {
         tick();
       }else{
+        addRecords(0, false);
         showTitle();
       }
     }else if(gameState == "running"){
