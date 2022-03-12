@@ -153,7 +153,7 @@ spells = {
             //tile.replace(Floor);
             let numWalls = 4 - tile.getAdjacentPassableNeighbors().length;
             if (numWalls < 3 && gRNG.getUniform() < 0.5){
-              tile.replace(Floor);
+              tile.replace(Floor2);
             }
           }else if(tile.monster && !tile.monster.flying){
             tile.monster.stunned = true;

@@ -82,12 +82,10 @@ Runes could be just the icon to avoid needing to call them runes.
 Sound panning, stereo sound based on if sound source is to left or right
 Soundmap.
 Soundmap focus, passing a turn should show sounds on the main map instead of less accurate sound map.
-Different floor after destroyed wall
 would crystal being able to swap with you using woop be too much?
 adjust spells to work in a way where each spell has a dedicated slot.
 Monster that can move between rooms and appears at night.
 More involved ending scenario.
-make things glow in the dark
 spell swapping
 allow you to staying in a room at the end of day but change all exits to go to main room.
 Running(shift + direction to automove) making it follow corridors until something interesting would be nice but probably too much work.
@@ -104,7 +102,9 @@ Monster improvements
   Mirrors(make crystals actually immobile but able to spawn mirrors that they shoot at to attack you)
   Golem monster that uses current crystal behaviour aside from wooping
   Make fleshball use DRAG and WATERWOOP spells, rest on it's own and whatever else to make it more dangerous
+Make fleshballs "follow" you to differnt maps
 Something that gives max energy/hp. Mushrooms?
+Let you know which spell a circle gives before charging it?
 
 bugs:
 passing in water messes with player sprite sometimes
@@ -121,6 +121,8 @@ not done but no longer as important:
       Or some other way to make playing frugally/optimally more interesting, as is you do interesting stuff only when it's the only way to avoid taking damage.
 
 done:
+Different floor after destroyed wall
+make things glow in the dark(sort of, darkness is drawn before anything that'd glow)
 More spells
 Line of Sight at night(or just "fake" one by hiding stuff based on distance)
 currently you get more than 10 spells but have no way to use them, I could do shift + 1-9 to cast more(would have to adjust the UI though)

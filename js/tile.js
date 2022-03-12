@@ -145,6 +145,12 @@ class Tile{
 		if(this.liquid == "slime" && depth >= 1){
 			drawTile(16, this.x, this.y);
     }
+		if(this.shroom){
+      drawTile(22, this.x, this.y);
+    }
+		if(this.line){
+      drawTile(24+6, this.x, this.y);
+    }
 		if(this.gem){
       drawTile(47, this.x, this.y);
     }
@@ -302,6 +308,13 @@ class Floor extends Tile{
   };
 }
 
+class Floor2 extends Tile{
+  constructor(x,y){
+    super(x, y, 1, true);
+    //super(x, y, 2, true, 0, "none", 0);
+  };
+}
+
 class Exit extends Tile{
   constructor(x, y, wx, wy, entryDir){
     super(x, y, 0, true);
@@ -336,6 +349,13 @@ class Exit extends Tile{
 class Wall extends Tile{
   constructor(x, y){
     super(x, y, 3, false, false, false);
+    //super(x, y, 3, false, 0, "none", 0);
+  }
+}
+
+class Door extends Tile{
+  constructor(x, y){
+    super(x, y, 7, false, false, false);
     //super(x, y, 3, false, 0, "none", 0);
   }
 }
@@ -385,6 +405,20 @@ class Slimepuddle extends Tile{
     super(x, y, 16, true, true, true, "slime", 1);
 		
   };
+}
+
+class FloorNub extends Tile{
+  constructor(x,y){
+    super(x, y, 31, true);
+    //super(x, y, 2, true, 0, "none", 0);
+  };
+}
+
+class WallNub extends Tile{
+  constructor(x, y){
+    super(x, y, 32, false, false, false);
+    //super(x, y, 3, false, 0, "none", 0);
+  }
 }
 
 //maybe do as var instead of tile?

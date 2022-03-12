@@ -595,7 +595,7 @@ class Crystal extends Monster{
   doStuff(){
     let neighbors = this.tile.getAdjacentNeighbors().filter(t => !t.passable && inBounds(t.x,t.y));
     if(neighbors.length){
-      neighbors[0].replace(Floor);
+      neighbors[0].replace(Floor2);
       //this.heal(0.5);
       this.shield += 2;
     }else{
