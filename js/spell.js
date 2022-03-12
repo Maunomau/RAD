@@ -306,7 +306,8 @@ spells = {
       if(testTile.monster){
         testTile.monster.hit(1, player)
         testTile.monster.tryMove(caster.lastMove[0],caster.lastMove[1]);
-        testTile.monster.stunned = true;
+        //testTile.monster.stunned = true;
+        tiles[testTile.x+caster.lastMove[0]][testTile.y+caster.lastMove[1]].monster.stunned = true;
       }
     }
   },

@@ -142,7 +142,7 @@ class Tile{
 				drawTile((this.circle+1)*4-1, this.x, this.y, circlesSheet, 4);
 			}
     }
-		if(this.liquid == "slime" && depth >= 1){
+		if(this.liquid == "slime" && this.depth >= 1){
 			drawTile(16, this.x, this.y);
     }
 		if(this.shroom){
@@ -150,6 +150,9 @@ class Tile{
     }
 		if(this.line){
       drawTile(24+6, this.x, this.y);
+    }
+		if(this.web){
+      drawTile(21, this.x, this.y);
     }
 		if(this.gem){
       drawTile(47, this.x, this.y);
@@ -223,9 +226,46 @@ class Tile{
 				else player.sprite = 0;
 			}
 			if(!player.small && this.depth < 4) player.peaceful = false;
+			
+			
+		}
+		
+		if(this.web && !monster.webwalker){
+			this.web = false;
+			monster.webbed = true;
+			if(monster.isPlayer)tick();
+			else{
+				monster.stunned = true;
+			}
+		}
+		
+		if(this.liquid == "slime" && !monster.slimewalker && !monster.flying){
+			let neighbors = this.getAdjacentPassableNeighbors();
+			let newTile = tiles[this.x+monster.lastMove[0]][this.y+monster.lastMove[1]];
+			neighbors = neighbors.filter(t => !t.monster || t.monster.resting);
+			if(newTile.passable && (!newTile.monster || newTile.monster.resting) && randomRange(0,4)){
+				monster.move(newTile);
+				if(monster.isPlayer) playSound("slip", monster.Tile);
+			}else if(neighbors.length && randomRange(0,2) == 1) {
+				newTile = neighbors[0];
+				//monster.tryMove(newTile.x - this.x, newTile.y - this.y);
+				monster.move(newTile);
+				if(monster.isPlayer && !monster.small){
+					playSound("slip", monster.Tile);
+					monster.small = true;
+					monster.peaceful = true;
+					monster.sprite = Math.min(4+this.depth, 6);
+				}else{
+					monster.stunned = true;
+					if(monster.isPlayer) playSound("slorch", monster.Tile);
+				}
+			}else if(randomRange(0,20) == 1 && this.depth == 1){//small chance to remove slime when stepping on it. Only when not slipping or sliding though since it'd look weird to slip on nothing.
+				this.liquid = "none";
+				this.depth = 0;
+			}
 		}
 		//
-		playSound("step", monster.Tile);
+		//playSound("step", monster.Tile);
   }
 	
   interactWith(monster){

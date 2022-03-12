@@ -67,13 +67,18 @@ function draw(){
     drawText("Day:"+day+" t:"+time+"", tileSize/2, false, 45, "violet");
     drawText("Runes:"+runeinv.length+"/"+gemMax, tileSize/2, false, 65, "violet");
     
+    let lasti = 0;
     let spellColor = "aqua";
     for(let i=0; i<player.spells.length; i++){
       if((shiftMode && i <= 9) || (!shiftMode && i > 9)) spellColor = "grey";
       else spellColor = "aqua";
       let spellText = (i+1) + "." + (player.spells[i] + "("+spells[player.spells[i]].cost+","+spells[player.spells[i]].droptime+")" || "");
       drawText(spellText, tileSize/2, false, 85+i*(tileSize-10), spellColor);
+      lasti = i+1;
     }
+    if (turn > leapturn+leapcd) spellColor = "khaki";
+    else spellColor = "grey";
+    drawText("F.LEAP", tileSize/2, false, 85+lasti*(tileSize-10), spellColor);
     
     if(gameState == "dead") {
       drawText("You have been defeated.", 30, true, canvas.height/2 - 55, "white");
@@ -267,6 +272,8 @@ function showTitle(){
 function startGame(){
   //playSound("newLevel");
   sounds["newLevel"].play();
+  worldSeed = ROT.RNG.getUniformInt(1,100000);
+  worldRNG.setSeed(worldSeed)
   wTiles = [];
   generateWorld()
   wpos = [14,11,10,0];//world position, x,y,z,plane
@@ -284,7 +291,9 @@ function startGame(){
   levelturn = 0;
   numSpells = 0;
   seenMons = new Set();
-  usedRunes = []
+  usedRunes = [];
+  leapturn = -100;
+  
   day = 1;
   time = 0;
   lastCircle = -1;//Last circle player was on(for warping to in some situations)
@@ -429,6 +438,10 @@ function initSounds(){
     circleCharge1: new Audio('sounds/circleCharge1.wav'),
     circleCharge2: new Audio('sounds/circleCharge2.wav'),
     circleCharge3: new Audio('sounds/circleCharge3.wav'),
+    leap: new Audio('sounds/leap.wav'),
+    slip: new Audio('sounds/slip3.wav'),
+    weave: new Audio('sounds/weave.wav'),
+    slorch: new Audio('sounds/slorch.wav'),
   };
 
   let mons = ["Slime", "Spider", "Wolfpup", "Wolf", "Crystal", "Wasp", "Goblin", "Hobgoblin", "Fleshball", "Fleshegg", "Rabbit", "Bunny", "Shade", "Snake"];

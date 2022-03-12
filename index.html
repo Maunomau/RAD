@@ -153,6 +153,7 @@ text
   //unsealMons = [];//Ugh, I hoped to not need to do this, did something even worse and just spawned new monsters
   capturedMons = [];
   haste = 0;
+  leapcd = 20;
   circlesFound = 0;
   cwarp = 4;
   advanceTimeOnDefeat = false;
@@ -328,6 +329,9 @@ text
       if(e.key=="l" && tileSize > 16) {
         tileSize -= 16;
         setupCanvas();
+      }
+      if(e.key=="f" && "can leap" && turn > leapturn+leapcd) {
+        player.leap();
       }
       
       //Not how I'd like to do this but will do for now.

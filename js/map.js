@@ -86,12 +86,18 @@ function generateWorld(){
           //Could do this automatically based on main circle location, should be easy if it's a dumb north circle is straight north.
         }
         let monAmount = randomRange(-1,1, worldRNG);
+        let mainMon = 0;
+        if(type == "9") {
+          mainMon = shuffle([Slime, Spider, Rabbit], worldRNG)[0];
+          monAmount = randomRange(0,1, worldRNG);
+          //console.log("%cmainMon "+mainMon.constructor.name+". ", "color:brown");
+        }
         wTiles[i][j] = {
           type:type,
           //runes:[worldRNG.getItem(unassignedRunes)], //unassignedRunes is already shuffled so no need.
           runes:[unassignedRunes.shift()], //ie. ["akesi","ala","ante"] or possibly(unlikely) [{w:akesi,p2,p3},{w:ale,p2,p3},{w:ante,p2,p3}] 
           //circleArea:circlearea,
-          mainMonster:0,
+          mainMonster:mainMon,
           monsterAmount:monAmount,
           monsters:[],
           otherstuff:{},
@@ -140,9 +146,9 @@ function generateLevel(entryDir=-1, playerHp=3){
   //currentSeed = parseInt(day+""+parseInt(+wpos[0]+""+(wpos[1])+""+(wpos[2]))+""+worldRNG.getSeed());
   //currentSeed = Math.sqrt(Math.sqrt(currentSeed))+worldRNG.getSeed()
   //currentSeed = (day+(wpos[0]/100)+(wpos[1]*10)+(wpos[2])+worldRNG.getSeed());
-  currentSeed = ([day, wpos[0], wpos[1], worldRNG.getSeed(), wpos[2], wpos[3]].join(''));
-  //while(currentSeed.length)
-  currentSeed = parseInt([day, wpos[0], wpos[1], worldRNG.getSeed(), wpos[2], wpos[3]].join(''));
+  currentSeed = ([day, wpos[0], wpos[1], worldSeed, wpos[2], wpos[3]].join(''));
+  currentSeed = parseInt([day, wpos[0], wpos[1], worldSeed, wpos[2], wpos[3]].join(''));
+  //while(Math.ceil(Math.log10(currentSeed + 1))>8) currentSeed = Math.floor(currentSeed/2);
   if (savedMaps.hasOwnProperty(currentSeed)){
     console.log("map already visited "+currentSeed);
     tiles = savedMaps[currentSeed].map;
@@ -351,7 +357,7 @@ function generateTiles(roomtype=2){
       //console.log("mapgen stuff:"+value+" "+x+" "+y+" ");
       if (value == 0) {
         //if(Math.abs(numtiles-x))
-        let pd = 3;
+        let pd = 3;//pool distance
         if(
             (x==pd && y>=pd && y<= numTiles-pd-1) ||
             (y==pd && x>=pd && x<= numTiles-pd-1) ||

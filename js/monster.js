@@ -12,7 +12,7 @@ class Monster{
     this.piptype = pipred;
     this.offsetX = 0;
     this.offsetY = 0;
-    this.lastMove = [-1,0];
+    this.lastMove = [0,1];
     this.bonusAttack = 0;
     this.shield = 0;
     this.dir = 0;
@@ -378,6 +378,40 @@ class Player extends Monster{
     */
   }
   
+  leap(){
+    if(this.tile.depth < 4 && !this.small){
+      let leapTile = tiles[this.tile.x + (this.lastMove[0]*2)][this.tile.y + (this.lastMove[1]*2)];
+      let pathTile = tiles[this.tile.x + this.lastMove[0]][this.tile.y + this.lastMove[1]];
+      //jump over a single flyable tile that can have a small monster and land into crawling position
+      if(pathTile.flyable && (!pathTile.monster || pathTile.monster.small || pathTile.monster.resting) && (!leapTile.monster || leapTile.monster.resting) && leapTile.crawlable){
+        //handle resting monster //// TODO: a better way to allow ignoring resting monsters
+        /*
+        if(leapTile.monster && leapTile.monster.resting){
+          if(!pathTile.monster && pathTile.passable) {
+            console.log("leap 1 ");
+            leapTile.monster.move(pathTile);
+            this.move(leapTile);
+          }else{
+            console.log("leap 2 ");
+            this.monster.swap(leapTile, this.tile);
+          }
+        }else{ 
+          this.move(leapTile);
+          console.log("leap 3 ");
+        }
+        */
+        this.move(leapTile);
+        //crouch
+        this.small = true;
+        this.peaceful = true;
+        this.sprite = Math.min(4+this.tile.depth, 6);
+        //cooldown
+        leapturn = turn;
+        playSound("leap");
+      }else playSound("no");
+    }else playSound("no");
+  }
+  
   addSpell(newSpell){                                                       
     //let newSpell = shuffle(Object.keys(spells))[0];
     //this.spells.push(newSpell);
@@ -516,14 +550,52 @@ class Slime extends Monster{
   constructor(tile){
       super(tile, 0, 2, 4);
       this.small = true;
+      this.slimewalker = true;
+  }
+  
+  //remove slime or water from tile to gain hp, 
+  doStuff(){
+    let playerDistance = this.tile.dist(player.tile);
+    //consume liquid to gain hp
+    if(randomRange(0,3) == 1 && this.hp < this.fullHp && (this.tile.liquid == "water" || this.tile.liquid == "slime")){
+      this.hp++
+      if(this.tile.depth == 1){
+        this.tile.liquid = "none";
+        this.tile.depth = 0;
+      }
+    }
+    //consume slime just because
+    else if(this.tile.liquid == "slime" && randomRange(0,7) == 1 && this.tile.depth == 1){
+      this.tile.liquid = "none";
+      this.tile.depth = 0;
+      super.doStuff();
+    }
+    //leave slime randomly if above 1 hp
+    else if(playerDistance > 1 && this.tile.liquid != "water" && this.tile.depth < 1 && randomRange(0,9) == 1 && this.hp > 1){
+      this.tile.liquid = "slime";
+      this.tile.depth = 1;
+      //this.hp--
+    }
+    else{
+      super.doStuff();
+    }
+    
   }
 
   update(){
+    
     let startedStunned = this.stunned;
     super.update();
     if(!startedStunned){
       this.stunned = true;
     }
+  }
+  KO(){
+    if(this.tile.liquid != "water" && this.tile.depth < 1){
+      this.tile.liquid = "slime";
+      this.tile.depth = 1;
+    }
+    super.KO();
   }
 }
 
@@ -535,6 +607,20 @@ class Spider extends Monster{
   constructor(tile){
       super(tile, 1, 1, 12);
       this.small = true;
+      this.webwalker = true;
+  }
+  doStuff(){
+    let playerDistance = this.tile.dist(player.tile);
+    //actually only care about being right next to player so maybe something else would be better
+    //spend a turn adding a web randomly
+    if(randomRange(0,5) == 1 && playerDistance>1 && !this.tile.web){
+      this.tile.web = true;
+      playSound("weave", this.tile);
+      //super.doStuff();
+    }else{
+      super.doStuff();
+    }
+    
   }
 }
 
