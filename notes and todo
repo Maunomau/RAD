@@ -92,28 +92,25 @@ Running(shift + direction to automove) making it follow corridors until somethin
   Needs serious rework of how input is handled so not doing it for now
 Figure out a nice way exclude resting monsters from being treated like non-resting ones(moving them from tile.monster to tile.restingmonster or such might be best, that'd require going over everything that handles monsters)
 line building after finding all outer circles?
+sleeping spot you can use to pass the night(so that actually coming back to base during night makes sense, would also allow making night last until you do get back or just be much longer)
 
 todo:
 
 Monster improvements
-  Hogoblins/Orcs sometimes knock you back
-  Goblins very rarely crawl into neighbouring vents(they also can't attack while doing that)
   Mirrors(make crystals actually immobile but able to spawn mirrors that they shoot at to attack you)
   Golem monster that uses current crystal behaviour aside from wooping
   Make fleshball use DRAG and WATERWOOP spells, rest on it's own and whatever else to make it more dangerous
 Make fleshballs "follow" you to differnt maps
 Something that gives max energy/hp. Mushrooms?
 Let you know which spell a circle gives before charging it?
-Yeah, just a sudden port home at the end of day sucks.
 
 bugs:
 passing in water messes with player sprite sometimes
-haste breaks things badly on map change
 pressing spell keys with no spells gives harmless error
 quakes can't break flesh eggs
-something wrong with rng.
 something wrong with rune drops(or is there?).
 leaping on defeated monsters can result in weird behaviour.
+slipping seems to happen after player's depth is checked and adjusted for.
 
 not done but no longer as important:
   Show rune icons on UI, fancy way would be to show runes moving from count to drop indicator and then to level.
@@ -123,6 +120,12 @@ not done but no longer as important:
       Or some other way to make playing frugally/optimally more interesting, as is you do interesting stuff only when it's the only way to avoid taking damage.
 
 done:
+
+sudden port home at the end of day sucks. Now you go home when using any exit instead, does mean that you can safely get back home with all of your runes by just waiting... Not sure I want that, just making night more dangerous would help.
+something wrong with rng.
+haste breaks things badly on map change
+Hogoblins/Orcs sometimes knock you back
+Goblins (very rarely, actually whenever seems fine) crawl into neighbouring vents(they also can't attack while doing that)
 Leaping
 Slime puddles you slip on
 Spider webs

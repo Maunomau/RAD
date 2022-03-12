@@ -165,24 +165,25 @@ function passTime(){
   
   if (time > timeInDay) {
     
-    //drop runes
-    while(runeinv.length){
-      runes[runeinv[0]].timer = 2;
-      let rtile = randomCrawlableTile(0)
-      runes[runeinv[0]].x = rtile.x;
-      runes[runeinv[0]].y = rtile.y;
-      runes[runeinv[0]].wx = wpos[0];
-      runes[runeinv[0]].wy = wpos[1];
-      runes[runeinv[0]].holder = false;
-      wTiles[wpos[0]][wpos[1]].runes.push(runeinv.shift());
-      //console.warn("Dropped a rune!"+"");
+    if("porthome on dayend" == "yes"){
+      //drop runes
+      while(runeinv.length){
+        runes[runeinv[0]].timer = 2;
+        let rtile = randomCrawlableTile(0)
+        runes[runeinv[0]].x = rtile.x;
+        runes[runeinv[0]].y = rtile.y;
+        runes[runeinv[0]].wx = wpos[0];
+        runes[runeinv[0]].wy = wpos[1];
+        runes[runeinv[0]].holder = false;
+        wTiles[wpos[0]][wpos[1]].runes.push(runeinv.shift());
+        //console.warn("Dropped a rune!"+"");
+      }
+      wpos[0] = 14;
+      wpos[1] = 14;
+      savedPlayer = player;
+      this.monster = null;
+      startLevel(-1, player.hp);
     }
-    
-    wpos[0] = 14;
-    wpos[1] = 14;
-    savedPlayer = player;
-    this.monster = null;
-    startLevel(-1, player.hp);
     
     day++;
     time = 0;
@@ -190,22 +191,25 @@ function passTime(){
   }
   
   //darkness = Math.floor(time/8) / Math.floor(timeInDay/8)
-  switch(Math.floor((time/timeInDay)*10)) {
-    case 0://
-      darkness = 0.25;
-      //spawnMonster(Fleshegg);
-      break;
-    case 1: darkness = 0; break;
-    case 2: darkness = 0; break;
-    case 3: darkness = 0; break;
-    case 4: darkness = 0; break;
-    case 5: darkness = 0.25; break;
-    case 6: darkness = 0.5; break;
-    case 7: darkness = 0.5; break;
-    case 8: darkness = 0.65; break;
-    case 9: darkness = 0.8; break;
-    case 10: darkness = 1; break;
-  }
+  if(day == levelday){//maintains full darkness until player leaves a level
+    switch(Math.floor((time/timeInDay)*10)) {
+      case 0://
+        darkness = 0.25;
+        //spawnMonster(Fleshegg);
+        break;
+      case 1: darkness = 0; break;
+      case 2: darkness = 0; break;
+      case 3: darkness = 0; break;
+      case 4: darkness = 0; break;
+      case 5: darkness = 0.25; break;
+      case 6: darkness = 0.5; break;
+      case 7: darkness = 0.5; break;
+      case 8: darkness = 0.65; break;
+      case 9: darkness = 0.8; break;
+      case 10: darkness = 1; break;
+    }
+}
+  //night time events
   if(time >= timeInDay/2 && time % 45 == 0){
     //cast QUAKE, or I could just copy what it does here
     for(let i=0; i<numTiles; i++){
@@ -334,6 +338,7 @@ function startLevel(entryDir, playerHp=3){
   
   gameState = "running";
   levelturn = 0;
+  levelday = day;
   gemMax = runeinv.length + gemCount();
 }
 

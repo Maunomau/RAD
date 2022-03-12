@@ -782,21 +782,22 @@ class Goblin extends Monster{
     //check tiles for crawl only
     let neighbors = this.tile.getAdjacentCrawlable();
     neighbors = neighbors.filter(t => (!t.monster || t.monster.resting));
-    if(neighbors.length) neighbors.sort((a,b) => a.dist(player.tile) - b.dist(player.tile));
-    let newTile = neighbors[0];
-    if(!this.small && !newTile.passable && playerDistance > 1){
-      this.small = true;
-      this.sprite = 29;
-      this.peaceful = true;
-      this.tryMove(newTile.x - this.tile.x, newTile.y - this.tile.y);
-    }else if(this.small && this.tile.passable){/*stand up*/
-      this.small = false;
-      this.sprite = 6;
-      this.peaceful = false;
-    }else{
-      super.doStuff();
-    }
-    
+    if(neighbors.length) {
+      neighbors.sort((a,b) => a.dist(player.tile) - b.dist(player.tile));
+      let newTile = neighbors[0];
+      if(!this.small && !newTile.passable && playerDistance > 1){
+        this.small = true;
+        this.sprite = 29;
+        this.peaceful = true;
+        this.tryMove(newTile.x - this.tile.x, newTile.y - this.tile.y);
+      }else if(this.small && this.tile.passable){/*stand up*/
+        this.small = false;
+        this.sprite = 6;
+        this.peaceful = false;
+      }else{
+        super.doStuff();
+      }
+    }else super.doStuff();
     //super.doStuff();
   }
 }

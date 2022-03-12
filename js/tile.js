@@ -381,10 +381,13 @@ class Exit extends Tile{
   interactWith(monster){
     if(monster.isPlayer){
 			playSound("newLevel");
-      if(level == numLevels){//TBR
-				console.log("Win.");
-				//addRecords(runeinv.length, true);
-        showTitle();
+      if(levelday != day){
+				savedPlayer = player;
+				wpos[0] = 14;
+				wpos[1] = 14;
+				startLevel(this.entryDir, player.hp);
+				console.table(wpos);
+				
       }else{
         //level++;
 				savedPlayer = player;

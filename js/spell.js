@@ -508,7 +508,7 @@ function dropRunes(){
   Object.keys(runes).forEach((rune, i) => {
     //let r = runes[rune.getOwnPropertyNames()[0]]; //a bit ehh but should work(ie. r = runes["ale"])
     let r = runes[rune];
-    if(wpos[0] == r.wx && wpos[1] == r.wy && r.setday != day){
+    if(wpos[0] == r.wx && wpos[1] == r.wy && r.setday != levelday){
       let tile = tiles[r.x][r.y];
       if(tile.crawlable && (!tile.circle >= 0) && !tile.exit && !tile.rune) {//if valid location
         console.log("rune("+rune+") at "+r.x+","+r.y);
@@ -524,14 +524,14 @@ function dropRunes(){
         }
       }
       if (r.timer <= 0){
-        tile.setEffect(11);
+        tile.setEffect(9);
         tile.rune = r.word;
         if(tile.runehint) tile.runehint = false;
-        r.setday = day;
-      }else if(r.hintday != day){
-        tile.setEffect(13);
+        r.setday = levelday;
+      }else if(r.hintday != levelday){
+        tile.setEffect(9);
         tile.runehint = r.word;
-        r.hintday = day;
+        r.hintday = levelday;
       }else if(r.timer <= 50){
         tile.setEffect(12);
       }else tile.setEffect(0);

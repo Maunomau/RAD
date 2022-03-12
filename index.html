@@ -358,10 +358,15 @@ text
         //startLevel(0, 0, 0, 0, day);
         //startLevel(worldPos[0], worldPos[1], worldPos[2], worldPos[3], day);
         //startLevel(wpos.join(''));
-        startLevel(0);
+        startLevel(-1);
       }
       if(e.key=="å") {
-        generateTiles();
+        wpos[0] = 14;
+        wpos[1] = 14;
+        savedPlayer = player;
+        this.monster = null;
+        startLevel(-1, player.hp);
+        //generateTiles();
       }
       if(e.key=="g") {
         //usedRunes.push([0, 1, player.tile, 1, wpos[0], wpos[1]]);
