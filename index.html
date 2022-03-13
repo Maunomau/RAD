@@ -1,7 +1,5 @@
 <!DOCTYPE html>
 <title>RADiaNTFoRM</title>
-
-
 <style>
     canvas{
         outline: 1px solid white;
@@ -13,10 +11,8 @@
         margin-top: 50px;
     }
 </style>
-
-
-text
-<br>
+<!--RADiaNTFoRM-->
+<!--<br>-->
 <canvas></canvas>
 <script src="https://cdn.jsdelivr.net/npm/rot-js@2/dist/rot.js"></script>
 <script src="rotjs/rot.js"></script>
@@ -70,10 +66,10 @@ text
   runesprites = [] //used to combine random runesheets
 
   effectsheet = new Image();
-  effectsheet.src = 'effects.png';
+  effectsheet.src = 'art/effects.png';
 
   tileset = new Image();
-  tileset.src = 'tiles.png';
+  tileset.src = 'art/tiles.png';
   
   maincircleSheet = new Image();
   maincircleSheet.src = 'art/maincircle1.png';
@@ -95,44 +91,44 @@ text
 
   //There's a better way to do this I assume.
   pipred = new Image();
-  pipred.src = 'pipred.png';
+  pipred.src = 'art/pipred.png';
 
   pipredshield = new Image();
-  pipredshield.src = 'pipredwhite.png';
+  pipredshield.src = 'art/pipredwhite.png';
 
   pipblue = new Image();
-  pipblue.src = 'pipblue.png';
+  pipblue.src = 'art/pipblue.png';
 
   pipblueshield = new Image();
-  pipblueshield.src = 'pipbluewhite.png';
+  pipblueshield.src = 'art/pipbluewhite.png';
 
   pipyellow = new Image();
-  pipyellow.src = 'pipyellow.png';
+  pipyellow.src = 'art/pipyellow.png';
 
   pipyellowshield = new Image();
-  pipyellowshield.src = 'pipyellowwhite.png';
+  pipyellowshield.src = 'art/pipyellowwhite.png';
 
   pipshield = new Image();
-  pipshield.src = 'pipwhite.png';
+  pipshield.src = 'art/pipwhite.png';
 
   pipgray = new Image();
-  pipgray.src = 'pipgray.png';
+  pipgray.src = 'art/pipgray.png';
 
   pipgrayshield = new Image();
-  pipgrayshield.src = 'pipgraywhite.png';
+  pipgrayshield.src = 'art/pipgraywhite.png';
 
   pipz0 = new Image();
-  pipz0.src = 'pipZ0.png';
+  pipz0.src = 'art/pipZ0.png';
 
   pipz1 = new Image();
-  pipz1.src = 'pipZ1.png';
+  pipz1.src = 'art/pipZ1.png';
 
   pipz2 = new Image();
-  pipz2.src = 'pipZ2.png';
+  pipz2.src = 'art/pipZ2.png';
 
   tileset.onload = showTitle;
 
-  //tileSize = 64;
+  tileSize = 48;
   tileSize = 32;
   numTiles = 17;
   uiWidth = 5;
@@ -153,7 +149,7 @@ text
   //unsealMons = [];//Ugh, I hoped to not need to do this, did something even worse and just spawned new monsters
   capturedMons = [];
   haste = 0;
-  leapcd = 20;
+  leapcd = 10;
   circlesFound = 0;
   cwarp = 4;
   advanceTimeOnDefeat = false;
@@ -385,4 +381,3 @@ text
 
 </script>
 <br>
-text2 <script>sealedMons//gameState</script>

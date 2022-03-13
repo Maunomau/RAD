@@ -15,9 +15,11 @@ class Tile{
 
   replace(newTileType){
 		let monmove = this.monster;
+		let runemove = this.rune;
     tiles[this.x][this.y] = new newTileType(this.x, this.y);
 		//copy monster over(being in vent while it's replaced with floor breaks things otherwise)
 		tiles[this.x][this.y].monster = monmove;
+		tiles[this.x][this.y].rune = runemove;
     return tiles[this.x][this.y];
   }
 
@@ -415,7 +417,7 @@ class Wall extends Tile{
   }
 }
 
-class Door extends Tile{
+class Wall2 extends Tile{
   constructor(x, y){
     super(x, y, 7, false, false, false);
     //super(x, y, 3, false, 0, "none", 0);

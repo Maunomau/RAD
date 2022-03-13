@@ -18,11 +18,11 @@ function generateWorld(){
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//10
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 00, 00, 00, 00, 00, 00, 00, 00, 00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//11
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 00, 00, 00, 00, 30, 23, 00, 00, 00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//12
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 00, 00, 00, 00, 00, 23, 26, 36, 00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//13
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 00, 00, 91, 21, 21, 14, 27, 27, 00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//14
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 00, 00, 00, 00, 00, 25, 38, 00, 00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//15
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 00, 00, 00, 22, 32, 25, 00, 00, 00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//16
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 00, 00, 00, 00, 00, 00, 00, 00, 00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//17
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 00, 00, 00, 91, 00, 23, 26, 36, 00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//13
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 00, 00, 91, 91, 91, 14, 27, 27, 00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//14
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 00, 00, 00, 00, 00, 25, 38, 38, 00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//15
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 00, 00, 00, 32, 32, 25, 00, 38, 00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//16
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 00, 00, 00, 00, 00, 35, 35, 38, 00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//17
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//18
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//19
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//20
@@ -65,6 +65,8 @@ function generateWorld(){
       }
     }
   }
+  //starting spell
+  spellSlots.push(spellOptions[18]);
   
   
   //replace map numbers with objects and figure out possible rooms for different circles
@@ -88,7 +90,7 @@ function generateWorld(){
         let monAmount = randomRange(-1,1, worldRNG);
         let mainMon = 0;
         if(type == "9") {
-          mainMon = shuffle([Slime, Spider, Rabbit], worldRNG)[0];
+          mainMon = shuffle([Slime, Spider, Rabbit, Goblin, Wasp, Crystal], worldRNG)[0];
           monAmount = randomRange(0,1, worldRNG);
           //console.log("%cmainMon "+mainMon.constructor.name+". ", "color:brown");
         }
@@ -619,7 +621,7 @@ function generateMonsters(){
   monsters = [];
   let monsterType
   let room = wTiles[wpos[0]][wpos[1]];
-  let numMonsters = day+room.monsterAmount+randomRange(0,3, mapRNG);
+  let numMonsters = day+room.monsterAmount+randomRange(0,2, mapRNG);
   if(room.mainMonster) monsterType = room.mainMonster;
   else {
     monsterType = shuffle([Slime, Spider, Wolf, Crystal, Wasp, Goblin, Hobgoblin, Rabbit], mapRNG)[0];

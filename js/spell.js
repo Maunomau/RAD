@@ -188,15 +188,17 @@ spells = {
       //for(let i=0;i<=runeinv.length;i++){
       for(let i=0;i<=2;i++){
         let testTile = newTile.getNeighbor(player.lastMove[0],player.lastMove[1]);
-        if(testTile.passable){
-          testTile.replace(Pool);
-          newTile = testTile;
-        }else if(testTile.crawlable){
-          testTile.replace(Floor2);
-          newTile = testTile;
-        }else if(inBounds(testTile.x, testTile.y)){
-          testTile.replace(Vent);
-          newTile = testTile;
+        if(testTile.constructor.name != "Exit"){
+          if(testTile.passable){
+            testTile.replace(Pool);
+            newTile = testTile;
+          }else if(testTile.crawlable){
+            testTile.replace(Floor2);
+            newTile = testTile;
+          }else if(inBounds(testTile.x, testTile.y)){
+            testTile.replace(Vent);
+            newTile = testTile;
+          }
         }
       }
     }

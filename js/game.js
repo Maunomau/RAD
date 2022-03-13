@@ -314,6 +314,9 @@ function showTitle(){
 function startGame(){
   //playSound("newLevel");
   sounds["newLevel"].play();
+  totalCharge = 0;
+  spellSlots = [];//player.spells are set to this.
+  spellsCast = 0;
   worldSeed = ROT.RNG.getUniformInt(1,100000);
   worldRNG.setSeed(worldSeed)
   wTiles = [];
@@ -323,12 +326,7 @@ function startGame(){
   circlesFound = 0;
   cwarp = 4;
   //wpos = [14,14,10,0];
-  level = 1;//TBR
-  charges = 0;//TBR
   runeinv = [];
-  totalCharge = 0;
-  spellSlots = [];//player.spells are set to this.
-  spellsCast = 0;
   turn = 0;
   levelturn = 0;
   numSpells = 0;
@@ -364,6 +362,9 @@ function resumeGame(){
   
   lastGemCount = -1;
   gemid = 0;
+  leapturn = -100;
+  hunterTimer = -1;
+  hunterDir = false;
   
   startLevel(-1, startingHp);
   //gameState = "mapgen";

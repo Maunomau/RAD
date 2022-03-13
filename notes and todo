@@ -94,14 +94,13 @@ Figure out a nice way exclude resting monsters from being treated like non-resti
 line building after finding all outer circles?
 sleeping spot you can use to pass the night(so that actually coming back to base during night makes sense, would also allow making night last until you do get back or just be much longer)
 Make rooms do turns to match turns spent away when returning to one.
+boss areas full of 1 monster type along with an elite version that instead of runes just have an ability gem/mask/doll associated with the monsters, making deals/contracts could later be tied to getting the thing either as way to get it or as something you do after getting it.
 
 todo:
 
 Monster improvements
   Mirrors(make crystals actually immobile but able to spawn mirrors that they shoot at to attack you)
   Golem monster that uses current crystal behaviour aside from wooping
-  Make fleshball use DRAG and WATERWOOP spells, rest on it's own and whatever else to make it more dangerous
-Make fleshballs "follow" you to differnt maps
 Something that gives max energy/hp. Mushrooms?
 Let you know which spell a circle gives before charging it?
 
@@ -123,6 +122,8 @@ not done but no longer as important:
 
 done:
 
+Make fleshballs "follow" you to differnt maps
+Make fleshball use DRAG and WATERWOOP spells, rest on it's own and whatever else to make it more dangerous
 sudden port home at the end of day sucks. Now you go home when using any exit instead, does mean that you can safely get back home with all of your runes by just waiting... Not sure I want that, just making night more dangerous would help.
 something wrong with rng.
 haste breaks things badly on map change

@@ -71,8 +71,14 @@ class Monster{
     
     let playerDistance = this.tile.dist(player.tile);
     //if ("cansee" == "cansee" && !this.smart){
-    if (playerDistance <= 2 || player.tile.constructor.name != "Vent" || (player.tile.depth < 4 && !player.small) || player.tile.depth < 2){
-      
+    
+    /*if(playerDistance <= 2 || player.tile.constructor.name != "Vent")console.log("Not in distant Vent.");
+    if((player.tile.depth < 4 && !player.small) || player.tile.depth < 2)console.log("Not hidden in water.");
+    if(player.tile.depth < 4 && !player.small)console.log("Not hidden in deepish water.");
+    if(player.tile.depth < 2)console.log("Not hidden in shallow water.");*/
+    
+    if(playerDistance <= 2 || player.tile.constructor.name != "Vent" && ((player.tile.depth < 4 && !player.small) || player.tile.depth < 2)){
+      console.log(""+this.constructor.name+" sees you, ("+playerDistance+","+player.tile.constructor.name+","+player.tile.depth+","+player.small+").");
 
       neighbors = neighbors.filter(t => !t.monster || t.monster.isPlayer || t.monster.resting);
 
