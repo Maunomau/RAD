@@ -93,7 +93,6 @@ Running(shift + direction to automove) making it follow corridors until somethin
 Figure out a nice way exclude resting monsters from being treated like non-resting ones(moving them from tile.monster to tile.restingmonster or such might be best, that'd require going over everything that handles monsters)
 line building after finding all outer circles?
 sleeping spot you can use to pass the night(so that actually coming back to base during night makes sense, would also allow making night last until you do get back or just be much longer)
-Make rooms do turns to match turns spent away when returning to one.
 
 todo:
 
@@ -108,13 +107,12 @@ Let you know which spell a circle gives before charging it?
 bugs:
 passing in water messes with player sprite sometimes
 pressing spell keys with no spells gives harmless error
+quakes can't break flesh eggs
 something wrong with rune drops(or is there?).
 leaping on defeated monsters can result in weird behaviour.
 slipping seems to happen after player's depth is checked and adjusted for.
-time doesn't pass in rooms you aren't in leading to some slight weirdness, especially when it's dark.
 
 not done but no longer as important:
-  quakes can't break flesh eggs(they've got timers now)
   Show rune icons on UI, fancy way would be to show runes moving from count to drop indicator and then to level.
   due to no stun on hit:
     resting hpup time counter

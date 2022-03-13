@@ -44,7 +44,7 @@ class Monster{
         if(this.teleportCounter) this.teleportCounter--;
         return
       }
-      if(this.stunned || this.teleportCounter > 0){
+      if(this.stunned || this.teleportCounter > 0){    
         this.stunned = false;
         this.teleportCounter--;
         console.log(""+this.constructor.name+" is stunned.");
@@ -603,13 +603,13 @@ class Slime extends Monster{
     if(randomRange(0,3) && this.hp < this.fullHp && (this.tile.liquid == "water" || this.tile.liquid == "slime")){
       this.hp++
       if(this.tile.depth == 1){
-        this.tile.liquid = false;
+        this.tile.liquid = "none";
         this.tile.depth = 0;
       }
     }
     //consume slime just because
     else if(this.tile.liquid == "slime" && randomRange(0,7) == 1 && this.tile.depth == 1){
-      this.tile.liquid = false;
+      this.tile.liquid = "none";
       this.tile.depth = 0;
       super.doStuff();
     }
@@ -820,85 +820,8 @@ Prefer resting on gems?
 */
 class Fleshball extends Monster{ // Eater Devourer
   constructor(tile){
-      super(tile, 8, 6, 1);
-      this.spells = ['DRAG', 'WATERWOOP', 'DIG'];
-      this.tiredness = 0;
-      this.maxTiredness = 10;
-      hunterPresent = true;
-  }
-  
-  update(){
-    if(time < timeInDay/2 && day == levelday)this.die();
-    if(this.tile.liquid == "water" && this.hp < this.fullHp){
-      this.hp++;
-      //remove puddles
-      if(this.tile.depth == 1){
-        this.tile.liquid = false;
-        this.tile.depth = 0;
-      }
-    }
-    //if(this.stunned) this.sprite = 9;//looks weird
-    
-    super.update();
-  }
-  doStuff(){
-    this.sprite = 8;
-    let playerDistance = this.tile.dist(player.tile);
-    if(this.tiredness >= this.maxTiredness){
-      //this.KO();
-      this.dead = true;
-      this.tile.monster = null;
-      //ROT.RNG to be empty?
-      spawnMonster(Fleshegg, 0, this.tile)
-      //this.tile.monster.hp++;
-      this.tile.monster.timedRelease = 8;
-    }else if((this.tile.liquid != "water" || playerDistance <= 3) && this.hp < 2){
-      //warp to heal in water
-      this.tiredness++;
-      super.castSpell(1);
-      console.log("%cFleshball WATERWOOPed to heal!", "color:pink");
-    }else if(randomRange(0,20) && playerDistance <= 3 && playerDistance > 1 && (player.tile.x == this.tile.x || player.tile.y == this.tile.y )){
-      //set this.lastMove toward player
-      if(player.tile.x == this.tile.x && player.tile.y > this.tile.y){//down
-        this.lastMove = dirmap[0];
-      }else if(player.tile.x < this.tile.x && player.tile.y == this.tile.y){//left
-        this.lastMove = dirmap[1];
-      }else if(player.tile.x == this.tile.x && player.tile.y < this.tile.y){//up
-        this.lastMove = dirmap[2];
-      }else if(player.tile.x > this.tile.x && player.tile.y == this.tile.y){//right
-        this.lastMove = dirmap[3];
-      }
-      this.tiredness++;
-      //DIG if there's wall(thought about just doing something else but this is easier to do atm.)
-      //Similar issue if there's monsters between but them getting beaten up is actually fine.
-      if(!tiles[this.tile.x+this.lastMove[0]][this.tile.x+this.lastMove[1]].crawlable){
-        super.castSpell(2);
-      }else{
-        super.castSpell(0);
-        console.log("%cYou got dragged!", "color:pink");
-      }
-    }else if(randomRange(0,3) == 1 && playerDistance > 6){
-      //should this check if it's in water or out of it and which one it should want?
-      this.tiredness++;
-      super.castSpell(1);
-      console.log("%cFleshball WATERWOOPed!", "color:pink");
-    }else if(randomRange(0,3) == 1 && this.hp < 5){
-      //warp to heal in water
-      this.tiredness++;
-      super.castSpell(1);
-      console.log("%cFleshball WATERWOOPed to heal!", "color:pink");
-    }else if(randomRange(0,3) == 1 && this.tiredness > 5 && playerDistance > 3){
-      //rest? Turn into a flesh egg but turn back after hp missing turns
-      this.tiredness--;
-      this.tiredness--;
-      this.sprite = 9;
-      //this.tiredness--;
-      console.log("%cFleshball takes a break!", "color:pink");
-    }else{
-      super.doStuff();
-      this.tiredness--;
-      //this.tiredness--;
-    }
+      super(tile, 8, 6);
+      this.spells = ['DRAG', 'WATERWOOP'];
   }
 }
 
@@ -910,45 +833,26 @@ No health bar or just 1 pip?
 increased chance to spawn on gems?
 */
 class Fleshegg extends Monster{ // 
-  constructor(tile, contained = Fleshball, timer = false){
+  constructor(tile){
       super(tile, 9, 1);
-      this.contains = contained;//new Fleshball(tile);
-      this.timedRelease = timer;//auto KO after x turns
+      this.contains = Fleshball//new Fleshball(tile);
   }
   
   doStuff(){
-    //Should this be in update or doStuff? It shouldn't matter, haste blocks both and stun neither
-    //maybe it matters for whether new monster gets doStuff or not?
-    if(this.timedRelease){
-      this.timedRelease--;
-      if(this.timedRelease == 0) this.KO();
-    }
     return;
-  }
-  
-  update(){
-    if(time < timeInDay/2 && day == levelday)this.die();
-    super.update();
   }
   
   KO(){
     var freed = this.contains;
     var where = this.tile;
-    if("fleshball not already around" && !hunterPresent){//What's a good way to check if monsters includes a monster?
-      //console.log("freed:"+freed.constructor.name);
-      console.log("free");
-      this.dead = true;
-      this.tile.monster = null;
-      //ROT.RNG to be empty?
-      spawnMonster(freed, 0, this.tile)
-      //this.tile.monster = freed;
-      //monsters.push(freed);
-      playSound("hatch", this.tile);
-    }else {
-      //this.dead = true;
-      //this.tile.monster = null;
-      //playSound("slorch", this.tile);
-    }
+    console.log("freed:"+freed);
+    console.log("free");
+    this.dead = true;
+    this.tile.monster = null;
+    //ROT.RNG to be empty?
+    spawnMonster(freed, 0, this.tile)
+    //this.tile.monster = freed;
+    //monsters.push(freed);
   }
 }
 

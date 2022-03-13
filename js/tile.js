@@ -113,21 +113,20 @@ class Tile{
     }
 		if(this.maincircle >= 0){
 			let c = circle[this.maincircle];
-			let charge = c.runesChargedWith.length;
 			if(c.found || this.maincircle == 4){
-				//should main circle count for circlesFound? nah
-				if(charge <= 0 && totalCharge < runeTypesTotal && circlesFound < 8){//total and found checks prevent middle from always being this
+				if(c.charge <= 0){
 					drawTile(this.maincircle, this.x, this.y, maincircleSheet, 3);
-				}else if (circlesFound < 8 && charge >= c.maxCharge) {
+				}else if (circlesFound < 8 && c.charge >= c.maxCharge) {
 					drawTile(this.maincircle, this.x, this.y, maincircleUnConChargedSheet, 3);
-				}else if (circlesFound < 8 && charge > 0) {
+				}else if (circlesFound < 8 && c.charge > 0) {
 					drawTile(this.maincircle, this.x, this.y, maincircleUnConChargingSheet, 3);
-				}else if (charge <= 0 && circlesFound >= 8 && totalCharge < runeTypesTotal) {
+				}else if (circlesFound >= 8) {//should main circle count for circlesFound?
 					drawTile(this.maincircle, this.x, this.y, maincircleConnectedSheet, 3);
-				}else if (charge >= c.maxCharge || totalCharge >= runeTypesTotal) {
-					drawTile(this.maincircle, this.x, this.y, maincircleChargedSheet, 3);
-				}else if(charge > 0 && charge >= c.maxCharge){
+				}
+				else if(c.charge > 0){
 					drawTile(this.maincircle, this.x, this.y, maincircleChargingSheet, 3);
+				}else if (c.charge >= c.maxCharge) {
+					drawTile(this.maincircle, this.x, this.y, maincircleChargedSheet, 3);
 				}
 			}
     }
@@ -191,8 +190,6 @@ class Tile{
 			
 			if(this.maincircle == 4 && totalCharge >= runeTypesTotal){
 				console.log("%cWin.", "color:yellow");
-				//Not actually visibly standing on the circle bothers me.
-				//tick();
 				addRecords(runeinv.length, true);
         showTitle();
 			}
@@ -392,11 +389,7 @@ class Exit extends Tile{
 				console.table(wpos);
 				
       }else{
-        if(hunterPresent == true){
-					//Would like to look at distance between fleshball and player but not sure how to get fleshballs tile so this'll do for now.
-					hunterTimer = Math.floor(numTiles/2-randomRange(0,5));
-					hunterDir = this.entryDir;
-				}
+        //level++;
 				savedPlayer = player;
 				wpos[0] += this.wx
 				wpos[1] += this.wy
