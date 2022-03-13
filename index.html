@@ -368,19 +368,9 @@ text
         startLevel(-1, player.hp);
         //generateTiles();
       }
-      if(e.key=="g") {
+      if(e.key=="ö") {
         //usedRunes.push([0, 1, player.tile, 1, wpos[0], wpos[1]]);
         player.spells = shuffle(Object.keys(spells));
-      }
-      if(e.key=="ö") {
-        tiles[player.tile.x][player.tile.y].monster = undefined;
-        player = undefined;
-        tiles = savedMaps[level-1].map ;//If I don't clone the map before saving this loads the map from when I left that particular level, that's potentially nice.
-        player = new Player(randomPassableTile("rune", gRNG));
-        //getMonsters();
-        monsters = savedMaps[level-1].mons ;
-        console.log("Loading saved map "+ level-1 +".");
-        //startLevel2(0)
       }
       
       console.groupEnd()

@@ -65,7 +65,7 @@ function draw(){
     
     drawText("Score:"+totalCharge+" "+""+"", tileSize/2, false, 25, "violet");
     drawText("Day:"+day+" t:"+time+"", tileSize/2, false, 45, "violet");
-    drawText("Runes:"+runeinv.length+"/"+gemMax, tileSize/2, false, 65, "violet");
+    drawText(""+runeinv.length+"/"+gemMax, tileSize/2, false, 65, "violet");
     
     let lasti = 0;
     let spellColor = "aqua";
@@ -148,7 +148,7 @@ function tick(){
   
   turn++;
   levelturn++;
-  gemMax = runeinv.length + usedRunes.length + gemCount();
+  gemMax = runeinv.length + gemCount();
   
   
   
@@ -184,7 +184,7 @@ function passTime(){
       this.monster = null;
       startLevel(-1, player.hp);
     }
-    
+    hunterTimer = -1;
     day++;
     time = 0;
     darkness = 0;
@@ -206,12 +206,41 @@ function passTime(){
       case 7: darkness = 0.5; break;
       case 8: darkness = 0.65; break;
       case 9: darkness = 0.8; break;
-      case 10: darkness = 1; break;
+      case 10: 
+        darkness = 1; 
+        shakeAmount = 30;
+        break;
     }
-}
+  }
   //night time events
-  if(time >= timeInDay/2 && time % 45 == 0){
+  //spawn hunter at exit if timer is out
+  if(hunterTimer) hunterTimer--;
+  if(time >= timeInDay/2 && hunterTimer == 0 && hunterPresent == false){
+    console.log("hunter follows");
+    
+    dirs = [
+      tiles[Math.floor(numTiles/2)][numTiles-2],
+      tiles[0+1][Math.floor(numTiles/2)],
+      tiles[Math.floor(numTiles/2)][0+1],
+      tiles[numTiles-2][Math.floor(numTiles/2)],
+    ]; //Oh, this is global and doesn't seem to vary. But just in case setting it again
+    if(hunterDir==0){
+      spawnMonster(Fleshball, 2, dirs[2]);//exit dir is opposite of entry one
+    }else if(hunterDir==1){
+      spawnMonster(Fleshball, 2, dirs[3]);
+    }else if(hunterDir==2){
+      spawnMonster(Fleshball, 2, dirs[0]);
+    }else if(hunterDir==3){
+      spawnMonster(Fleshball, 2, dirs[1]);
+    }else{
+      spawnMonster(Fleshball, 2, randomWaterTile(gRNG));
+    }
+    hunterTimer = -1;
+  }
+  //after half way through day, every 45 turns
+  if(time >= timeInDay/2 && time % 45 == 0 && wpos != [14, 14, 10, 0] && (wpos[0] != 14 || wpos[1] != 14 ) ){
     //cast QUAKE, or I could just copy what it does here
+    console.log("world shakes");
     for(let i=0; i<numTiles; i++){
       for(let j=0; j<numTiles; j++){
         let tile = getTile(i,j);
@@ -221,6 +250,8 @@ function passTime(){
           if (numWalls < 3 && gRNG.getUniform() < 0.25){
             tile.replace(Floor);
           }
+        }else if(tile.constructor.name == "Floor" && gRNG.getUniform() < 0.05){
+          tile.replace(Pool);
         }else if(tile.monster && !tile.monster.flying){
           if(gRNG.getUniform < 0.5) tile.monster.hit(1) = true;//Chance of breaking flesheggs already around.
           tile.monster.stunned = true;
@@ -228,8 +259,14 @@ function passTime(){
       }
     }
     shakeAmount = 20;
-    //spawnMonster(Fleshegg, 0, tile = randomPassableTile(0, gRNG);
-    spawnMonster(Fleshegg, 0, randomWaterTile(gRNG));
+    if(hunterPresent == false){
+      //spawnMonster(Fleshegg, 0, tile = randomPassableTile(0, gRNG);
+      let waterTile = randomWaterTile(gRNG);
+      //spawnMonster(Fleshegg, 0, waterTile);
+      let monster = new Fleshegg(waterTile, Fleshball, 45);
+      monster.teleportCounter = 0;
+      monsters.push(monster);
+    }
   }
   if(time == 2){
     //spellSlots.push("SEAL");
@@ -240,7 +277,7 @@ function passTime(){
     //spellSlots.push("WALL");
     //spellSlots.push("SHOVE");
   }
-  //if(time == 21) spawnMonster(Fleshegg, 0, randomWaterTile(gRNG));
+  //if(time <= 5 || time == 60 || time == 40 || time == 20) spawnMonster(Fleshegg, 0, randomWaterTile(gRNG));
   console.log("time phase:"+ Math.floor((time/timeInDay)*10) +", darkness is at "+ darkness);
 }
 
@@ -297,6 +334,8 @@ function startGame(){
   seenMons = new Set();
   usedRunes = [];
   leapturn = -100;
+  hunterTimer = -1;
+  hunterDir = false;
   
   day = 1;
   time = 0;
@@ -339,6 +378,7 @@ function startLevel(entryDir, playerHp=3){
   gameState = "running";
   levelturn = 0;
   levelday = day;
+  hunterPresent = false;
   gemMax = runeinv.length + gemCount();
 }
 
@@ -447,11 +487,13 @@ function initSounds(){
     slip: new Audio('sounds/slip3.wav'),
     weave: new Audio('sounds/weave.wav'),
     slorch: new Audio('sounds/slorch.wav'),
+    hatch: new Audio('sounds/unpa1.wav'),
     splash: new Audio('sounds/splash2.wav'),
   };
 
-  let mons = ["Slime", "Spider", "Wolfpup", "Wolf", "Crystal", "Wasp", "Goblin", "Hobgoblin", "Fleshball", "Fleshegg", "Rabbit", "Bunny", "Shade", "Snake"];
-  console.log("Setting up audio for monsters, some file not found errors expected.");
+  //let mons = ["Slime", "Spider", "Wolfpup", "Wolf", "Crystal", "Wasp", "Goblin", "Hobgoblin", "Fleshball", "Fleshegg", "Rabbit", "Bunny", "Shade", "Snake"];
+  let mons = ["Slime", "Spider", "Wolfpup", "Wolf", "Crystal", "Wasp", "Goblin", "Hobgoblin", "Fleshball", "Fleshegg", "Rabbit", "Bunny", "Shade"];
+  //console.log("Setting up audio for monsters, some file not found errors expected.");
   //file not found errors aren't JS errors so can't handle them afaict.
   for(let i=0;i<mons.length;i++){
     sounds['hit1'+mons[i]] = new Audio('sounds/hit'+mons[i]+'.wav');

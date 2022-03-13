@@ -211,16 +211,25 @@ spells = {
       let testTile;
       for(let i=0;i<=dragRange;i++){
         testTile = newTile.getNeighbor(caster.lastMove[0],caster.lastMove[1]);
-        if(testTile.passable && !testTile.monster){
+        if(testTile.crawlable && !testTile.monster){
           newTile = testTile;
         }else{
           break;
         }
       }
       if(testTile.monster){
-        testTile.monster.move(newTile);
-        newTile.monster.stunned = true;
-        newTile.monster.hit(1);
+        //testTile.monster.move(newTile);
+        //trip player, stun and do damage to non players
+        if(testTile.monster.isPlayer){
+          player.small = true;
+          player.peaceful = true;
+          player.sprite = Math.min(4+newTile.depth, 6);
+          player.hit(1, caster);
+        }else{
+          testTile.monster.stunned = true;
+          testTile.monster.hit(1, caster);
+        }
+        testTile.monster.tryPush(newTile.x-testTile.x, newTile.y-testTile.y);
       }
     }
   },
@@ -334,7 +343,7 @@ spells = {
   //Seal/Vanish/Banish
   //just increased cost and drop time to balance
   SEAL: {
-    cost: 5,
+    cost: 10,
     dropdistance: 8,
     droptime: timeInDay,
     f: function(caster){
@@ -356,8 +365,7 @@ spells = {
   CAPTURE: {
     cost: 1,
     dropdistance: 2,
-    droptime: 5,
-    worksnot: true,
+    droptime: 20,
     f: function(caster){
       let tile = caster.tile;
       let testTile = tile.getNeighbor(caster.lastMove[0],caster.lastMove[1]);
@@ -545,7 +553,7 @@ function gemCount(){
   let gemCount = 0;
   tiles.forEach(el => {
     el.forEach(tile => {
-      if (tile.gem) gemCount++;
+      if (tile.rune) gemCount++;
     })
   });
   if(lastGemCount != gemCount)console.log("gemcount add "+(gemCount-lastGemCount)+" = %c"+gemCount, "color:violet");
