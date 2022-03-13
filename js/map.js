@@ -1,7 +1,7 @@
 function generateWorld(){
-  //console.groupCollapsed("worldgen(seed:%c"+ worldRNG.getSeed() +"%c)", "color:green", "color:");
+  console.groupCollapsed("worldgen(seed:%c"+ worldRNG.getSeed() +"%c)", "color:green", "color:");
   //worldRNG.setSeed(122)
-  console.group("worldgen(seed:%c"+ worldRNG.getSeed() +"%c)", "color:green", "color:");
+  //console.group("worldgen(seed:%c"+ worldRNG.getSeed() +"%c)", "color:green", "color:");
   makeRuneList();
   makeRuneList2();
   wTiles = [
