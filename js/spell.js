@@ -75,8 +75,8 @@ spells = {
     cost: 2,
     dropdistance: 1,
     droptime: 100,
-    f: function(){
-      boltTravel(player.lastMove, 16 - Math.abs(player.lastMove[1]), 4);
+    f: function(caster){
+      boltTravel(caster.lastMove, 16 - Math.abs(caster.lastMove[1]), 4, caster);
     }
   },
   SWAP: {
@@ -103,7 +103,7 @@ spells = {
     cost: 2,
     dropdistance: 1,
     droptime: 100,
-    f: function(){
+    f: function(caster){
       let directions = [
         [0, -1],
         [0, 1],
@@ -111,7 +111,7 @@ spells = {
         [1, 0]
       ];
       for(let k=0;k<directions.length;k++){
-        boltTravel(directions[k], 16 - Math.abs(directions[k][1]), 2);
+        boltTravel(directions[k], 16 - Math.abs(directions[k][1]), 2, caster);
       }
     }
   },
@@ -119,9 +119,9 @@ spells = {
     cost: 1,
     dropdistance: 1,
     droptime: 10,
-    f: function(){
+    f: function(caster){
       for(let i=0;i<monsters.length;i++){
-        if (monsters[i].resting){
+        if (monsters[i].resting && monsters[i] != caster){
           monsters[i].rp = 0;
           monsters[i].fullHp += 2;
         }
@@ -132,8 +132,8 @@ spells = {
     cost: 1,
     dropdistance: 1,
     droptime: 100,
-    f: function(){
-      player.bonusAttack=5;
+    f: function(caster){
+      caster.bonusAttack=5;
     }
   },
   // Meh, not sure there's anything I'd want to do based on neighbouring walls
@@ -145,7 +145,7 @@ spells = {
     cost: 1,
     dropdistance: 16,
     droptime: 10,
-    f: function(){
+    f: function(caster){
       for(let i=0; i<numTiles; i++){
         for(let j=0; j<numTiles; j++){
           let tile = getTile(i,j);
@@ -155,7 +155,7 @@ spells = {
             if (numWalls < 3 && gRNG.getUniform() < 0.5){
               tile.replace(Floor2);
             }
-          }else if(tile.monster && !tile.monster.flying){
+          }else if(tile.monster && !tile.monster.flying && tile.monster != caster){
             tile.monster.stunned = true;
           }
         }
@@ -167,7 +167,7 @@ spells = {
     cost: 1,
     dropdistance: 5,
     droptime: 100,
-    f: function(){
+    f: function(caster){
       let directions = [
         [-1, -1],
         [-1, 1],
@@ -175,7 +175,7 @@ spells = {
         [1, 1]
       ];
       for(let k=0;k<directions.length;k++){
-        boltTravel(directions[k], 14, 3);
+        boltTravel(directions[k], 14, 3, caster);
       }
     }
   },
@@ -183,8 +183,8 @@ spells = {
     cost: 1,
     dropdistance: 0,
     droptime: 20,
-    f: function(){
-      let newTile = player.tile;
+    f: function(caster){
+      let newTile = caster.tile;
       //for(let i=0;i<=runeinv.length;i++){
       for(let i=0;i<=2;i++){
         let testTile = newTile.getNeighbor(player.lastMove[0],player.lastMove[1]);
@@ -438,8 +438,8 @@ spells = {
 };
 
 
-function boltTravel(direction, effect, damage){
-  let newTile = player.tile;
+function boltTravel(direction, effect, damage, caster){
+  let newTile = caster.tile;
   while(true){
     let testTile = newTile.getNeighbor(direction[0], direction[1]);
     if(testTile.passable){

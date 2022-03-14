@@ -218,6 +218,18 @@ function generateLevel(entryDir=-1, playerHp=3){
       if(wpos[0] == c.wTile[0] && wpos[1] == c.wTile[1]){
         if(i != 4) {//not the main circle
           let tile = randomPassableTile("exit", mapRNG);
+          //scuffed way to avoid placing under an exit without needing to have this happen after exit placement.
+          //does make changing exit positioning risk issues again.
+          while(true){
+            if((tile.x == Math.floor(numTiles/2) && tile.y == numTiles-2) ||
+              (tile.x == 1 && tile.y == Math.floor(numTiles/2)) ||
+              (tile.x == Math.floor(numTiles/2) && tile.y == 1) ||
+              (tile.x == numTiles-2 && tile.y == Math.floor(numTiles/2))
+            ){
+              console.info("don't put circle under a future exit");
+            }else break;
+            tile = randomPassableTile("exit", mapRNG);
+          }
           tile.circle = i;
           c.roomTileX = tile.x;
           c.roomTileY = tile.y;

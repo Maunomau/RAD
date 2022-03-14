@@ -1,6 +1,6 @@
 class Tile{
   //constructor(x, y, sprite, passable, crawlable, liquid, depth){
-	constructor(x, y, sprite, passable, crawlable=true, flyable=true, liquid=0, depth=0){
+	constructor(x, y, sprite, passable, crawlable=true, flyable=true, liquid="none", depth=0){
     this.x = x;
     this.y = y;
     this.sprite = sprite;
@@ -215,7 +215,7 @@ class Tile{
 				}
 	    }
 			//The way I'm doing this assumes a lot about player's spritesheet, mainly that runes and belt are handled some other way.
-			if (this.liquid && this.depth){
+			if (this.liquid != "none" && this.depth){
 				if(this.depth >= 4) {
 					player.sprite = 6;
 					player.peaceful = true;
@@ -230,6 +230,7 @@ class Tile{
 				}
 			}else if (player.sprite != 0 && player.sprite != 4 && player.sprite < 7){
 				//exit liquid
+				console.log("left liquid! liquid:"+this.liquid+" depth:"+this.depth);
 				if (player.small) player.sprite = 4;
 				else player.sprite = 0;
 			}
@@ -337,9 +338,9 @@ class Tile{
 			}
 			if(this.circle >= 0){
 				let c = circle[this.circle];
-				console.log("warp? "+c.maxCharge+"=="+c.charge);
-				if(c.maxCharge <= c.charge || c.charge > 0 || monster.small && runeinv.length <= 0) {
-					console.log("warp! "+c.maxCharge+"=="+c.charge);
+				console.log("warp? "+c.maxCharge+"=="+c.runesChargedWith.length);
+				if(c.maxCharge <= c.runesChargedWith.length || c.runesChargedWith.length > 0 || monster.small && runeinv.length <= 0) {
+					console.log("warp! "+c.maxCharge+"=="+c.runesChargedWith.length);
 					//warp to main circle
 					//or something, warping probably should be much easier.
 					//circle[4] should give the main circle even if it's moved away from 14,14
@@ -360,21 +361,21 @@ class Tile{
 
 class Floor extends Tile{
   constructor(x,y){
-    super(x, y, 2, true);
+    super(x, y, 2, true, true, true, "none", 0);
     //super(x, y, 2, true, 0, "none", 0);
   };
 }
 
 class Floor2 extends Tile{
   constructor(x,y){
-    super(x, y, 1, true);
+    super(x, y, 1, true, true, true, "none", 0);
     //super(x, y, 2, true, 0, "none", 0);
   };
 }
 
 class Exit extends Tile{
   constructor(x, y, wx, wy, entryDir){
-    super(x, y, 0, true);
+    super(x, y, 0, true, true, true, "none", 0);
     this.wx = wx;
     this.wy = wy;
     this.entryDir = entryDir;
@@ -412,28 +413,28 @@ class Exit extends Tile{
 
 class Wall extends Tile{
   constructor(x, y){
-    super(x, y, 3, false, false, false);
+    super(x, y, 3, false, false, false, "none", 0);
     //super(x, y, 3, false, 0, "none", 0);
   }
 }
 
 class Wall2 extends Tile{
   constructor(x, y){
-    super(x, y, 7, false, false, false);
+    super(x, y, 7, false, false, false, "none", 0);
     //super(x, y, 3, false, 0, "none", 0);
   }
 }
 
 class Vent extends Tile{
   constructor(x, y){
-    super(x, y, 4, false, true, false);
+    super(x, y, 4, false, true, false, "none", 0);
     //super(x, y, 4, false, 1, "none", 0);
   }
 }
 
 class Pit extends Tile{
   constructor(x,y){
-    super(x, y, 6, true);
+    super(x, y, 6, true, true, true, "none", 0);
     //super(x, y, 6, false, false, true);
   };
 }
@@ -473,14 +474,14 @@ class Slimepuddle extends Tile{
 
 class FloorNub extends Tile{
   constructor(x,y){
-    super(x, y, 31, true);
+    super(x, y, 31, true, true, true, "none", 0);
     //super(x, y, 2, true, 0, "none", 0);
   };
 }
 
 class WallNub extends Tile{
   constructor(x, y){
-    super(x, y, 32, false, false, false);
+    super(x, y, 32, false, false, false, "none", 0);
     //super(x, y, 3, false, 0, "none", 0);
   }
 }

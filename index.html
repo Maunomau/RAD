@@ -152,6 +152,7 @@
   leapcd = 10;
   circlesFound = 0;
   cwarp = 4;
+  gameVolume = 0.3;
   advanceTimeOnDefeat = false;
   advanceTimeOnDefeat = true;
   savedPlayer = {small:false, hp:3};
@@ -267,7 +268,6 @@
     }else if(gameState == "dead"){
       if(e.key=="c") {
         resumeGame();
-        if(advanceTimeOnDefeat) day++;
       }else if(e.key=="z") {
         tick();
       }else{
@@ -334,10 +334,10 @@
       //Not how I'd like to do this but will do for now.
       if(e.key>=1 && e.key<=9) {
         if(!shiftMode) {
-          console.log("Casting spell "+parseInt(e.key)-1+" "+".");
+          console.log("Casting spell "+(parseInt(e.key)-1)+" "+".");
           player.castSpell(parseInt(e.key)-1);
         }else{
-          console.log("Casting spell "+parseInt(e.key)+10-1+" "+".");
+          console.log("Casting spell "+(parseInt(e.key)+10-1)+" "+".");
           player.castSpell(parseInt(e.key)+10-1);
         }
           

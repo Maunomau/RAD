@@ -313,7 +313,7 @@ function showTitle(){
 
 function startGame(){
   //playSound("newLevel");
-  sounds["newLevel"].play();
+  //sounds["newLevel"].play();
   totalCharge = 0;
   spellSlots = [];//player.spells are set to this.
   spellsCast = 0;
@@ -350,14 +350,14 @@ function startGame(){
 //hmm, not sure about this trying to be stripped down startGame, might be better to just warp player to home and advance time if that's enabled
 function resumeGame(){
   //playSound("newLevel");
-  sounds["newLevel"].play();
+  //sounds["newLevel"].play();
   wpos = [14,14,10,0];//world position, x,y,z,plane
   //wpos = lastCircle ??? //not sure how to do this
   lastCircle = -1;//Last circle player was on(for warping to in some situations)
   runeinv = [];
   if(advanceTimeOnDefeat) turn = 0;
   levelturn = 0;
-  if(advanceTimeOnDefeat) day = 1;
+  if(advanceTimeOnDefeat) day++;
   if(advanceTimeOnDefeat) time = 0;
   
   lastGemCount = -1;
@@ -534,11 +534,12 @@ function playSound(soundName, sourceTile = false, voladjust = 0){
       let vol = Math.max(1-(soundDistance/16), 0.01)
       //console.log("Playing positional sfx:"+soundName+", distance between "+player.tile.x+", "+player.tile.y+" and "+sourceTile.x+", "+sourceTile.y+" is "+soundDistance+" so sound volume is set to "+vol);
       if (voladjust) vol = Math.min(vol*voladjust, 1)
+      vol = vol*gameVolume;
       sounds[soundName].volume = vol;
       soundsplayed[soundName+"Vol"] = vol;
     }//else{console.log("Skipped more distant "+soundName+" sound, soundsplayed:"+JSON.stringify(soundsplayed));}
   }else{
-    sounds[soundName].volume = 1;
+    sounds[soundName].volume = 1*gameVolume;
     soundsplayed[soundName+"Distance"] = 0;
     soundsplayed[soundName+"Count"] = 1;
     soundsplayed[soundName+"Vol"] = 1;

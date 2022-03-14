@@ -84,10 +84,8 @@ Soundmap.
 Soundmap focus, passing a turn should show sounds on the main map instead of less accurate sound map.
 would crystal being able to swap with you using woop be too much?
 adjust spells to work in a way where each spell has a dedicated slot.
-Monster that can move between rooms and appears at night.
 More involved ending scenario.
 spell swapping
-allow you to staying in a room at the end of day but change all exits to go to main room.
 Running(shift + direction to automove) making it follow corridors until something interesting would be nice but probably too much work.
   Needs serious rework of how input is handled so not doing it for now
 Figure out a nice way exclude resting monsters from being treated like non-resting ones(moving them from tile.monster to tile.restingmonster or such might be best, that'd require going over everything that handles monsters)
@@ -103,14 +101,14 @@ Monster improvements
   Golem monster that uses current crystal behaviour aside from wooping
 Something that gives max energy/hp. Mushrooms?
 Let you know which spell a circle gives before charging it?
+Volume control
 
 bugs:
-passing in water messes with player sprite sometimes
-pressing spell keys with no spells gives harmless error
 something wrong with rune drops(or is there?).
 leaping on defeated monsters can result in weird behaviour.
 slipping seems to happen after player's depth is checked and adjusted for.
 time doesn't pass in rooms you aren't in leading to some slight weirdness, especially when it's dark.
+hunter's DIG probably still doesn't work always
 
 not done but no longer as important:
   quakes can't break flesh eggs(they've got timers now)
@@ -121,8 +119,15 @@ not done but no longer as important:
       Or some other way to make playing frugally/optimally more interesting, as is you do interesting stuff only when it's the only way to avoid taking damage.
 
 done:
-
-Make fleshballs "follow" you to differnt maps
+deep water visually more distinct.
+wasps weren't tagged as flying
+hunter didn't try using dig spell when meant to
+circles can be under exits
+continue doesn't add day
+pressing spell keys with no spells gives harmless error
+passing in water messes with player sprite sometimes
+allow you to staying in a room at the end of day but change all exits to go to main room.
+Monster that can move between rooms and appears at night.(fleshballs "follow" you to differnt maps)
 Make fleshball use DRAG and WATERWOOP spells, rest on it's own and whatever else to make it more dangerous
 sudden port home at the end of day sucks. Now you go home when using any exit instead, does mean that you can safely get back home with all of your runes by just waiting... Not sure I want that, just making night more dangerous would help.
 something wrong with rng.

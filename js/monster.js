@@ -234,6 +234,7 @@ class Monster{
 
   castSpell(index){
     let spellName = this.spells[index];
+    console.log("%cMonster casts "+spellName, "color:red");
     if(spellName){
       playSound("spell", this.tile);
       spells[spellName].f(this);
@@ -469,39 +470,41 @@ class Player extends Monster{
   }
 
   castSpell(index){
-    let spellName = this.spells[index];
-    console.log("Casting spell "+index+" "+spellName+".");
-    let cost = spells[spellName].cost;
-    if(spellName && cost <= runeinv.length){
-      //delete this.spells[index];
-      console.log("It costs "+cost);
-      while(cost > 0){
-        //usedRunes.push([spells[spellName].droptime, spells[spellName].dropdistance, this.tile, runeinv.pop(), wpos[0], wpos[1]]);
-        //runes[runeinv[cost-1]].timer = spells[spellName].droptime;// shift() takes care of cost-1
-        runes[runeinv[0]].timer = spells[spellName].droptime;
-        runes[runeinv[0]].x = this.tile.x;
-        runes[runeinv[0]].y = this.tile.y;
-        runes[runeinv[0]].wx = wpos[0];
-        runes[runeinv[0]].wy = wpos[1];
-        runes[runeinv[0]].holder = false;
-        wTiles[wpos[0]][wpos[1]].runes.push(runeinv.shift());
-        // TODO: ability to use a specific rune instead of first one in runeinv
-        cost--;
+    if(this.spells.length > index){
+      let spellName = this.spells[index];
+      console.log("Casting spell "+index+" "+spellName+".");
+      let cost = spells[spellName].cost;
+      if(spellName && cost <= runeinv.length){
+        //delete this.spells[index];
+        console.log("It costs "+cost);
+        while(cost > 0){
+          //usedRunes.push([spells[spellName].droptime, spells[spellName].dropdistance, this.tile, runeinv.pop(), wpos[0], wpos[1]]);
+          //runes[runeinv[cost-1]].timer = spells[spellName].droptime;// shift() takes care of cost-1
+          runes[runeinv[0]].timer = spells[spellName].droptime;
+          runes[runeinv[0]].x = this.tile.x;
+          runes[runeinv[0]].y = this.tile.y;
+          runes[runeinv[0]].wx = wpos[0];
+          runes[runeinv[0]].wy = wpos[1];
+          runes[runeinv[0]].holder = false;
+          wTiles[wpos[0]][wpos[1]].runes.push(runeinv.shift());
+          // TODO: ability to use a specific rune instead of first one in runeinv
+          cost--;
+        }
+        //useCharge(this.tile, spells[spellName].droptime, spells[spellName].dropdistance);
+        spells[spellName].f(this);
+        playSound("spell");
+        spellsCast++;
+        tick();
+      }else if(this.hp > cost){
+        console.log("Used energy/hp instead, it cost "+cost);
+        this.hp -= cost
+        spells[spellName].f(this);
+        playSound("spell");
+        tick();
+      }else{
+        console.log("Couldn't cast it, it cost "+cost);
+        playSound("no");
       }
-      //useCharge(this.tile, spells[spellName].droptime, spells[spellName].dropdistance);
-      spells[spellName].f(this);
-      playSound("spell");
-      spellsCast++;
-      tick();
-    }else if(this.hp > cost){
-      console.log("Used energy/hp instead, it cost "+cost);
-      this.hp -= cost
-      spells[spellName].f(this);
-      playSound("spell");
-      tick();
-    }else{
-      console.log("Couldn't cast it, it cost "+cost);
-      playSound("no");
     }
   }
 
@@ -609,13 +612,13 @@ class Slime extends Monster{
     if(randomRange(0,3) && this.hp < this.fullHp && (this.tile.liquid == "water" || this.tile.liquid == "slime")){
       this.hp++
       if(this.tile.depth == 1){
-        this.tile.liquid = false;
+        this.tile.liquid = "none";
         this.tile.depth = 0;
       }
     }
     //consume slime just because
     else if(this.tile.liquid == "slime" && randomRange(0,7) == 1 && this.tile.depth == 1){
-      this.tile.liquid = false;
+      this.tile.liquid = "none";
       this.tile.depth = 0;
       super.doStuff();
     }
@@ -757,7 +760,7 @@ flies
 class Wasp extends Monster{
   constructor(tile){
       super(tile, 5, 1, 10);
-      //this.flying = true;
+      this.flying = true;
   }
   doStuff(){
     let lastpos = {x:this.tile.x, y:this.tile.y}
@@ -839,7 +842,7 @@ class Fleshball extends Monster{ // Eater Devourer
       this.hp++;
       //remove puddles
       if(this.tile.depth == 1){
-        this.tile.liquid = false;
+        this.tile.liquid = "none";
         this.tile.depth = 0;
       }
     }
@@ -877,8 +880,10 @@ class Fleshball extends Monster{ // Eater Devourer
       this.tiredness++;
       //DIG if there's wall(thought about just doing something else but this is easier to do atm.)
       //Similar issue if there's monsters between but them getting beaten up is actually fine.
-      if(!tiles[this.tile.x+this.lastMove[0]][this.tile.x+this.lastMove[1]].crawlable){
+      console.log("%cFleshball casting spell at wall? "+(tiles[this.tile.x + this.lastMove[0])][(this.tile.y + this.lastMove[1])].crawlable+"!("+(this.tile.x + this.lastMove[0])+","+(this.tile.y + this.lastMove[1])+") is crawlable", "color:pink");
+      if(!tiles[(this.tile.x+this.lastMove[0])][(this.tile.y+this.lastMove[1])].crawlable || !tiles[(this.tile.x+this.lastMove[0]*2)][(this.tile.y+this.lastMove[1]*2)].crawlable){
         super.castSpell(2);
+        console.log("%cDIG?", "color:pink");
       }else{
         super.castSpell(0);
         console.log("%cYou got dragged!", "color:pink");
