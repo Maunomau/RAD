@@ -880,7 +880,7 @@ class Fleshball extends Monster{ // Eater Devourer
       this.tiredness++;
       //DIG if there's wall(thought about just doing something else but this is easier to do atm.)
       //Similar issue if there's monsters between but them getting beaten up is actually fine.
-      console.log("%cFleshball casting spell at wall? "+(tiles[this.tile.x + this.lastMove[0])][(this.tile.y + this.lastMove[1])].crawlable+"!("+(this.tile.x + this.lastMove[0])+","+(this.tile.y + this.lastMove[1])+") is crawlable", "color:pink");
+      //console.log("%cFleshball casting spell at wall? "+(tiles[this.tile.x + this.lastMove[0])][(this.tile.y + this.lastMove[1])].crawlable+"!("+(this.tile.x + this.lastMove[0])+","+(this.tile.y + this.lastMove[1])+") is crawlable", "color:pink");
       if(!tiles[(this.tile.x+this.lastMove[0])][(this.tile.y+this.lastMove[1])].crawlable || !tiles[(this.tile.x+this.lastMove[0]*2)][(this.tile.y+this.lastMove[1]*2)].crawlable){
         super.castSpell(2);
         console.log("%cDIG?", "color:pink");
