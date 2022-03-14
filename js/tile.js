@@ -126,10 +126,10 @@ class Tile{
 					drawTile(this.maincircle, this.x, this.y, maincircleUnConChargingSheet, 3);
 				}else if (charge <= 0 && circlesFound >= 8 && totalCharge < runeTypesTotal) {
 					drawTile(this.maincircle, this.x, this.y, maincircleConnectedSheet, 3);
+				}else if(charge > 0 && charge < c.maxCharge && totalCharge < runeTypesTotal){
+					drawTile(this.maincircle, this.x, this.y, maincircleChargingSheet, 3);
 				}else if (charge >= c.maxCharge || totalCharge >= runeTypesTotal) {
 					drawTile(this.maincircle, this.x, this.y, maincircleChargedSheet, 3);
-				}else if(charge > 0 && charge >= c.maxCharge){
-					drawTile(this.maincircle, this.x, this.y, maincircleChargingSheet, 3);
 				}
 			}
     }
@@ -166,6 +166,19 @@ class Tile{
 		if(this.runehint){
       drawTile(46, this.x, this.y);
     }
+		//look at neighbouring rooms runes
+		if(this.exit && this.entryDir){
+			let testX = parseInt(wpos[0]+parseInt(dirmap[this.entryDir]));
+			let testY = parseInt(wpos[1]+parseInt(dirmap[this.entryDir]));
+			let test;
+			if(wTiles[testX][testY].runes) {
+				test = wTiles[testX][testY].runes.length;
+			}
+	 		if(test){
+			//console.log("%cThere are runes in direction "+this.entryDir+"("+testX+","+testY+")?", "color:violet");
+	    //drawTile(45, this.x, this.y);
+	    }
+		}
 		if(this.effectCounter){                    
       this.effectCounter--;
       ctx.globalAlpha = this.effectCounter/30;

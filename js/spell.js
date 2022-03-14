@@ -544,7 +544,7 @@ function dropRunes(){
         r.hintday = levelday;
       }else if(r.timer <= 50){
         tile.setEffect(12);
-      }else tile.setEffect(0);
+      }//else tile.setEffect(0);
     }
     if(r.timer) r.timer--;
     

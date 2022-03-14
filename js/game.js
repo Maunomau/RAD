@@ -63,7 +63,7 @@ function draw(){
     //drawSprite(0, x, y);
     player.draw();
     
-    drawText("Score:"+totalCharge+" "+""+"", tileSize/2, false, 25, "violet");
+    drawText("Score:"+totalCharge+"/"+runeTypesTotal+"", tileSize/2, false, 25, "violet");
     drawText("Day:"+day+" t:"+time+"", tileSize/2, false, 45, "violet");
     drawText(""+runeinv.length+"/"+gemMax, tileSize/2, false, 65, "violet");
     

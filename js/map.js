@@ -633,7 +633,7 @@ function generateMonsters(){
   monsters = [];
   let monsterType
   let room = wTiles[wpos[0]][wpos[1]];
-  let numMonsters = day+room.monsterAmount+randomRange(0,2, mapRNG);
+  let numMonsters = Math.floor(day/3)+room.monsterAmount+randomRange(0,2, mapRNG);
   if(room.mainMonster) monsterType = room.mainMonster;
   else {
     monsterType = shuffle([Slime, Spider, Wolf, Crystal, Wasp, Goblin, Hobgoblin, Rabbit], mapRNG)[0];
@@ -641,11 +641,11 @@ function generateMonsters(){
   }
   
   for(let i=0;i<numMonsters;i++){
-      spawnMonster(monsterType, 1, tile = randomPassableTile("exit", mapRNG), mapRNG);
+    spawnMonster(monsterType, 1, tile = randomPassableTile("exit", mapRNG), mapRNG);
   }
   //random monsters
-  for(let i=0;i<numMonsters;i++){
-      spawnMonster(0, 1, tile = randomPassableTile("exit", mapRNG), mapRNG);
+  for(let i=0;i<Math.max(numMonsters, 1);i++){
+    spawnMonster(0, 1, tile = randomPassableTile("exit", mapRNG), mapRNG);
   }
   room.monsters = monsters;
 }

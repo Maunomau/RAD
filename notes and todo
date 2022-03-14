@@ -102,13 +102,22 @@ Monster improvements
 Something that gives max energy/hp. Mushrooms?
 Let you know which spell a circle gives before charging it?
 Volume control
+Make hunter harder to cheese
+Some sort of rune tracker to discover where the remaining runes are. Change exit sprite if there's no gem in that room?
+indicator on exits that shows based on something.
 
 bugs:
-something wrong with rune drops(or is there?).
 leaping on defeated monsters can result in weird behaviour.
 slipping seems to happen after player's depth is checked and adjusted for.
 time doesn't pass in rooms you aren't in leading to some slight weirdness, especially when it's dark.
 hunter's DIG probably still doesn't work always
+leap cooldown is weird
+using runes in main circle room traps them? Or not? Won the game despite seeing that there were two runes set to be in 14,14 not sure what's going on, several possibilities.
+
+probably fixed
+something wrong with rune drops(or is there?).
+some weirdness with display of maincircle after all circles found(circles not fully charged invisible when most are fully charged)
+
 
 not done but no longer as important:
   quakes can't break flesh eggs(they've got timers now)
@@ -117,8 +126,8 @@ not done but no longer as important:
     resting hpup time counter
     Magic circles that allow casting (any or specific?) spells for free?
       Or some other way to make playing frugally/optimally more interesting, as is you do interesting stuff only when it's the only way to avoid taking damage.
-
 done:
+Ensure no enemy less rooms
 deep water visually more distinct.
 wasps weren't tagged as flying
 hunter didn't try using dig spell when meant to
