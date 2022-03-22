@@ -38,6 +38,7 @@ function generateWorld(){
   
   circle = [] ;
   let spellOptions = shuffle(Object.keys(spells), worldRNG);
+  spellOptions = spellOptions.filter(spell => spell != "HEAL");
   //let spellOptions = shuffle(["WOOP", "BRAVERY", "MAELSTROM", "DASH", "BOLT", "SWAP", "CROSS", "SLEEPMORE", "POWER", "EX", "DIG"], worldRNG);//Object.keys(spells) after removals
   for (var i = 0; i < 9; i++) {
     if (i != 4){
@@ -633,7 +634,7 @@ function generateMonsters(){
   monsters = [];
   let monsterType
   let room = wTiles[wpos[0]][wpos[1]];
-  let numMonsters = Math.floor(day/3)+room.monsterAmount+randomRange(0,2, mapRNG);
+  let numMonsters = Math.floor(day/3)+room.monsterAmount+randomRange(1,3, mapRNG);
   if(room.mainMonster) monsterType = room.mainMonster;
   else {
     monsterType = shuffle([Slime, Spider, Wolf, Crystal, Wasp, Goblin, Hobgoblin, Rabbit], mapRNG)[0];

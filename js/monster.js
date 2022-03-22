@@ -175,6 +175,27 @@ class Monster{
         //This neatly allows player to hit nonplayers and nonplayers to hit player
         if(this.isPlayer != newTile.monster.isPlayer && !newTile.monster.resting && !this.peaceful){
           console.log(""+this.constructor.name+"("+this.hp+") attacks "+newTile.monster.constructor.name+"("+newTile.hp+").");
+          //Use rune/charge or whatever normal attacks should cost for player
+          if(this.isPlayer){
+              let cost = 1;
+              if( cost <= runeinv.length){
+                while(cost > 0){
+                  //usedRunes.push([spells[spellName].droptime, spells[spellName].dropdistance, this.tile, runeinv.pop(), wpos[0], wpos[1]]);
+                  //runes[runeinv[cost-1]].timer = spells[spellName].droptime;// shift() takes care of cost-1
+                  runes[runeinv[0]].timer = timeInDay*0.9;
+                  runes[runeinv[0]].x = this.tile.x;
+                  runes[runeinv[0]].y = this.tile.y;
+                  runes[runeinv[0]].wx = wpos[0];
+                  runes[runeinv[0]].wy = wpos[1];
+                  runes[runeinv[0]].holder = false;
+                  wTiles[wpos[0]][wpos[1]].runes.push(runeinv.shift());
+                  // TODO: ability to use a specific rune instead of first one in runeinv
+                  // TODO: function to handle doing this
+                  cost--;
+                }
+                playSound("spell");
+              }else return false;//no attack due to no runes.
+          }
           this.attackedThisTurn = true;
           if(this.stunning) newTile.monster.stunned = true;
           newTile.monster.hit(1 + this.bonusAttack, this);
@@ -372,6 +393,7 @@ class Player extends Monster{
   rest(){
     this.tile.stepOn(this);//To pickup gems
     //Heal in water
+    /*
     if (this.tile.liquid = "water" && this.tile.depth >= 2 && this.hp < this.fullHp) {
       this.tile.setEffect(13);
       //this.resting = true;//won't work since player has separate drawHp() and update(), all it does is make enemies swap with player instead of attacking
@@ -383,6 +405,7 @@ class Player extends Monster{
       //Or base on submergion so crouch rest at depth 2 and just rest at depth 3
       //Nothing changes fullHp from 3, it's fine though makes discovering how to heal harder so could update with level changes, though thinking about it I don't think I actually want exits to give hp.
     }
+    */
     playSound("blip");
     tick();
   }
@@ -488,6 +511,7 @@ class Player extends Monster{
           runes[runeinv[0]].holder = false;
           wTiles[wpos[0]][wpos[1]].runes.push(runeinv.shift());
           // TODO: ability to use a specific rune instead of first one in runeinv
+          // TODO: function to handle doing this
           cost--;
         }
         //useCharge(this.tile, spells[spellName].droptime, spells[spellName].dropdistance);

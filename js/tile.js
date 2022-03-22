@@ -161,7 +161,11 @@ class Tile{
       drawTile(47, this.x, this.y);
     }
 		if(this.rune){
-      drawTile(5, this.x, this.y);
+			//ctx.globalAlpha = 0.9;
+			drawTile(5, this.x, this.y);
+      //drawTile(0, this.x, this.y, art.runes[this.rune]);
+      //drawRune(this.x, this.y, art.runes[this.rune]);
+			ctx.globalAlpha = 1;
     }
 		if(this.runehint){
       drawTile(46, this.x, this.y);
@@ -185,12 +189,28 @@ class Tile{
       drawSprite(this.effect, this.x, this.y, effectsheet);
       ctx.globalAlpha = 1;
     }
+		if(this.runeEffectCounter){                    
+      this.runeEffectCounter--;
+      ctx.globalAlpha = this.runeEffectCounter/30;
+      //drawSprite(this.runeEffect, this.x, this.y, effectsheet);
+			//drawRune(this.x, this.y, art.runes[this.rune]);
+			//drawTile(0, this.x, this.y, art.runes[this.rune]);
+			drawRune(this.x, this.y, this.runeEffect);
+      ctx.globalAlpha = 1;
+    }
   }
 	
 	setEffect(effectSprite){
 		//console.log("Effect "+effectSprite+".");
     this.effect = effectSprite;
     this.effectCounter = 30;
+  }
+	
+	//kind of bad and inflexible way to do runes as effects
+	setRuneEffect(effectSprite){
+		//console.log("Effect "+effectSprite+".");
+    this.runeEffect = effectSprite;
+    this.runeEffectCounter = 60;
   }
 	
   stepOn(monster){
@@ -200,6 +220,7 @@ class Tile{
 	      //spawnMonster();
 	    }
 			if(this.rune){
+				this.setRuneEffect(art.runes[this.rune]);
 				if(pickupRune(this.rune)) this.rune = false;
 	      //spawnMonster();
 	    }
@@ -210,6 +231,11 @@ class Tile{
 				//tick();
 				addRecords(runeinv.length, true);
         showTitle();
+			}else if(this.maincircle == 4 && !this.maincircle.found){
+				circle[4].found = true;
+				playSound("circleFound", monster.Tile);
+				numSpells++;
+				player.addSpell("HEAL");
 			}
 			
 			
@@ -359,10 +385,12 @@ class Tile{
 					//circle[4] should give the main circle even if it's moved away from 14,14
 					wpos[0] = circle[4].wTile[0];
 					wpos[1] = circle[4].wTile[1];
+					let entryD = 5;//not sure why exactly this being 5 doesn't work when warping without charged circle but it's not important I suppose.
+					if(monster.small && runeinv.length <= 0) entryD = -1;
 					cwarp = this.circle;
 					savedPlayer = player;
 					this.monster = null;
-	        startLevel(5, player.hp);
+	        startLevel(entryD, player.hp);
 				}else{
 					
 					playSound("no", monster.Tile);

@@ -32,6 +32,22 @@ spells = {
       }
     }
   },
+  HEAL: {
+    cost: 1,
+    dropdistance: 0,
+    droptime: timeInDay,
+    f: function(caster){
+      if (caster.tile.liquid = "water" && caster.tile.depth >= 2 && caster.hp+1 < caster.fullHp) {
+        caster.hp += 2;
+      }
+      else if(caster.hp < caster.fullHp){
+        caster.hp += 1;
+      }
+      caster.tile.setEffect(13);
+      //if (caster.hp < caster.fullHp) caster.hpup = true;
+      //else caster.hpup = false;
+    }
+  },
   MAELSTROM: {
     cost: 1,
     dropdistance: 10,

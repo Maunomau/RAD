@@ -36,6 +36,15 @@ function drawSprite(sprite, x, y, sheet, dir = 0){
   );
 }
 
+//Draw rune without scaling it based on tilesize
+function drawRune(x, y, runeimg=art.runes[Object.keys(art.runes)[0]], elementorsth=0){
+  ctx.drawImage(
+    runeimg,
+    x*tileSize + shakeX + tileSize/2-8,//centers rune assuming runeimgs are 16x16
+    y*tileSize + shakeY + tileSize/2-8,
+  );
+}
+
 function draw(){
   if(gameState == "running" || gameState == "dead"){
     ctx.clearRect(0,0,canvas.width,canvas.height);

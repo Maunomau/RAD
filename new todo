@@ -1,0 +1,16 @@
+
+I really should get you to use more spells, as is I don't really care about them that much and only when things look tricky do I even consider using them. Not being able to heal as easily would probably do a lot.
+  Something I could try is go with spells disappear after use thing or something like it that there was initially but have regaining them require more than just new level/room. What if spells were tied to the dropped rune? Perhaps finally separate charges and runes so that using a spell drops both.
+Different biomes or something would be real nice.
+FoV.
+  Should I just start working on it now and not care about having kind of wanted to release another version before I tackle that?
+  If I leave making enemies caring about seeing you for later it wouldn't be that drastic of a change, especially if it's only during night.
+  So probably.
+
+Hmm, even with needing to use HEAL spell to recover hp I'm still not really using any spells during the first day or two at least. I suppose increasing monster amounts back up might help a bit but that isn't really a solution when most enemies have ways to deal with them without taking damage or using spells. Making normal attacks take runes/charges... could be a solution. Currently that'd mean you might eventually need to sort of stock up on gems by casting spells at home so that the last few games you can get without fight. I wondered if enemies defaulting to peaceful and needing to see/hear you would change things so much that it'd be kind of pointless to try to fix spell use now but thinking about it I'd say no, almost the opposite even, those things make enemies easier to handle so getting a head start on making things difficult should be fine.
+  Done,
+
+done:
+Fixed "secret" warp method not working.
+HEAL spell that's better in water and always learned from main circle
+Basic attacks cost runes.
