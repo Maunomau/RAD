@@ -176,7 +176,7 @@ class Monster{
         if(this.isPlayer != newTile.monster.isPlayer && !newTile.monster.resting && !this.peaceful){
           console.log(""+this.constructor.name+"("+this.hp+") attacks "+newTile.monster.constructor.name+"("+newTile.hp+").");
           //Use rune/charge or whatever normal attacks should cost for player
-          if(this.isPlayer){
+          if(this.isPlayer && gamesettings.noFreeAttacks){
               let cost = 1;
               if( cost <= runeinv.length){
                 while(cost > 0){
@@ -393,8 +393,8 @@ class Player extends Monster{
   rest(){
     this.tile.stepOn(this);//To pickup gems
     //Heal in water
-    /*
-    if (this.tile.liquid = "water" && this.tile.depth >= 2 && this.hp < this.fullHp) {
+    
+    if (this.tile.liquid = "water" && this.tile.depth >= 2 && this.hp < this.fullHp && gamesettings.freeHeals) {
       this.tile.setEffect(13);
       //this.resting = true;//won't work since player has separate drawHp() and update(), all it does is make enemies swap with player instead of attacking
       this.hp += 0.5;
@@ -405,7 +405,7 @@ class Player extends Monster{
       //Or base on submergion so crouch rest at depth 2 and just rest at depth 3
       //Nothing changes fullHp from 3, it's fine though makes discovering how to heal harder so could update with level changes, though thinking about it I don't think I actually want exits to give hp.
     }
-    */
+    
     playSound("blip");
     tick();
   }

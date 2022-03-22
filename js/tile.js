@@ -231,7 +231,7 @@ class Tile{
 				//tick();
 				addRecords(runeinv.length, true);
         showTitle();
-			}else if(this.maincircle == 4 && !this.maincircle.found){
+			}else if(this.maincircle == 4 && !this.maincircle.found && !gamesettings.freeHeals){
 				circle[4].found = true;
 				playSound("circleFound", monster.Tile);
 				numSpells++;

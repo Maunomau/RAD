@@ -323,6 +323,8 @@ function showTitle(){
 function startGame(){
   //playSound("newLevel");
   //sounds["newLevel"].play();
+  gamesettings.noFreeAttacks = true;
+  gamesettings.freeHeals = false;
   totalCharge = 0;
   spellSlots = [];//player.spells are set to this.
   spellsCast = 0;

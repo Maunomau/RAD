@@ -8,9 +8,10 @@ FoV.
   So probably.
 
 Hmm, even with needing to use HEAL spell to recover hp I'm still not really using any spells during the first day or two at least. I suppose increasing monster amounts back up might help a bit but that isn't really a solution when most enemies have ways to deal with them without taking damage or using spells. Making normal attacks take runes/charges... could be a solution. Currently that'd mean you might eventually need to sort of stock up on gems by casting spells at home so that the last few games you can get without fight. I wondered if enemies defaulting to peaceful and needing to see/hear you would change things so much that it'd be kind of pointless to try to fix spell use now but thinking about it I'd say no, almost the opposite even, those things make enemies easier to handle so getting a head start on making things difficult should be fine.
-  Done,
+  Done, certainly made me prefer using spells when just running isn't an option.
 
 done:
 Fixed "secret" warp method not working.
 HEAL spell that's better in water and always learned from main circle
 Basic attacks cost runes.
+made heal and attack changes optional
