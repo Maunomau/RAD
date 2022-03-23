@@ -206,6 +206,7 @@
   logUncollapseMode = "turns";
   downkey = "";
   keyspressed = [];
+  var waitForInputToTick;
   //shiftKeyPressed = false;//instanceOfKeyboardEvent.shiftKey;
   
   /*
@@ -280,6 +281,11 @@
         addRecords(0, false);
         showTitle();
       }
+    }else if(waitForInputToTick){
+      //if(e.key=="f"){
+        waitForInputToTick = false;
+        tick();
+      //}
     }else if(gameState == "running"){
       //turn ending keys... not sure how I feel about doing this.
       if(e.key=="w"||e.key=="a"||e.key=="s"||e.key=="d"||e.key=="z"||(e.key=="c"&&player.small||e.key>=1 && e.key<=9)){

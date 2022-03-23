@@ -10,7 +10,28 @@ FoV.
 Hmm, even with needing to use HEAL spell to recover hp I'm still not really using any spells during the first day or two at least. I suppose increasing monster amounts back up might help a bit but that isn't really a solution when most enemies have ways to deal with them without taking damage or using spells. Making normal attacks take runes/charges... could be a solution. Currently that'd mean you might eventually need to sort of stock up on gems by casting spells at home so that the last few games you can get without fight. I wondered if enemies defaulting to peaceful and needing to see/hear you would change things so much that it'd be kind of pointless to try to fix spell use now but thinking about it I'd say no, almost the opposite even, those things make enemies easier to handle so getting a head start on making things difficult should be fine.
   Done, certainly made me prefer using spells when just running isn't an option.
 
+Make days change room positions(but reduce randomness of rooms themselves)
+Poisoned/Numbed status that forces you into crawling position for a bit.
+Make wasp stings poison you after a turn or two.
+Make wasps wait for the poison to take effect before peacefully interacting with you from behind.
+Make wasp nests a thing.
+Make being somehow carried to a wasp nest possible(fade to black if effectively defeated by multiple wasps or something)
+Make webs take two or more turns to get out of.
+Categorize spells/skills based on who you'd have to manifest to use them.
+Figure out and implement party member manifestation in some way.
+  "Roles":
+    Knight/Warrior/Guardian/Bodyguard as spell less melee attacker who has some skills
+    Artist as weaker than you in combat but good senses(sight, hearing and taste), memory and maybe crafting/lockpicking or whatever might need stable hands.
+    Street urchin/thief as sneaky dagger thrower
+    Elf as plant and mind mage
+    Golem as slow but sturdy and strong combatant
+    Wolfboy as decent fighter and great senses but unable to resist some instinctual actions or something
+    Maid as? athletic? "Negotiator/Pacifier"? Deceptive trap maker? Good at playing dead?
+
+Crawling under wasps or other creatures?
+
 done:
+Make each tick require player input even when player can't do anything.
 Fixed "secret" warp method not working.
 HEAL spell that's better in water and always learned from main circle
 Basic attacks cost runes.

@@ -364,16 +364,22 @@ class Player extends Monster{
   }
   
   update(){
-    if(!haste && !this.posthaste|| haste && this.hasted){
+    //reduce personal haste counter as long global haste effect is on and check if you have posthaste after global haste has expired.
+    if(!haste && !this.posthaste || haste && this.hasted){
       if(this.hasted) this.hasted--;
     }else{
       //if(!player.small && player.tile.depth < 4 && "or flying or such") player.peaceful = false;
       if(this.posthaste) this.posthaste--;
-      //Somehow wait a bit? And prevent doing stuff while doing that.
-      tick();
+      tick(true, "Frozen.");
     }
     if (this.shield) this.shield--;
-    this.stunned = false;//get player out of stun state(could do earlier if grey pips after damage is issue also might want player able to actually get stunned at some point)
+    
+    if(this.stunned){
+      //get player out of stun state.
+      this.stunned = false;
+      tick(true, "Stunned!");
+      console.log(""+this.constructor.name+" is stunned.");
+    }
     this.TUs = 0;
     console.log("player hp: "+this.hp+"/"+this.fullHp+"/"+maxHp);
   }
@@ -408,6 +414,7 @@ class Player extends Monster{
     
     playSound("blip");
     tick();
+    //Multi turn rest?
   }
   
   crouch(){
@@ -535,7 +542,7 @@ class Player extends Monster{
   draw(){
     if(this.teleportCounter > 1){
       drawSprite(31, this.getDisplayX(),  this.getDisplayY(), this.sheet);
-    }else if(this.teleportCounter == 1 || this.stunned){
+    }else if(this.teleportCounter == 1 || this.stunned || waitForInputToTick && this.isPlayer){
       //drawSprite(30, this.tile.x, this.tile.y, this.sheet);
       //drawSprite(this.sprite, this.tile.x, this.tile.y, this.sheet);
       drawSprite(this.sprite, this.getDisplayX(),  this.getDisplayY(), this.sheet, this.dir);

@@ -281,7 +281,7 @@ class Tile{
 		if(this.web && !monster.webwalker){
 			if(!monster.resting) this.web = false;
 			monster.webbed = true;
-			if(monster.isPlayer)tick();
+			if(monster.isPlayer)tick(true, "Stuck in a web!");
 			else{
 				monster.stunned = true;
 			}

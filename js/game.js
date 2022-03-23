@@ -95,78 +95,90 @@ function draw(){
       drawText("Press Z to pass a turn.", 20, true, canvas.height/2, "white");
       drawText("Press anything else to restart the game.", 20, true, canvas.height/2 + 25, "white");
     }
+    if(waitForInputToTick){
+      drawText(turnMsg, 30, true, canvas.height/2 - 55, "white");
+    }
   }
 }
 
-function tick(){
-  soundsplayed = {} //(soundname: distance)Used to avoid more distant sounds replacing closer ones.
-  //iterate over monsters(including player) (importantly in reverse so they can be safely deleted)
-  //adjust for knocking out
-  if(!haste){
-    passTime();
-    dropRunes();
-  }
-  for(let k=monsters.length-1;k>=0;k--){
-    if(!monsters[k].dead){
-      monsters[k].update();
-    }else{
-      monsters.splice(k,1);
+function tick(needConfirm = false, msg = "You are incapacitated."){
+  if(needConfirm == true){
+    turnMsg = msg;
+    waitForInputToTick = true;
+    console.log("%cPassed turn.", "color:grey");
+  }else{
+    console.log("%cTick, confirm needed?"+needConfirm+".", "color:grey");
+    soundsplayed = {} //(soundname: distance)Used to avoid more distant sounds replacing closer ones.
+    //iterate over monsters(including player) (importantly in reverse so they can be safely deleted)
+    //adjust for knocking out
+    if(!haste){
+      passTime();
+      dropRunes();
     }
-  }
-  
-  player.update();
-  
-  if(player.dead){
-    while(runeinv.length){
-      runes[runeinv[0]].timer = 0;
-      let rtile = randomCrawlableTile(0)
-      runes[runeinv[0]].x = rtile.x;
-      runes[runeinv[0]].y = rtile.y;
-      runes[runeinv[0]].wx = wpos[0];
-      runes[runeinv[0]].wy = wpos[1];
-      runes[runeinv[0]].holder = false;
-      wTiles[wpos[0]][wpos[1]].runes.push(runeinv.shift());
-    }
-    dropRunes();
-    //Unseal sealedMons
-    if(sealedMons){
-      while(sealedMons.length > 0){
-        //let tile = randomPassableTile();
-        //sealedMons[sealedMons.length-1].tile = tile;
-        //monsters.push(sealedMons.pop());//This just look like it works for the turn
-        spawnMonster(eval(sealedMons[0].constructor.name), 1, tile = randomPassableTile("exit", gRNG), gRNG);
-        sealedMons.shift()
+    for(let k=monsters.length-1;k>=0;k--){
+      if(!monsters[k].dead){
+        monsters[k].update();
+      }else{
+        monsters.splice(k,1);
       }
     }
-    if (capturedMons) {
-      while(capturedMons.length > 0){
-        spawnMonster(eval(capturedMons.shift().constructor.name), 1, tile = randomPassableTile("exit", gRNG), gRNG);
+    
+    player.update();
+    
+    if(player.dead){
+      while(runeinv.length){
+        runes[runeinv[0]].timer = 0;
+        let rtile = randomCrawlableTile(0)
+        runes[runeinv[0]].x = rtile.x;
+        runes[runeinv[0]].y = rtile.y;
+        runes[runeinv[0]].wx = wpos[0];
+        runes[runeinv[0]].wy = wpos[1];
+        runes[runeinv[0]].holder = false;
+        wTiles[wpos[0]][wpos[1]].runes.push(runeinv.shift());
       }
+      dropRunes();
+      //Unseal sealedMons
+      if(sealedMons){
+        while(sealedMons.length > 0){
+          //let tile = randomPassableTile();
+          //sealedMons[sealedMons.length-1].tile = tile;
+          //monsters.push(sealedMons.pop());//This just look like it works for the turn
+          spawnMonster(eval(sealedMons[0].constructor.name), 1, tile = randomPassableTile("exit", gRNG), gRNG);
+          sealedMons.shift()
+        }
+      }
+      if (capturedMons) {
+        while(capturedMons.length > 0){
+          spawnMonster(eval(capturedMons.shift().constructor.name), 1, tile = randomPassableTile("exit", gRNG), gRNG);
+        }
+      }
+      //addRecords(runeinv.length, false);
+      gameState = "dead";
     }
-    //addRecords(runeinv.length, false);
-    gameState = "dead";
-  }
-  /* spawn monsters, should adjust for knocking out and breeding */
-  //spawnCounter--;//disabled at least for now.
-  if(spawnCounter <= 0){
+    /* spawn monsters, should adjust for knocking out and breeding */
+    //spawnCounter--;//disabled at least for now.
+    if(spawnCounter <= 0){
       spawnMonster();
       spawnCounter = spawnRate;
       spawnRate--;
+    }
+    if(haste) haste--
+    
+    turn++;
+    levelturn++;
+    gemMax = runeinv.length + gemCount();
+    
+    
+    
+    //
+    if (rngLog[0] != mapRNG.getState()[0]){
+      console.warn("MapRNG changed!:"+ mapRNG.getState()[0] +"");
+      console.log("MapRNG was:"+ rngLog[0] +"");
+      rngLog = mapRNG.getState();
+    }
   }
-  if(haste) haste--
-  
-  turn++;
-  levelturn++;
-  gemMax = runeinv.length + gemCount();
   
   
-  
-  //
-  if (rngLog[0] != mapRNG.getState()[0]){
-    console.warn("MapRNG changed!:"+ mapRNG.getState()[0] +"");
-    console.log("MapRNG was:"+ rngLog[0] +"");
-    rngLog = mapRNG.getState();
-  }
 }
 
 function passTime(){
