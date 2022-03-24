@@ -164,7 +164,6 @@ function tick(needConfirm = false, msg = "You are incapacitated."){
     gemMax = runeinv.length + gemCount();
     
     
-    
     //
     if (rngLog[0] != mapRNG.getState()[0]){
       console.warn("MapRNG changed!:"+ mapRNG.getState()[0] +"");
@@ -395,7 +394,16 @@ function startLevel(entryDir, playerHp=3){
   levelday = day;
   hunterPresent = false;
   gemMax = runeinv.length + gemCount();
+  
+  fov = new ROT.FOV.RecursiveShadowcasting(lightPasses);
+  let visRange = 10;
+  fov.compute180(player.tile.x, player.tile.y, visRange, player.dir, function(x, y, r, visibility) {
+    tiles[x][y].seenByPlayer = 1;
+    console.log("tile("+x+","+y+") seen by player.");
+  });
 }
+
+
 
 function drawText(text, size, centered, textY, color){
   ctx.fillStyle = color;

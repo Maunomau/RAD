@@ -31,6 +31,75 @@ function rightPad(textArray){
   return finalText;
 }
 
+
+
+/*
+ROT.RNG.setSeed(12345);
+var W = 80;
+var H = 30;
+DIR_NORTH = 0;
+DIR_WEST  = 6;
+
+var display = new ROT.Display({fontSize:12, width:W, height:H});
+SHOW(display.getContainer());
+
+*/
+/* create a map */
+/*
+var data = {};
+new ROT.Map.Uniform(W, H).create(function(x, y, type) {
+  data[x+","+y] = type;
+  display.DEBUG(x, y, type);
+});
+
+
+
+// input callback
+function lightPasses0(x, y) {
+  var key = x+","+y;
+  if (key in data) { return (data[key] == 0); }
+  return false;
+}
+*/
+
+function lightPasses(x, y) {
+  var tile = getTile(x, y);
+  console.log("%clight pass check("+x+","+y+") == "+tile.visibility+".", "color:lightyellow");
+  if(tile.visibility == 1) return true;
+  if(tile.visibility == 0) return false;
+}
+
+
+//var fov = new ROT.FOV.RecursiveShadowcasting(lightPasses);
+
+/* output callback for mob with bad vision 
+
+fov.compute90(player.tile.x, player.tile.y, 10, DIR_WEST, function(x, y, r, visibility) {
+  tiles[x][y].seenByPlayer = 1;
+});
+*/
+
+/* output callback for second mob with better vision 
+fov.compute180(57, 14, 10, DIR_NORTH, function(x, y, r, visibility) {
+  var ch = (r ? "2" : "@");
+  var color = (data[x+","+y] ? "#aa0": "#660");
+  display.draw(x, y, ch, "#fff", color);
+});
+*/
+
+/* output callback for third mob with supernatural vision 
+fov.compute(65, 5, 10, function(x, y, r, visibility) {
+  var ch = (r ? "3" : "@");
+  var color = (data[x+","+y] ? "#aa0": "#660");
+  display.draw(x, y, ch, "#fff", color);
+});
+*/
+
+
+
+
+
+
 function makeRuneList(){
   runes = {};
   let i = 0;

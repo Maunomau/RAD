@@ -11,6 +11,8 @@ class Tile{
 		//for vents at first I wanted different opening heights but dunno if I still want that.
     this.liquid = liquid; //"water"
     this.depth = depth; //0-6
+    this.visibility = 1;
+    this.seenByPlayer = 0;
 	}
 
   replace(newTileType){
@@ -113,6 +115,16 @@ class Tile{
       ctx.fillStyle = 'rgba(0, 0, 0, '+0.25+')';
       ctx.fillRect(this.x*tileSize+shakeX, this.y*tileSize+shakeY, tileSize, tileSize);
     }
+		//Indicate FoV
+		if (this.seenByPlayer) {
+			if (this.seenByPlayer == 1) {
+	      ctx.fillStyle = 'rgba(0, 210, 210, '+0.5+')';
+	      ctx.fillRect(this.x*tileSize+shakeX, this.y*tileSize+shakeY, tileSize, tileSize);
+	    }else if (this.seenByPlayer == 2) {
+	      ctx.fillStyle = 'rgba(0, 210, 210, '+0.2+')';
+	      ctx.fillRect(this.x*tileSize+shakeX, this.y*tileSize+shakeY, tileSize, tileSize);
+	    }
+		}
 		if(this.maincircle >= 0){
 			let c = circle[this.maincircle];
 			let charge = c.runesChargedWith.length;
@@ -456,6 +468,7 @@ class Wall extends Tile{
   constructor(x, y){
     super(x, y, 3, false, false, false, "none", 0);
     //super(x, y, 3, false, 0, "none", 0);
+		this.visibility = 0;
   }
 }
 
@@ -463,6 +476,7 @@ class Wall2 extends Tile{
   constructor(x, y){
     super(x, y, 7, false, false, false, "none", 0);
     //super(x, y, 3, false, 0, "none", 0);
+		this.visibility = 0;
   }
 }
 
@@ -524,6 +538,7 @@ class WallNub extends Tile{
   constructor(x, y){
     super(x, y, 32, false, false, false, "none", 0);
     //super(x, y, 3, false, 0, "none", 0);
+		this.visibility = 0;
   }
 }
 

@@ -413,6 +413,24 @@ class Player extends Monster{
     
     this.TUs = 0;
     console.log("player hp: "+this.hp+"/"+this.fullHp+"/"+maxHp);
+    
+    
+    this.vision();
+  }
+  
+  vision(){
+    tiles.forEach(el => {
+      el.forEach(tile => {
+        if (tile.seenByPlayer){
+          tile.seenByPlayer = 2;
+        }
+      })
+    });
+    let visRange = 10;
+    fov.compute90(player.tile.x, player.tile.y, visRange, player.dir*2, function(x, y, r, visibility) {
+      tiles[x][y].seenByPlayer = 1;
+      console.log("tile("+x+","+y+") seen by player.");
+    });
   }
   
   tryMove(dx, dy){
