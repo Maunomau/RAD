@@ -24,6 +24,7 @@ class Monster{
   }
 
   update(){
+    // TODO: handle non-player poisoning
     if(!haste && !this.posthaste|| haste && this.hasted){
       if(this.hasted) this.hasted--;
       if(this.shield) this.shield--;
@@ -126,6 +127,10 @@ class Monster{
     //Health pips are size 6, figure out how many we can show per line based on tilesize
     let modul = Math.floor(tileSize / 6);
     //I could do these in one for loop couldn't I? Well hp potentially being higher than fullHp... Would just mean needing Math.max()
+    //poison, not used for monsters yet
+    if(this.poisoned && this.poisontimer < 1){
+      pip = pipgreen);
+    }
     if(!this.resting){
       for(let i=0 ; i < Math.floor(this.hp) ; i++){
         ctx.drawImage(
@@ -180,17 +185,8 @@ class Monster{
               let cost = 1;
               if( cost <= runeinv.length){
                 while(cost > 0){
-                  //usedRunes.push([spells[spellName].droptime, spells[spellName].dropdistance, this.tile, runeinv.pop(), wpos[0], wpos[1]]);
-                  //runes[runeinv[cost-1]].timer = spells[spellName].droptime;// shift() takes care of cost-1
-                  runes[runeinv[0]].timer = timeInDay*0.9;
-                  runes[runeinv[0]].x = this.tile.x;
-                  runes[runeinv[0]].y = this.tile.y;
-                  runes[runeinv[0]].wx = wpos[0];
-                  runes[runeinv[0]].wy = wpos[1];
-                  runes[runeinv[0]].holder = false;
-                  wTiles[wpos[0]][wpos[1]].runes.push(runeinv.shift());
-                  // TODO: ability to use a specific rune instead of first one in runeinv
-                  // TODO: function to handle doing this
+                  //releaseRune(this.tile.x, this.tile.y, timeInDay*0.9, 0, wpos[0], wpos[1], false);
+                  releaseRune(this.tile.x, this.tile.y);
                   cost--;
                 }
                 playSound("spell");
@@ -198,6 +194,17 @@ class Monster{
           }
           this.attackedThisTurn = true;
           if(this.stunning) newTile.monster.stunned = true;
+          if(this.poisonous){
+            //if already poisoned make it trigger faster and add 1 more turn if below normal.
+            if(newTile.monster.poisoned){
+              //newTile.monster.poisoned = this.poisonous;
+              if(newTile.monster.poisoned < this.poisonous) newTile.monster.poisoned++;
+              if(newTile.monster.poisontimer) newTile.monster.poisontimer--;
+            }else{
+              newTile.monster.poisoned = this.poisonous;
+              newTile.monster.poisontimer = this.poisonspeed;
+            }
+          }
           newTile.monster.hit(1 + this.bonusAttack, this);
           this.bonusAttack = 0;
           if(this.knocksback){
@@ -364,6 +371,11 @@ class Player extends Monster{
   }
   
   update(){
+    //If tick doesn't need confirmation reset turnMsg
+    if(!waitForInputToTick && turnMsg){
+      console.log("%cResetting turnMsg:%c"+turnMsg, "color:grey", "color:");
+      turnMsg = "";
+    }
     //reduce personal haste counter as long global haste effect is on and check if you have posthaste after global haste has expired.
     if(!haste && !this.posthaste || haste && this.hasted){
       if(this.hasted) this.hasted--;
@@ -380,6 +392,25 @@ class Player extends Monster{
       tick(true, "Stunned!");
       console.log(""+this.constructor.name+" is stunned.");
     }
+    
+    //first reduce poisontimer and once it's 0 go through poisoned until that too is 0
+    //
+    if(this.poisoned){
+      if(this.poisontimer > 0){
+        this.poisontimer--
+      }
+      if(this.poisontimer < 1){
+        if(!this.small){//not exactly a foolproof way to check this is 1st turn of poison being active.
+          turnMsg = "Feeling weak!";
+          playSound("weak");
+        }
+        this.poisoned--
+        this.small = true;
+        this.peaceful = true;
+        if(this.sprite < 4) this.sprite = Math.min(4+this.tile.depth, 6);
+      }
+    }
+    
     this.TUs = 0;
     console.log("player hp: "+this.hp+"/"+this.fullHp+"/"+maxHp);
   }
@@ -418,30 +449,35 @@ class Player extends Monster{
   }
   
   crouch(){
-    if (!this.small && this.tile.crawlable) {
-      if (!this.tile.crawlable) return;//above pit for some reason probably
-      this.small = true;
-      this.peaceful = true;
-      this.sprite = Math.min(4+this.tile.depth, 6);
-    }
-    else {
-      if (!this.tile.passable) return;//in vent probably
-      this.small = false;
-      this.peaceful = false;
-      this.sprite = Math.min(0+this.tile.depth, 3);
-      //End turn
+    //Make posion prevent wasting a turn trying to get up.
+    if(!this.poisoned || (this.poisontimer && this.poisontimer > 0)){//checking poisontimer twice to hopefully make it fail when undefined and when below 1 without 2nd one happening if it's undefined(poisoned check passing should already mean it's not undefined).
+      if (!this.small && this.tile.crawlable) {
+        if (!this.tile.crawlable) return;//above pit for some reason probably flying
+        this.small = true;
+        this.peaceful = true;
+        this.sprite = Math.min(4+this.tile.depth, 6);
+      }
+      else {
+        if (!this.tile.passable) return;//in vent probably
+        this.small = false;
+        this.peaceful = false;
+        this.sprite = Math.min(0+this.tile.depth, 3);
+        //End turn
+        this.TUs++
+        playSound("blip");
+        tick();
+      }
       this.TUs++
-      playSound("blip");
-      tick();
+      /*
+      //End turn
+      What if only on getting up?
+      Losing only one turn to misinput instead of two is better
+      If I do make use of TUs could just make getting up more expensive
+      player.tile.stepOn(this);//To pickup gems
+      */
+    }else{
+      playSound("weak");
     }
-    this.TUs++
-    /*
-    //End turn
-    What if only on getting up?
-    Losing only one turn to misinput instead of two is better
-    If I do make use of TUs could just make getting up more expensive
-    player.tile.stepOn(this);//To pickup gems
-    */
   }
   
   leap(){
@@ -508,17 +544,7 @@ class Player extends Monster{
         //delete this.spells[index];
         console.log("It costs "+cost);
         while(cost > 0){
-          //usedRunes.push([spells[spellName].droptime, spells[spellName].dropdistance, this.tile, runeinv.pop(), wpos[0], wpos[1]]);
-          //runes[runeinv[cost-1]].timer = spells[spellName].droptime;// shift() takes care of cost-1
-          runes[runeinv[0]].timer = spells[spellName].droptime;
-          runes[runeinv[0]].x = this.tile.x;
-          runes[runeinv[0]].y = this.tile.y;
-          runes[runeinv[0]].wx = wpos[0];
-          runes[runeinv[0]].wy = wpos[1];
-          runes[runeinv[0]].holder = false;
-          wTiles[wpos[0]][wpos[1]].runes.push(runeinv.shift());
-          // TODO: ability to use a specific rune instead of first one in runeinv
-          // TODO: function to handle doing this
+          releaseRune(this.tile.x, this.tile.y, spells[spellName].droptime, 0);
           cost--;
         }
         //useCharge(this.tile, spells[spellName].droptime, spells[spellName].dropdistance);
@@ -540,27 +566,29 @@ class Player extends Monster{
   }
 
   draw(){
+    //player sprite
     if(this.teleportCounter > 1){
       drawSprite(31, this.getDisplayX(),  this.getDisplayY(), this.sheet);
-    }else if(this.teleportCounter == 1 || this.stunned || waitForInputToTick && this.isPlayer){
-      //drawSprite(30, this.tile.x, this.tile.y, this.sheet);
-      //drawSprite(this.sprite, this.tile.x, this.tile.y, this.sheet);
-      drawSprite(this.sprite, this.getDisplayX(),  this.getDisplayY(), this.sheet, this.dir);
-      this.drawHp(pipgray);
-      if(this.isPlayer){
-          //console.log("Player stunned is "+this.stunned+".");
-      }
     }else{
       drawSprite(this.sprite, this.getDisplayX(),  this.getDisplayY(), this.sheet, this.dir);
       //if(this.belt)
-      //if(runeinv.length || runes)
       drawSprite(this.sprite, this.getDisplayX(),  this.getDisplayY(), beltsheet, this.dir);
       drawSprite(this.sprite, this.getDisplayX(),  this.getDisplayY(), belt2sheet, this.dir);
+      //if(runeinv.length || runes)
       for(let i=0 ; i < runesprites.length ; i++){
         //let runesheet = eval("runes"+runesprites[i]+"sheet");
         let runesheet = runesprites[i];
         drawSprite(this.sprite, this.getDisplayX(),  this.getDisplayY(), runesheet, this.dir);
       }
+    }
+    //health pips
+    if(this.teleportCounter == 1 || this.stunned || waitForInputToTick && this.isPlayer){
+      this.drawHp(pipgray);
+    }else if(this.poisoned && this.poisontimer < 2){
+      //this used to happens before poison had actually made you crawl... it was fine as indication that you're about to crawl.
+      //so made this pass at poisontimer 1 instead of just 0,
+      this.drawHp(pipgreen);
+    }else{
       this.drawHp(this.piptype);
     }
     this.offsetX -= Math.sign(this.offsetX)*(1/4);
@@ -759,6 +787,7 @@ class Crystal extends Monster{
       this.spells = ['WOOP', 'BOLT', 'CROSS'];
       this.flying = true;
       this.shield = 0;
+      this.stunning = true;
   }
   //Eat walls
   doStuff(){
@@ -792,6 +821,8 @@ class Wasp extends Monster{
   constructor(tile){
       super(tile, 5, 1, 10);
       this.flying = true;
+      this.poisonous = 3;
+      this.poisonspeed = 4;
   }
   doStuff(){
     let lastpos = {x:this.tile.x, y:this.tile.y}
@@ -802,6 +833,12 @@ class Wasp extends Monster{
 
     if(!this.attackedThisTurn){
       super.doStuff();
+    }
+    //Don't attack for a turn after attack
+    if(this.attackedThisTurn){
+      this.peaceful = true;
+    }else if (this.peaceful) {
+      this.peaceful = false;
     }
     //buzzing is a tad annoying when wasp is stuck somewhere, walls blocking sounds and using pathing distance for sound would help. Oh, remember starting position and don't play sound if it's same or just 1 away.
     if (this.tile.dist(lastpos)>1){
@@ -845,9 +882,10 @@ class Goblin extends Monster{
 class Hobgoblin extends Monster{
   constructor(tile){
       super(tile, 7, 4, 12);
+      this.knocksback = true;
   }
   doStuff(){
-    if(randomRange(0,5) <= 0) this.knocksback = true;//turns out knockback everytime seems fine
+    //if(randomRange(0,5) <= 0) this.knocksback = true;//turns out knockback everytime seems fine
     super.doStuff();
   }
 }

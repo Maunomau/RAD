@@ -728,4 +728,6 @@ function loadPlayerState(pl = player){
     haste = savedPlayer.hasted;
   }
   if(savedPlayer.posthaste) pl.posthaste = savedPlayer.posthaste;
+  if(savedPlayer.poisoned) pl.poisoned = savedPlayer.poisoned;
+  if(savedPlayer.poisontimer) pl.poisontimer = savedPlayer.poisontimer;
 }

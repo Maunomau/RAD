@@ -43,6 +43,10 @@ spells = {
       else if(caster.hp < caster.fullHp){
         caster.hp += 1;
       }
+      if(caster.poisoned){
+        caster.poisoned = 0;
+        caster.poisontimer = 0;
+      }
       caster.tile.setEffect(13);
       //if (caster.hp < caster.fullHp) caster.hpup = true;
       //else caster.hpup = false;
@@ -565,6 +569,21 @@ function dropRunes(){
     if(r.timer) r.timer--;
     
   });
+}
+
+function releaseRune(x = player.tile.x, y = player.tile.y, delay = timeInDay*0.9, runeid = 0, wx = wpos[0], wy = wpos[1], holder = false) {
+  if(runeinv.length){
+    //runes[runeinv[cost-1]].timer = spells[spellName].droptime;// shift()/splice takes care of cost-1
+    runes[runeinv[0]].x = x;
+    runes[runeinv[0]].y = y;
+    runes[runeinv[0]].timer = delay;
+    runes[runeinv[0]].wx = wx;
+    runes[runeinv[0]].wy = wy;
+    runes[runeinv[0]].holder = holder;
+    // TODO: check ability to use a specific rune instead of first one in runeinv works fine
+    wTiles[wx][wy].runes.push(runeinv.splice(runeid,1));
+    //wTiles[wx][wy].runes.push(runeinv.shift());
+  }else console.error("Tried to release rune despite not having any.");
 }
 
 function gemCount(){

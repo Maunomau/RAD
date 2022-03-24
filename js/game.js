@@ -95,8 +95,8 @@ function draw(){
       drawText("Press Z to pass a turn.", 20, true, canvas.height/2, "white");
       drawText("Press anything else to restart the game.", 20, true, canvas.height/2 + 25, "white");
     }
-    if(waitForInputToTick){
-      drawText(turnMsg, 30, true, canvas.height/2 - 55, "white");
+    if(waitForInputToTick || (gameState == "running" && turnMsg)){
+      drawText(turnMsg, 30, true, canvas.height/2 - 155, "white");
     }
   }
 }
@@ -105,9 +105,9 @@ function tick(needConfirm = false, msg = "You are incapacitated."){
   if(needConfirm == true){
     turnMsg = msg;
     waitForInputToTick = true;
-    console.log("%cPassed turn.", "color:grey");
+    console.log("%cPassed turn.("+turnMsg+")", "color:grey");
   }else{
-    console.log("%cTick, confirm needed?"+needConfirm+".", "color:grey");
+    //console.log("%cTick, confirm needed?"+needConfirm+".", "color:grey");
     soundsplayed = {} //(soundname: distance)Used to avoid more distant sounds replacing closer ones.
     //iterate over monsters(including player) (importantly in reverse so they can be safely deleted)
     //adjust for knocking out
@@ -123,18 +123,13 @@ function tick(needConfirm = false, msg = "You are incapacitated."){
       }
     }
     
-    player.update();
+    player.update();//removes turnMsg without waitForInputToTick
     
     if(player.dead){
       while(runeinv.length){
         runes[runeinv[0]].timer = 0;
         let rtile = randomCrawlableTile(0)
-        runes[runeinv[0]].x = rtile.x;
-        runes[runeinv[0]].y = rtile.y;
-        runes[runeinv[0]].wx = wpos[0];
-        runes[runeinv[0]].wy = wpos[1];
-        runes[runeinv[0]].holder = false;
-        wTiles[wpos[0]][wpos[1]].runes.push(runeinv.shift());
+        releaseRune(rtile.x, rtile.y, 0);
       }
       dropRunes();
       //Unseal sealedMons
@@ -189,14 +184,9 @@ function passTime(){
     if("porthome on dayend" == "yes"){
       //drop runes
       while(runeinv.length){
-        runes[runeinv[0]].timer = 2;
         let rtile = randomCrawlableTile(0)
-        runes[runeinv[0]].x = rtile.x;
-        runes[runeinv[0]].y = rtile.y;
-        runes[runeinv[0]].wx = wpos[0];
-        runes[runeinv[0]].wy = wpos[1];
-        runes[runeinv[0]].holder = false;
-        wTiles[wpos[0]][wpos[1]].runes.push(runeinv.shift());
+        let delay = 2;
+        releaseRune(rtile.x, rtile.y, delay);
         //console.warn("Dropped a rune!"+"");
       }
       wpos[0] = 14;
@@ -504,6 +494,7 @@ function initSounds(){
     buzz: new Audio('sounds/buzz2.wav'),
     growl: new Audio('sounds/grr.wav'),
     no: new Audio('sounds/no.wav'),
+    weak: new Audio('sounds/weak.wav'),
     circleFound: new Audio('sounds/circleFound.wav'),
     circleCharge1: new Audio('sounds/circleCharge1.wav'),
     circleCharge2: new Audio('sounds/circleCharge2.wav'),

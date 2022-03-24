@@ -119,10 +119,12 @@ leaping on defeated monsters can result in weird behaviour.
 slipping seems to happen after player's depth is checked and adjusted for.
 time doesn't pass in rooms you aren't in leading to some slight weirdness, especially when it's dark.
 hunter's DIG probably still doesn't work always
-leap cooldown is weird
-using runes in main circle room traps them? Or not? Won the game despite seeing that there were two runes set to be in 14,14 not sure what's going on, several possibilities.
+hobgobs don't always knockback?
+Push doesn't stun when done in melee against 1 enemy?
 
 probably fixed
+leap cooldown is weird
+using runes in main circle room traps them? Or not? Won the game despite seeing that there were two runes set to be in 14,14 not sure what's going on, several possibilities.
 something wrong with rune drops(or is there?).
 some weirdness with display of maincircle after all circles found(circles not fully charged invisible when most are fully charged)
 

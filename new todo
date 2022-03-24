@@ -11,8 +11,6 @@ Hmm, even with needing to use HEAL spell to recover hp I'm still not really usin
   Done, certainly made me prefer using spells when just running isn't an option.
 
 Make days change room positions(but reduce randomness of rooms themselves)
-Poisoned/Numbed status that forces you into crawling position for a bit.
-Make wasp stings poison you after a turn or two.
 Make wasps wait for the poison to take effect before peacefully interacting with you from behind.
 Make wasp nests a thing.
 Make being somehow carried to a wasp nest possible(fade to black if effectively defeated by multiple wasps or something)
@@ -30,7 +28,12 @@ Figure out and implement party member manifestation in some way.
 
 Crawling under wasps or other creatures?
 
+Undo or something to rollback a turn or two would help with figuring out what happened if something weird happens.
+
 done:
+Make wasps peaceful for a turn after attacking
+Poisoned/Numbed status that forces you into crawling position for a bit.
+Make wasp stings poison you after a turn or two.
 Make each tick require player input even when player can't do anything.
 Fixed "secret" warp method not working.
 HEAL spell that's better in water and always learned from main circle
