@@ -64,7 +64,7 @@ function lightPasses0(x, y) {
 
 function lightPasses(x, y) {
   var tile = getTile(x, y);
-  console.log("%clight pass check("+x+","+y+") == "+tile.visibility+".", "color:lightyellow");
+  //console.log("%clight pass check("+x+","+y+") == "+tile.visibility+".", "color:lightyellow");
   if(tile.visibility == 1) return true;
   if(tile.visibility == 0) return false;
 }

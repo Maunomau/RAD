@@ -115,16 +115,6 @@ class Tile{
       ctx.fillStyle = 'rgba(0, 0, 0, '+0.25+')';
       ctx.fillRect(this.x*tileSize+shakeX, this.y*tileSize+shakeY, tileSize, tileSize);
     }
-		//Indicate FoV
-		if (this.seenByPlayer) {
-			if (this.seenByPlayer == 1) {
-	      ctx.fillStyle = 'rgba(0, 210, 210, '+0.5+')';
-	      ctx.fillRect(this.x*tileSize+shakeX, this.y*tileSize+shakeY, tileSize, tileSize);
-	    }else if (this.seenByPlayer == 2) {
-	      ctx.fillStyle = 'rgba(0, 210, 210, '+0.2+')';
-	      ctx.fillRect(this.x*tileSize+shakeX, this.y*tileSize+shakeY, tileSize, tileSize);
-	    }
-		}
 		if(this.maincircle >= 0){
 			let c = circle[this.maincircle];
 			let charge = c.runesChargedWith.length;
@@ -195,13 +185,13 @@ class Tile{
 	    //drawTile(45, this.x, this.y);
 	    }
 		}
-		if(this.effectCounter){                    
+		if(this.effectCounter){
       this.effectCounter--;
       ctx.globalAlpha = this.effectCounter/30;
       drawSprite(this.effect, this.x, this.y, effectsheet);
       ctx.globalAlpha = 1;
     }
-		if(this.runeEffectCounter){                    
+		if(this.runeEffectCounter){
       this.runeEffectCounter--;
       ctx.globalAlpha = this.runeEffectCounter/30;
       //drawSprite(this.runeEffect, this.x, this.y, effectsheet);
@@ -210,6 +200,19 @@ class Tile{
 			drawRune(this.x, this.y, this.runeEffect);
       ctx.globalAlpha = 1;
     }
+		
+		//Indicate FoV
+		if (this.seenByPlayer == 1) {
+    }else if (this.seenByPlayer == 2 || darkness < 0.3) {
+      ctx.fillStyle = 'rgba(0, 0, 0, '+0.25+')';
+      ctx.fillRect(this.x*tileSize+shakeX, this.y*tileSize+shakeY, tileSize, tileSize);
+    }else if (this.seenByPlayer == 3) {
+      ctx.fillStyle = 'rgba(0, 0, 0, '+0.25+')';
+      ctx.fillRect(this.x*tileSize+shakeX, this.y*tileSize+shakeY, tileSize, tileSize);
+    }else{
+			ctx.fillStyle = 'rgba(0, 0, 0, '+1+')';
+			ctx.fillRect(this.x*tileSize+shakeX, this.y*tileSize+shakeY, tileSize, tileSize);
+		}
   }
 	
 	setEffect(effectSprite){

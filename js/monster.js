@@ -16,11 +16,39 @@ class Monster{
     this.bonusAttack = 0;
     this.shield = 0;
     this.dir = 0;
+    this.seesPlayer = false;
     seenMons.add(this.constructor.name)
   }
 
   heal(damage){
     this.hp = Math.min(maxHp, this.hp+damage);
+  }
+  
+  vision(seer){
+    /*
+    tiles.forEach(el => {
+      el.forEach(tile => {
+        if (tile.seenBy.length){
+          tile.seenBy = [];
+        }
+      })
+    });
+    */
+    this.seesPlayer = false;
+    let visRange = 10;
+    let dirTl = [2, 3, 0, 1];//clockwise south 0 to ccw north 0
+    let dir = dirTl[this.dir];
+    dir = dir*2;
+    fov.compute(this.tile.x, this.tile.y, visRange, function(x, y, r, visibility) {
+      tiles[x][y].seenByPlayer = 2;
+      if(tiles[x][y].monster){
+        if(tiles[x][y].monster.isPlayer){
+          console.log("%cYou're within LoS of "+seer.constructor.name+"!", "color:orange");
+          seer.seesPlayer = true;
+        }
+      }
+      
+    });
   }
 
   update(){
@@ -58,6 +86,8 @@ class Monster{
       if(this.dead) {
         //this.die();//not sure if this is needed(tick() might expect it since update used to call die())
       }
+      this.heardByPlayer = false;
+      this.vision(this);
       this.doStuff();
     }
   }
@@ -78,7 +108,7 @@ class Monster{
     if(player.tile.depth < 4 && !player.small)console.log("Not hidden in deepish water.");
     if(player.tile.depth < 2)console.log("Not hidden in shallow water.");*/
     
-    if(playerDistance <= 2 || player.tile.constructor.name != "Vent" && ((player.tile.depth < 4 && !player.small) || player.tile.depth < 2)){
+    if(playerDistance <= 2 || player.tile.constructor.name != "Vent" && ((player.tile.depth < 4 && !player.small) || player.tile.depth < 2) && this.seesPlayer){
       console.log(""+this.constructor.name+" sees you, ("+playerDistance+","+player.tile.constructor.name+","+player.tile.depth+","+player.small+").");
 
       neighbors = neighbors.filter(t => !t.monster || t.monster.isPlayer || t.monster.resting);
@@ -103,24 +133,26 @@ class Monster{
   }
 
   draw(){
-    if(this.teleportCounter > 1){
-      drawSprite(31, this.getDisplayX(),  this.getDisplayY(), this.sheet);
-    }else if(this.teleportCounter == 1 || this.stunned){
-      //drawSprite(30, this.tile.x, this.tile.y, this.sheet);
-      //drawSprite(this.sprite, this.tile.x, this.tile.y, this.sheet);
-      if(this.resting) drawSprite(this.sprite, this.getDisplayX(), this.getDisplayY(), monsterKOdsheet, this.dir);
-      else drawSprite(this.sprite, this.getDisplayX(), this.getDisplayY(), this.sheet, this.dir);
-      this.drawHp(pipgray);
-      if(this.isPlayer){
-          //console.log("Player stunned is "+this.stunned+".");
+    if(this.tile.seenByPlayer == 1 || this.tile.seenByPlayer == 2 || this.heardByPlayer || darkness == 0){
+      if(this.teleportCounter > 1){
+        drawSprite(31, this.getDisplayX(),  this.getDisplayY(), this.sheet);
+      }else if(this.teleportCounter == 1 || this.stunned){
+        //drawSprite(30, this.tile.x, this.tile.y, this.sheet);
+        //drawSprite(this.sprite, this.tile.x, this.tile.y, this.sheet);
+        if(this.resting) drawSprite(this.sprite, this.getDisplayX(), this.getDisplayY(), monsterKOdsheet, this.dir);
+        else drawSprite(this.sprite, this.getDisplayX(), this.getDisplayY(), this.sheet, this.dir);
+        this.drawHp(pipgray);
+        if(this.isPlayer){
+            //console.log("Player stunned is "+this.stunned+".");
+        }
+      }else{
+        if(this.resting) drawSprite(this.sprite, this.getDisplayX(), this.getDisplayY(), monsterKOdsheet, this.dir);
+        else drawSprite(this.sprite, this.getDisplayX(), this.getDisplayY(), this.sheet, this.dir);
+        this.drawHp(this.piptype);
       }
-    }else{
-      if(this.resting) drawSprite(this.sprite, this.getDisplayX(), this.getDisplayY(), monsterKOdsheet, this.dir);
-      else drawSprite(this.sprite, this.getDisplayX(), this.getDisplayY(), this.sheet, this.dir);
-      this.drawHp(this.piptype);
+      this.offsetX -= Math.sign(this.offsetX)*(1/4);
+      this.offsetY -= Math.sign(this.offsetY)*(1/4);
     }
-    this.offsetX -= Math.sign(this.offsetX)*(1/4);
-    this.offsetY -= Math.sign(this.offsetY)*(1/4);
   }
   
   drawHp(pip){
@@ -182,15 +214,20 @@ class Monster{
           console.log(""+this.constructor.name+"("+this.hp+") attacks "+newTile.monster.constructor.name+"("+newTile.hp+").");
           //Use rune/charge or whatever normal attacks should cost for player
           if(this.isPlayer && gamesettings.noFreeAttacks){
-              let cost = 1;
-              if( cost <= runeinv.length){
-                while(cost > 0){
-                  //releaseRune(this.tile.x, this.tile.y, timeInDay*0.9, 0, wpos[0], wpos[1], false);
-                  releaseRune(this.tile.x, this.tile.y);
-                  cost--;
-                }
-                playSound("spell");
-              }else return false;//no attack due to no runes.
+            let cost = 1;
+            if( cost <= runeinv.length){
+              while(cost > 0){
+                //releaseRune(this.tile.x, this.tile.y, timeInDay*0.9, 0, wpos[0], wpos[1], false);
+                releaseRune(this.tile.x, this.tile.y);
+                cost--;
+              }
+              playSound("spell");
+            }else if(this.hp > cost){
+              this.hp -= cost;
+            }else {
+              playSound("no");
+              return false;//no attack due to no runes and no hp.
+            }
           }
           this.attackedThisTurn = true;
           if(this.stunning) newTile.monster.stunned = true;
@@ -415,21 +452,28 @@ class Player extends Monster{
     console.log("player hp: "+this.hp+"/"+this.fullHp+"/"+maxHp);
     
     
-    this.vision();
+    //this.vision();
   }
   
   vision(){
     tiles.forEach(el => {
       el.forEach(tile => {
         if (tile.seenByPlayer){
-          tile.seenByPlayer = 2;
+          tile.seenByPlayer = 3;
         }
       })
     });
     let visRange = 10;
-    fov.compute90(player.tile.x, player.tile.y, visRange, player.dir*2, function(x, y, r, visibility) {
+    let dirTl = [2, 3, 0, 1];//clockwise south 0 to ccw north 0
+    let dir = dirTl[player.dir];
+    dir = dir*2;
+    fov.compute180(player.tile.x, player.tile.y, visRange, dir, function(x, y, r, visibility) {
+      tiles[x][y].seenByPlayer = 2;
+      //console.log("tile("+x+","+y+") seen by player.");
+    });
+    fov.compute90(player.tile.x, player.tile.y, visRange, dir, function(x, y, r, visibility) {
       tiles[x][y].seenByPlayer = 1;
-      console.log("tile("+x+","+y+") seen by player.");
+      //console.log("tile("+x+","+y+") seen by player.");
     });
   }
   
@@ -443,6 +487,7 @@ class Player extends Monster{
     }else{
       this.TUs++
     }
+    this.vision();
   }
   
   rest(){
@@ -780,6 +825,7 @@ class Wolf extends Monster{
     }else if(randomRange(0,5) == 1 && !this.growled){
       console.log("Wolf growled");
       playSound("growl", this.tile);
+      this.heardByPlayer = true;
       this.shield = 1;
       this.growled = 3;
     }else{
@@ -861,8 +907,10 @@ class Wasp extends Monster{
     //buzzing is a tad annoying when wasp is stuck somewhere, walls blocking sounds and using pathing distance for sound would help. Oh, remember starting position and don't play sound if it's same or just 1 away.
     if (this.tile.dist(lastpos)>1){
       playSound("buzz", this.tile);
+      this.heardByPlayer = true;
     }else{
       playSound("buzz", this.tile, 0.25);
+      this.heardByPlayer = true;
     }
     
   }
@@ -957,12 +1005,16 @@ class Fleshball extends Monster{ // Eater Devourer
       //set this.lastMove toward player
       if(player.tile.x == this.tile.x && player.tile.y > this.tile.y){//down
         this.lastMove = dirmap[0];
+        //this.lastMove = dirmap[2];
       }else if(player.tile.x < this.tile.x && player.tile.y == this.tile.y){//left
         this.lastMove = dirmap[1];
+        //this.lastMove = dirmap[1];
       }else if(player.tile.x == this.tile.x && player.tile.y < this.tile.y){//up
         this.lastMove = dirmap[2];
+        //this.lastMove = dirmap[0];
       }else if(player.tile.x > this.tile.x && player.tile.y == this.tile.y){//right
         this.lastMove = dirmap[3];
+        //this.lastMove = dirmap[3];
       }
       this.tiredness++;
       //DIG if there's wall(thought about just doing something else but this is easier to do atm.)

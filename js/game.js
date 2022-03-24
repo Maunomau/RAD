@@ -124,6 +124,7 @@ function tick(needConfirm = false, msg = "You are incapacitated."){
     }
     
     player.update();//removes turnMsg without waitForInputToTick
+    player.vision();
     
     if(player.dead){
       while(runeinv.length){
@@ -395,12 +396,8 @@ function startLevel(entryDir, playerHp=3){
   hunterPresent = false;
   gemMax = runeinv.length + gemCount();
   
-  fov = new ROT.FOV.RecursiveShadowcasting(lightPasses);
-  let visRange = 10;
-  fov.compute180(player.tile.x, player.tile.y, visRange, player.dir, function(x, y, r, visibility) {
-    tiles[x][y].seenByPlayer = 1;
-    console.log("tile("+x+","+y+") seen by player.");
-  });
+  fov = new ROT.FOV.RecursiveShadowcasting(lightPasses);//how often should this run? Every tick would be safest but only when map changes in some way could work. Though I'm not seeing any issues with just this, should investigate.
+  player.vision();
 }
 
 

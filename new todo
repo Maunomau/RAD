@@ -27,8 +27,10 @@ Figure out and implement party member manifestation in some way.
     Maid as? athletic? "Negotiator/Pacifier"? Deceptive trap maker? Good at playing dead?
 
 Crawling under wasps or other creatures?
-
 Undo or something to rollback a turn or two would help with figuring out what happened if something weird happens.
+now that truning has benefits should implement TUs.
+consider handling drawing seen but out of sight tiles in cleverer way(don't clear them until they're in sight?)
+Make mosnters know where they last saw you.
 
 done:
 Make wasps peaceful for a turn after attacking
