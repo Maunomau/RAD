@@ -129,7 +129,7 @@ class Monster{
     //I could do these in one for loop couldn't I? Well hp potentially being higher than fullHp... Would just mean needing Math.max()
     //poison, not used for monsters yet
     if(this.poisoned && this.poisontimer < 1){
-      pip = pipgreen);
+      pip = pipgreen;
     }
     if(!this.resting){
       for(let i=0 ; i < Math.floor(this.hp) ; i++){
