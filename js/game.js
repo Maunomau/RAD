@@ -59,7 +59,7 @@ function draw(){
     /*
     */
     if (darkness) {
-      ctx.fillStyle = 'rgba(0, 0, 0, '+darkness+')';
+      //ctx.fillStyle = 'rgba(0, 0, 0, '+darkness+')';
       //ctx.fillRect(0, 0, numTiles*tileSize, numTiles*tileSize);
     }
     
@@ -74,7 +74,9 @@ function draw(){
     
     drawText("Score:"+totalCharge+"/"+runeTypesTotal+"", tileSize/2, false, 25, "violet");
     drawText("Day:"+day+" t:"+time+"", tileSize/2, false, 45, "violet");
-    drawText(""+runeinv.length+"/"+gemMax, tileSize/2, false, 65, "violet");
+    if(player.tile.maincircle){
+      drawText(""+runeinv.length+"/"+gemMax+" "+circle[player.tile.maincircle].runesChargedWith.length+"/"+circle[player.tile.maincircle].maxCharge, tileSize/2, false, 65, "violet");
+    }else drawText(""+runeinv.length+"/"+gemMax, tileSize/2, false, 65, "violet");
     
     let lasti = 0;
     let spellColor = "aqua";
@@ -113,6 +115,13 @@ function tick(needConfirm = false, msg = "You are incapacitated."){
     waitForInputToTick = true;
     console.log("%cPassed turn.("+turnMsg+")", "color:grey");
   }else{
+    //reset seeCount, unused atm.
+    tiles.forEach(el => {
+      el.forEach(tile => {
+        tile.seeCount = 0;
+      })
+    });
+    
     //console.log("%cTick, confirm needed?"+needConfirm+".", "color:grey");
     soundsplayed = {} //(soundname: distance)Used to avoid more distant sounds replacing closer ones.
     //iterate over monsters(including player) (importantly in reverse so they can be safely deleted)
@@ -181,6 +190,7 @@ function tick(needConfirm = false, msg = "You are incapacitated."){
   
   fov = new ROT.FOV.RecursiveShadowcasting(lightPasses);
   
+  
 }
 
 function passTime(){
@@ -206,7 +216,7 @@ function passTime(){
     leapcd -= timeInDay;
     day++;
     time = 0;
-    darkness = 0;
+    //darkness = 0;
   }
   
   //darkness = Math.floor(time/8) / Math.floor(timeInDay/8)
@@ -224,13 +234,18 @@ function passTime(){
       case 6: darkness = 0.5; break;
       case 7: darkness = 0.5; break;
       case 8: darkness = 0.65; break;
-      case 9: darkness = 0.8; break;
+      case 9: darkness = 0.65; break;
       case 10: 
         darkness = 1; 
         shakeAmount = 30;
         break;
     }
   }
+  darknessVision = Math.floor(10-darkness*10);
+  if(player.sightRange != darknessVision){
+    player.sightRange = darknessVision;
+  }
+  
   //night time events
   //spawn hunter at exit if timer is out
   if(hunterTimer > 0) hunterTimer--;
@@ -332,10 +347,25 @@ function showTitle(){
 function startGame(){
   //playSound("newLevel");
   //sounds["newLevel"].play();
-  gamesettings.noFreeAttacks = true;
-  gamesettings.freeHeals = false;
-  gamesettings.disableFoV = false;
-  gamesettings.senseMelee = true;//while not knowing for sure if enemy is right behind you or not can be nice it's easily confusing and being able to hear creatures at so close makes sense. // TODO: don't reveal what creature unless you look.
+  if("getpageurlafter?" == "v7DRL"){
+    gamesettings.noFreeAttacks = false;
+    gamesettings.freeHeals = true;
+    gamesettings.disableFoV = true;
+    gamesettings.oldDarkness = true;
+    gamesettings.senseMelee = false;
+    gamesettings.runeSight = false;
+    gamesettings.smallMap = false;
+    wpos = [14,11,10,0];//world position, x,y,z,plane
+  }else{
+    gamesettings.noFreeAttacks = true;
+    gamesettings.freeHeals = false;
+    gamesettings.disableFoV = false;
+    gamesettings.oldDarkness = false;
+    gamesettings.senseMelee = true;//while not knowing for sure if enemy is right behind you or not can be nice it's easily confusing and being able to hear creatures at so close makes sense. // TODO: don't reveal what creature unless you look.
+    gamesettings.runeSight = true;
+    gamesettings.smallMap = true;
+    wpos = [14,12,10,0];//world position, x,y,z,plane
+  }
   totalCharge = 0;
   spellSlots = [];//player.spells are set to this.
   spellsCast = 0;
@@ -343,7 +373,7 @@ function startGame(){
   worldRNG.setSeed(worldSeed)
   wTiles = [];
   generateWorld()
-  wpos = [14,11,10,0];//world position, x,y,z,plane
+  //wpos = [14,11,10,0];//world position, x,y,z,plane
   savedMaps = {};
   circlesFound = 0;
   cwarp = 4;

@@ -17,6 +17,7 @@ class Monster{
     this.shield = 0;
     this.dir = 0;
     this.seesPlayer = false;
+    this.sightRange = 20;
     seenMons.add(this.constructor.name)
   }
 
@@ -35,15 +36,16 @@ class Monster{
     });
     */
     this.seesPlayer = false;
-    let visRange = 20;
+    let visRange = this.sightRange;
     let dirTl = [2, 3, 0, 1];//clockwise south 0 to ccw north 0
     let dir = dirTl[this.dir];
     dir = dir*2;
     fov.compute(this.tile.x, this.tile.y, visRange, function(x, y, r, visibility) {
       let tile = getTile(x,y);
-      tile.seenByPlayer = 2;
-      if(tiles[x][y].monster){
-        if(tiles[x][y].monster.isPlayer){
+      //tile.seenBy.push(this);//or something like that
+      tile.seeCount++;
+      if(tile.monster){
+        if(tile.monster.isPlayer){
           console.log("%cYou're within LoS of "+seer.constructor.name+"!", "color:orange");
           seer.seesPlayer = true;
         }
@@ -249,6 +251,7 @@ class Monster{
             }
           }
           newTile.monster.hit(1 + this.bonusAttack, this);
+          this.heardByPlayer = true;//this mainly ensures being knockedbacked while effectively blind isn't as confusing
           this.bonusAttack = 0;
           if(this.knocksback){
             newTile.monster.tryPush(this.lastMove[0],this.lastMove[1], 2);
@@ -489,19 +492,36 @@ class Player extends Monster{
       })
     });
     if(!this.seeAll && !gamesettings.disableFoV){
-      let visRange = 20;
+      let visRange = this.sightRange;
       let dirTl = [2, 3, 0, 1];//clockwise south 0 to ccw north 0
       let dir = dirTl[player.dir];
       dir = dir*2;
       fov.compute180(player.tile.x, player.tile.y, visRange, dir, function(x, y, r, visibility) {
-        tiles[x][y].seenByPlayer = 2;
+        let tile = getTile(x,y);
+        tile.seenByPlayer = 2;
         //console.log("tile("+x+","+y+") seen by player.");
       });
       fov.compute90(player.tile.x, player.tile.y, visRange, dir, function(x, y, r, visibility) {
-        tiles[x][y].seenByPlayer = 1;
+        let tile = getTile(x,y);
+        tile.seenByPlayer = 1;
         //console.log("tile("+x+","+y+") seen by player.");
       });
     }
+    tiles.forEach(el => {
+      el.forEach(tile => {
+        if (gamesettings.runeSight) {
+          if (tile.rune){
+            tile.seenByPlayer = 1;
+            tile.getAdjacentNeighbors(gRNG, "diagonal").forEach(t => {
+              t.seenByPlayer = 1;
+            });
+          }
+          if (tile.circle){
+            tile.seenByPlayer = 1;
+          }
+        }
+      })
+    });
   }
   
   tryMove(dx, dy){
@@ -922,6 +942,7 @@ class Wasp extends Monster{
       this.poisonspeed = 4;
   }
   doStuff(){
+    let playerDistance = this.tile.dist(player.tile);
     let lastpos = {x:this.tile.x, y:this.tile.y}
     //console.log("Buzz "+ JSON.stringify(lastpos)+" Am I stunned?"+this.stunned);
     
@@ -940,10 +961,10 @@ class Wasp extends Monster{
     //buzzing is a tad annoying when wasp is stuck somewhere, walls blocking sounds and using pathing distance for sound would help. Oh, remember starting position and don't play sound if it's same or just 1 away.
     if (this.tile.dist(lastpos)>1){
       playSound("buzz", this.tile);
-      this.heardByPlayer = true;
+      if(playerDistance < numTiles/2) this.heardByPlayer = true;
     }else{
       playSound("buzz", this.tile, 0.25);
-      this.heardByPlayer = true;
+      if(playerDistance < numTiles/4) this.heardByPlayer = true;
     }
     
   }

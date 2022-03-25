@@ -13,6 +13,7 @@ class Tile{
     this.depth = depth; //0-6
     this.visibility = 1;
     this.seenByPlayer = 0;
+    this.seeCount = 0;//number of monsters that see this tile
 	}
 
   replace(newTileType){
@@ -105,9 +106,11 @@ class Tile{
 	draw(){
     drawTile(this.sprite, this.x, this.y);
 		let playerDistance = this.dist(player.tile);
-    ctx.fillStyle = 'rgba(0, 0, 0, '+darkness+')';
-    ctx.fillRect(this.x*tileSize+shakeX, this.y*tileSize+shakeY, tileSize, tileSize);
-		if (darkness>0.25 && playerDistance > 10-(darkness*10)) {
+		if (gamesettings.oldDarkness){
+	    ctx.fillStyle = 'rgba(0, 0, 0, '+darkness+')';
+	    ctx.fillRect(this.x*tileSize+shakeX, this.y*tileSize+shakeY, tileSize, tileSize);
+		}
+		if (gamesettings.oldDarkness && darkness>0.25 && playerDistance > 10-(darkness*10)) {
       ctx.fillStyle = 'rgba(0, 0, 0, '+1+')';
       ctx.fillRect(this.x*tileSize+shakeX, this.y*tileSize+shakeY, tileSize, tileSize);
     }
@@ -179,6 +182,7 @@ class Tile{
 			let test;
 			if(wTiles[testX][testY].runes) {
 				test = wTiles[testX][testY].runes.length;
+				console.log("%cExit in dir "+this.entryDir+" sees "+test+" runes in the other room["+testX+"]["+testY+"]", "color:pink");
 			}
 	 		if(test){
 			//console.log("%cThere are runes in direction "+this.entryDir+"("+testX+","+testY+")?", "color:violet");
@@ -202,17 +206,21 @@ class Tile{
     }
 		
 		//Indicate FoV
+		let alpha = Math.max(Math.min(darkness,0.75),0.15);
 		if (this.seenByPlayer == 1) {
-    }else if (this.seenByPlayer == 2 || darkness < 0.3) {
-      ctx.fillStyle = 'rgba(0, 0, 0, '+0.25+')';
-      ctx.fillRect(this.x*tileSize+shakeX, this.y*tileSize+shakeY, tileSize, tileSize);
-    }else if (this.seenByPlayer == 3) {
-      ctx.fillStyle = 'rgba(0, 0, 0, '+0.25+')';
-      ctx.fillRect(this.x*tileSize+shakeX, this.y*tileSize+shakeY, tileSize, tileSize);
+      ctx.fillStyle = 'rgba(0, 0, 0, '+Math.max(alpha/2-0.1,0)+')';
+    }else if (this.seenByPlayer == 2 || this.seenByPlayer == 3) {
+			if (darkness < 0.3) {
+	      ctx.fillStyle = 'rgba(0, 0, 0, '+alpha+')';
+			}else{
+				ctx.fillStyle = 'rgba(50, 0, 50, '+alpha+')';
+			}
+    }else if (darkness < 0.3) {
+      ctx.fillStyle = 'rgba(10, 10, 10, '+(alpha+0.2)+')';
     }else{
 			ctx.fillStyle = 'rgba(0, 0, 0, '+1+')';
-			ctx.fillRect(this.x*tileSize+shakeX, this.y*tileSize+shakeY, tileSize, tileSize);
 		}
+		ctx.fillRect(this.x*tileSize+shakeX, this.y*tileSize+shakeY, tileSize, tileSize);
   }
 	
 	setEffect(effectSprite){

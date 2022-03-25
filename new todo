@@ -33,8 +33,13 @@ consider handling drawing seen but out of sight tiles in cleverer way(don't clea
 Make mosnters know where they last saw you.
 Try out indicating just sounds on the map instead of showing the monster sprite, mainly to make "hearing" creatures in melee range a bit more scary since you won't know what exactly you're hearing.
 make webs require trying to move to break? And potentially stronger webs that require multiple attempts.
+What if you could see around runes? Might be interesting.
+Make capture change displayed name to release based on capturedMons.length
 
 done:
+Main circle charge info
+runeSight
+circle 0 spell 1 and circle 8 spell 2 were always same
 Make circles make their spell free, even if it'd make a room trivial that's fine since it's just 1 room.
 Temporarily give maincircle spells before it's charged or something.
 Make wasps peaceful for a turn after attacking

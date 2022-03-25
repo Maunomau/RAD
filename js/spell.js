@@ -1,4 +1,8 @@
+
+
+
 timeInDay = 500;//Uhh... I guess this runs before index.html is fully done or something
+
 spells = {
   WOOP: {
     cost: 1,
