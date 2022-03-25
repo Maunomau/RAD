@@ -48,7 +48,7 @@ function generateWorld(){
         maxCharge: Math.floor(runeTypesTotal/8),
         runesChargedWith:[],//should prefer length of this to charge
         spell:spellOptions[i],
-        spell2:spellOptions[i+8],// need 2 unique spells per circle
+        spell2:spellOptions[i+8],
         found:false,
         wTileOptions:[],
         wTile:[]

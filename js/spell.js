@@ -24,7 +24,7 @@ spells = {
   BRAVERY: {
     cost: 1,
     dropdistance: 2,
-    droptime: 100,
+    droptime: timeInDay*0.9,
     f: function(){
       player.shield = 3;
       for(let i=0;i<monsters.length;i++){
@@ -35,7 +35,7 @@ spells = {
   HEAL: {
     cost: 1,
     dropdistance: 0,
-    droptime: timeInDay,
+    droptime: timeInDay*0.9,
     f: function(caster){
       if (caster.tile.liquid = "water" && caster.tile.depth >= 2 && caster.hp+1 < caster.fullHp) {
         caster.hp += 2;
@@ -63,6 +63,14 @@ spells = {
           monsters[i].teleportCounter = 3;
         }
       }
+    }
+  },
+  REVEAL: {
+    cost: 1,
+    dropdistance: 1,
+    droptime: timeInDay*0.9,
+    f: function(caster){
+      caster.seeAll = true;
     }
   },
   DASH: {
@@ -94,7 +102,7 @@ spells = {
   BOLT: {
     cost: 2,
     dropdistance: 1,
-    droptime: 100,
+    droptime: timeInDay*0.9,
     f: function(caster){
       boltTravel(caster.lastMove, 16 - Math.abs(caster.lastMove[1]), 4, caster);
     }
@@ -122,7 +130,7 @@ spells = {
   CROSS: {
     cost: 2,
     dropdistance: 1,
-    droptime: 100,
+    droptime: timeInDay*0.9,
     f: function(caster){
       let directions = [
         [0, -1],
@@ -138,7 +146,7 @@ spells = {
   SLEEPMORE: {
     cost: 1,
     dropdistance: 1,
-    droptime: 10,
+    droptime: timeInDay*0.9,
     f: function(caster){
       for(let i=0;i<monsters.length;i++){
         if (monsters[i].resting && monsters[i] != caster){
@@ -151,7 +159,7 @@ spells = {
   POWER: {
     cost: 1,
     dropdistance: 1,
-    droptime: 100,
+    droptime: timeInDay*0.9,
     f: function(caster){
       caster.bonusAttack=5;
     }
@@ -164,7 +172,7 @@ spells = {
   QUAKE: {
     cost: 1,
     dropdistance: 16,
-    droptime: 10,
+    droptime: timeInDay*0.9,
     f: function(caster){
       for(let i=0; i<numTiles; i++){
         for(let j=0; j<numTiles; j++){
@@ -186,7 +194,7 @@ spells = {
   EX: {
     cost: 1,
     dropdistance: 5,
-    droptime: 100,
+    droptime: timeInDay*0.9,
     f: function(caster){
       let directions = [
         [-1, -1],
@@ -202,7 +210,7 @@ spells = {
   DIG: {
     cost: 1,
     dropdistance: 0,
-    droptime: 20,
+    droptime: 10,
     f: function(caster){
       let newTile = caster.tile;
       //for(let i=0;i<=runeinv.length;i++){
@@ -226,7 +234,7 @@ spells = {
   DRAG: {
     cost: 1,
     dropdistance: 0,
-    droptime: 100,
+    droptime: timeInDay*0.9,
     f: function(caster){
       let dragRange = 3;
       let newTile = caster.tile;
@@ -296,7 +304,7 @@ spells = {
   PUSH: {
     cost: 1,
     dropdistance: 1,
-    droptime: 20,
+    droptime: 5,
     f: function(caster){
       let newTile = caster.tile;
       let testTile = newTile.getNeighbor(caster.lastMove[0],caster.lastMove[1]);
@@ -319,7 +327,7 @@ spells = {
   SHOVE: {
     cost: 1,
     dropdistance: 1,
-    droptime: 10,
+    droptime: 3,
     f: function(caster){
       let newTile = caster.tile;
       let testTile = newTile.getNeighbor(caster.lastMove[0],caster.lastMove[1]);
@@ -334,7 +342,7 @@ spells = {
   WALL: {
     cost: 1,
     dropdistance: 8,
-    droptime: 100,
+    droptime: timeInDay*0.9,
     f: function(caster){
       //Nonplayer casting? Would need monster specific sealedMons easyish way might be to just sealedMons[caster.constructor.name][monster] but not sure I really need that.
       //if(sealedMons == undefined) sealedMons = [];//not good enough apparently,
@@ -352,7 +360,7 @@ spells = {
   HASTE: {
     cost: 1,
     dropdistance: 1,
-    droptime: 20,
+    droptime: timeInDay*0.9,
     f: function(caster){
       for(let i=0;i<monsters.length;i++){
         if(monsters[i] != caster) monsters[i].stunned = true;
@@ -365,7 +373,7 @@ spells = {
   //Seal/Vanish/Banish
   //just increased cost and drop time to balance
   SEAL: {
-    cost: 10,
+    cost: 3,
     dropdistance: 8,
     droptime: timeInDay,
     f: function(caster){
@@ -387,7 +395,7 @@ spells = {
   CAPTURE: {
     cost: 1,
     dropdistance: 2,
-    droptime: 20,
+    droptime: timeInDay*0.9,
     f: function(caster){
       let tile = caster.tile;
       let testTile = tile.getNeighbor(caster.lastMove[0],caster.lastMove[1]);

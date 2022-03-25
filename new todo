@@ -31,8 +31,12 @@ Undo or something to rollback a turn or two would help with figuring out what ha
 now that truning has benefits should implement TUs.
 consider handling drawing seen but out of sight tiles in cleverer way(don't clear them until they're in sight?)
 Make mosnters know where they last saw you.
+Try out indicating just sounds on the map instead of showing the monster sprite, mainly to make "hearing" creatures in melee range a bit more scary since you won't know what exactly you're hearing.
+make webs require trying to move to break? And potentially stronger webs that require multiple attempts.
 
 done:
+Make circles make their spell free, even if it'd make a room trivial that's fine since it's just 1 room.
+Temporarily give maincircle spells before it's charged or something.
 Make wasps peaceful for a turn after attacking
 Poisoned/Numbed status that forces you into crawling position for a bit.
 Make wasp stings poison you after a turn or two.

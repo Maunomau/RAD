@@ -78,10 +78,16 @@ function draw(){
     
     let lasti = 0;
     let spellColor = "aqua";
-    for(let i=0; i<player.spells.length; i++){
-      if((shiftMode && i <= 9) || (!shiftMode && i > 9)) spellColor = "grey";
+    let spellList = structuredClone(player.spells);//clone to prevent actually gaining the free spell
+    if(player.freeSpell && !spellList.includes(player.freeSpell)) spellList.push(player.freeSpell);
+    for(let i=0; i<spellList.length; i++){
+      let spellText = (i+1) + "." + (spellList[i] + "("+spells[spellList[i]].cost+","+spells[spellList[i]].droptime+")" || "");
+      if(spellList[i] == player.freeSpell) {
+        spellColor = "khaki";
+        spellText = (i+1) + "." + (spellList[i] || "");
+      }
+      else if((shiftMode && i <= 9) || (!shiftMode && i > 9)) spellColor = "grey";
       else spellColor = "aqua";
-      let spellText = (i+1) + "." + (player.spells[i] + "("+spells[player.spells[i]].cost+","+spells[player.spells[i]].droptime+")" || "");
       drawText(spellText, tileSize/2, false, 85+i*(tileSize-10), spellColor);
       lasti = i+1;
     }
@@ -173,6 +179,7 @@ function tick(needConfirm = false, msg = "You are incapacitated."){
     }
   }
   
+  fov = new ROT.FOV.RecursiveShadowcasting(lightPasses);
   
 }
 
@@ -327,6 +334,8 @@ function startGame(){
   //sounds["newLevel"].play();
   gamesettings.noFreeAttacks = true;
   gamesettings.freeHeals = false;
+  gamesettings.disableFoV = false;
+  gamesettings.senseMelee = true;//while not knowing for sure if enemy is right behind you or not can be nice it's easily confusing and being able to hear creatures at so close makes sense. // TODO: don't reveal what creature unless you look.
   totalCharge = 0;
   spellSlots = [];//player.spells are set to this.
   spellsCast = 0;
@@ -397,6 +406,7 @@ function startLevel(entryDir, playerHp=3){
   gemMax = runeinv.length + gemCount();
   
   fov = new ROT.FOV.RecursiveShadowcasting(lightPasses);//how often should this run? Every tick would be safest but only when map changes in some way could work. Though I'm not seeing any issues with just this, should investigate.
+  //seems like at least hunter following causes issues with just this, added this to tick() to hopefully fix that
   player.vision();
 }
 
@@ -507,6 +517,7 @@ function initSounds(){
     leap: new Audio('sounds/leap.wav'),
     slip: new Audio('sounds/slip3.wav'),
     weave: new Audio('sounds/weave.wav'),
+    webstuck: new Audio('sounds/weave.wav'),//todo
     slorch: new Audio('sounds/slorch.wav'),
     hatch: new Audio('sounds/unpa1.wav'),
     splash: new Audio('sounds/splash2.wav'),

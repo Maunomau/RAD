@@ -35,12 +35,13 @@ class Monster{
     });
     */
     this.seesPlayer = false;
-    let visRange = 10;
+    let visRange = 20;
     let dirTl = [2, 3, 0, 1];//clockwise south 0 to ccw north 0
     let dir = dirTl[this.dir];
     dir = dir*2;
     fov.compute(this.tile.x, this.tile.y, visRange, function(x, y, r, visibility) {
-      tiles[x][y].seenByPlayer = 2;
+      let tile = getTile(x,y);
+      tile.seenByPlayer = 2;
       if(tiles[x][y].monster){
         if(tiles[x][y].monster.isPlayer){
           console.log("%cYou're within LoS of "+seer.constructor.name+"!", "color:orange");
@@ -78,7 +79,7 @@ class Monster{
         this.teleportCounter--;
         console.log(""+this.constructor.name+" is stunned.");
         return;
-      }
+      }else if(this.webbed) this.webbed = false;
       if(Math.floor(this.hp) < 1) {
         this.KO();
         console.error(""+this.constructor.name+" wasn't resting for some reason despite having "+ this.hp +" hp.");
@@ -133,7 +134,12 @@ class Monster{
   }
 
   draw(){
-    if(this.tile.seenByPlayer == 1 || this.tile.seenByPlayer == 2 || this.heardByPlayer || darkness == 0){
+    if(this.webbed){
+      //Draw web here since we remove it from the tile itself right away.
+      drawTile(21, this.tile.x, this.tile.y);
+    }
+    let playerDistance = this.tile.dist(player.tile)
+    if(this.tile.seenByPlayer == 1 || this.tile.seenByPlayer == 2 || this.heardByPlayer || darkness == -1 || (playerDistance < 2 && gamesettings.senseMelee)){
       if(this.teleportCounter > 1){
         drawSprite(31, this.getDisplayX(),  this.getDisplayY(), this.sheet);
       }else if(this.teleportCounter == 1 || this.stunned){
@@ -400,6 +406,7 @@ class Player extends Monster{
     //this.spells = new Set(Object.keys(spells))//Sets are meh
     //this.spells = Object.keys(spells).splice(0,numSpells);
     this.spells = spellSlots;
+    this.freeSpell = "";
     //this.spells = [];
     this.TUs = 0;//Timeunits(or "Turningunits"), to track "free" actions such as turning(not sure I'll use them for anything).
     this.restspeed = 2;//rest turns to gain 1 hp
@@ -413,6 +420,23 @@ class Player extends Monster{
       console.log("%cResetting turnMsg:%c"+turnMsg, "color:grey", "color:");
       turnMsg = "";
     }
+    
+    //remove tempspell
+    //kind of risky, could easily remove or not remove spells when not meant to.
+    //safer way might be to just combine freeSpell and spells whenever spells is checked.
+    /*
+    if (player.spells.includes(player.tempspell) && player.tempspell != player.freeSpell) {
+      player.spells = player.spells.filter(spell => spell != player.tempspell);
+      player.tempspell = "";
+    }
+    
+    //give freeSpells
+    if (player.freeSpell && !player.spells.includes(player.freeSpell)) {
+      player.addSpell(player.freeSpell);
+      player.tempspell = player.freeSpell;
+    }
+    */
+    
     //reduce personal haste counter as long global haste effect is on and check if you have posthaste after global haste has expired.
     if(!haste && !this.posthaste || haste && this.hasted){
       if(this.hasted) this.hasted--;
@@ -428,7 +452,7 @@ class Player extends Monster{
       this.stunned = false;
       tick(true, "Stunned!");
       console.log(""+this.constructor.name+" is stunned.");
-    }
+    }else if(this.webbed && !waitForInputToTick) this.webbed = false;
     
     //first reduce poisontimer and once it's 0 go through poisoned until that too is 0
     //
@@ -461,20 +485,23 @@ class Player extends Monster{
         if (tile.seenByPlayer){
           tile.seenByPlayer = 3;
         }
+        if(this.seeAll || gamesettings.disableFoV) tile.seenByPlayer = 1;
       })
     });
-    let visRange = 10;
-    let dirTl = [2, 3, 0, 1];//clockwise south 0 to ccw north 0
-    let dir = dirTl[player.dir];
-    dir = dir*2;
-    fov.compute180(player.tile.x, player.tile.y, visRange, dir, function(x, y, r, visibility) {
-      tiles[x][y].seenByPlayer = 2;
-      //console.log("tile("+x+","+y+") seen by player.");
-    });
-    fov.compute90(player.tile.x, player.tile.y, visRange, dir, function(x, y, r, visibility) {
-      tiles[x][y].seenByPlayer = 1;
-      //console.log("tile("+x+","+y+") seen by player.");
-    });
+    if(!this.seeAll && !gamesettings.disableFoV){
+      let visRange = 20;
+      let dirTl = [2, 3, 0, 1];//clockwise south 0 to ccw north 0
+      let dir = dirTl[player.dir];
+      dir = dir*2;
+      fov.compute180(player.tile.x, player.tile.y, visRange, dir, function(x, y, r, visibility) {
+        tiles[x][y].seenByPlayer = 2;
+        //console.log("tile("+x+","+y+") seen by player.");
+      });
+      fov.compute90(player.tile.x, player.tile.y, visRange, dir, function(x, y, r, visibility) {
+        tiles[x][y].seenByPlayer = 1;
+        //console.log("tile("+x+","+y+") seen by player.");
+      });
+    }
   }
   
   tryMove(dx, dy){
@@ -599,10 +626,13 @@ class Player extends Monster{
   }
 
   castSpell(index){
-    if(this.spells.length > index){
-      let spellName = this.spells[index];
+    let spellList = structuredClone(this.spells);//clone to prevent avtually gaining the free spell
+    if(this.freeSpell && !spellList.includes(this.freeSpell)) spellList.push(this.freeSpell);
+    if(spellList.length > index){
+      let spellName = spellList[index];
       console.log("Casting spell "+index+" "+spellName+".");
       let cost = spells[spellName].cost;
+      if(this.freeSpell == spellName) cost = 0;
       if(spellName && cost <= runeinv.length){
         //delete this.spells[index];
         console.log("It costs "+cost);
@@ -629,6 +659,9 @@ class Player extends Monster{
   }
 
   draw(){
+    if(this.webbed){
+      drawTile(21, this.tile.x, this.tile.y);
+    }
     //player sprite
     if(this.teleportCounter > 1){
       drawSprite(31, this.getDisplayX(),  this.getDisplayY(), this.sheet);

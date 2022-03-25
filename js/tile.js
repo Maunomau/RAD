@@ -230,6 +230,7 @@ class Tile{
 	
   stepOn(monster){
     if(monster.isPlayer){
+			monster.freeSpell = "";//assuming no other way to get freeSpell outside of one's after this
 			if(this.gem){
 				if(pickupRune(this.gem)) this.gem = false;
 	      //spawnMonster();
@@ -251,8 +252,9 @@ class Tile{
 				playSound("circleFound", monster.Tile);
 				numSpells++;
 				player.addSpell("HEAL");
+			}else if (this.maincircle >= 0 && this.maincircle != 4  && circle[this.maincircle].found ) {
+				monster.freeSpell = circle[this.maincircle].spell2;
 			}
-			
 			
 			//mark circle as found
 			if(this.circle >= 0){
@@ -267,6 +269,7 @@ class Tile{
 			      player.addSpell(c.spell);
 			    }
 				}
+				monster.freeSpell = c.spell;
 	    }
 			//The way I'm doing this assumes a lot about player's spritesheet, mainly that runes and belt are handled some other way.
 			if (this.liquid != "none" && this.depth){
@@ -289,9 +292,7 @@ class Tile{
 				else player.sprite = 0;
 			}
 			if(!player.small && this.depth < 4) player.peaceful = false;
-			
-			
-		}
+		}//end of isPlayer
 		
 		if(this.web && !monster.webwalker){
 			if(!monster.resting) this.web = false;
@@ -299,7 +300,9 @@ class Tile{
 			if(monster.isPlayer)tick(true, "Stuck in a web!");
 			else{
 				monster.stunned = true;
+				monster.heardByPlayer = true;
 			}
+			playSound("webstuck", monster.Tile);
 		}
 		
 		//slippery slime
@@ -309,6 +312,7 @@ class Tile{
 			let newTile = tiles[this.x+monster.lastMove[0]][this.y+monster.lastMove[1]];
 			neighbors = neighbors.filter(t => !t.monster || t.monster.resting);
 			if(newTile.passable && (!newTile.monster || newTile.monster.resting) && randomRange(0,4)){
+				monster.heardByPlayer = true;
 				monster.move(newTile);
 				if(monster.isPlayer) playSound("slip", monster.Tile);
 			}else if(neighbors.length && randomRange(0,2) == 1) {
@@ -316,6 +320,7 @@ class Tile{
 				//monster.tryMove(newTile.x - this.x, newTile.y - this.y);
 				monster.move(newTile);
 				if(monster.isPlayer && !monster.small){
+					monster.heardByPlayer = true;
 					playSound("slip", monster.Tile);
 					monster.small = true;
 					monster.peaceful = true;
@@ -349,7 +354,7 @@ class Tile{
 				if(pickupRune(this.rune)) this.rune = false;
 	      //spawnMonster();
 	    }
-			if(this.maincircle >= 0 && this.maincircle != 4){
+			if(this.maincircle >= 0 && this.maincircle != 4 && circle[this.maincircle].found){
 				let c = circle[this.maincircle];//should replace circle[i] with c
 				let i = this.maincircle;
 				let charge = c.runesChargedWith.length;
