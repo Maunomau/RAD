@@ -176,18 +176,14 @@ class Tile{
       drawTile(46, this.x, this.y);
     }
 		//look at neighbouring rooms runes
-		if(this.exit && this.entryDir){
-			let testX = parseInt(wpos[0]+parseInt(dirmap[this.entryDir]));
-			let testY = parseInt(wpos[1]+parseInt(dirmap[this.entryDir]));
-			let test;
-			if(wTiles[testX][testY].runes) {
-				test = wTiles[testX][testY].runes.length;
-				console.log("%cExit in dir "+this.entryDir+" sees "+test+" runes in the other room["+testX+"]["+testY+"]", "color:pink");
-			}
-	 		if(test){
-			//console.log("%cThere are runes in direction "+this.entryDir+"("+testX+","+testY+")?", "color:violet");
-	    //drawTile(45, this.x, this.y);
-	    }
+		if(this.exit){
+			if(!this.exitRuneCount){
+				drawTile(45, this.x, this.y);
+			}else if(this.exitRuneCount <= 4){
+				ctx.globalAlpha = 0.95-(this.exitRuneCount*0.2);
+				drawTile(45, this.x, this.y);
+	      ctx.globalAlpha = 1;
+			}//else drawTile(44, this.x, this.y);
 		}
 		if(this.effectCounter){
       this.effectCounter--;
@@ -462,6 +458,7 @@ class Exit extends Tile{
 				wpos[1] = 14;
 				startLevel(this.entryDir, player.hp);
 				console.table(wpos);
+				
 				
       }else{
         if(hunterPresent == true){

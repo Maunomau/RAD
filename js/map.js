@@ -300,9 +300,20 @@ function placeExitsAndPlayer(entryDir=-1, playerHp=3, rng=mapRNG){
     tiles[Math.floor(numTiles/2)][0+1],
     tiles[numTiles-2][Math.floor(numTiles/2)],
   ];
+  let runeCounts = [0,0,0,0];
   let wtile1 = wTiles[wpos[0]][wpos[1]];
   console.log("This rooms type is "+wtile1.type+" and it's position is ["+wpos[0]+"]["+wpos[1]+"]");
   for(let i=0 ; i<dirs.length ; i++) {
+    //runeCounts for neighbouring rooms
+    let testX = parseInt(wpos[0]+parseInt(dirmap[i][0]));
+    let testY = parseInt(wpos[1]+parseInt(dirmap[i][1]));
+    let test;
+    if(wTiles[testX][testY].runes) {
+      test = wTiles[testX][testY].runes.length;
+      runeCounts[i] = wTiles[testX][testY].runes.length;
+      console.log("%cExit in dir "+i+" sees "+test+" runes in the other room["+testX+"]["+testY+"]", "color:pink");
+    }else console.log("%cExit? in dir "+i+" sees "+0+" runes in the other room["+testX+"]["+testY+"]", "color:pink");
+    //
     let tile = dirs[i];
     let frontTileType = Floor;
     //let frontTileType = Pit;
@@ -332,6 +343,7 @@ function placeExitsAndPlayer(entryDir=-1, playerHp=3, rng=mapRNG){
       if(tiles[tile.x][tile.y].circle >= 0) console.warn("Circle on exit! Do something?");
       //add the exit
       tiles[tile.x][tile.y] = new Exit(tile.x, tile.y, dirmap[i][0], dirmap[i][1], i);
+      tiles[tile.x][tile.y].exitRuneCount = runeCounts[i];
       console.log("spawned exit in direction "+i+" leading to room type "+wtile2+" (wTiles["+(wpos[0]+dirmap[i][0])+","+(wpos[1]+dirmap[i][1])+"])");
     }else{
       console.log("no world tile in direction "+i+" wTiles["+(wpos[0]+dirmap[i][0])+","+(wpos[1]+dirmap[i][1])+"]");

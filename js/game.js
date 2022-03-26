@@ -74,8 +74,10 @@ function draw(){
     
     drawText("Score:"+totalCharge+"/"+runeTypesTotal+"", tileSize/2, false, 25, "violet");
     drawText("Day:"+day+" t:"+time+"", tileSize/2, false, 45, "violet");
-    if(player.tile.maincircle){
+    if(player.tile.maincircle >= 0){
       drawText(""+runeinv.length+"/"+gemMax+" "+circle[player.tile.maincircle].runesChargedWith.length+"/"+circle[player.tile.maincircle].maxCharge, tileSize/2, false, 65, "violet");
+    }else if (player.tile.exit) {
+      drawText(""+runeinv.length+"/"+gemMax+" ("+player.tile.exitRuneCount+")", tileSize/2, false, 65, "violet");
     }else drawText(""+runeinv.length+"/"+gemMax, tileSize/2, false, 65, "violet");
     
     let lasti = 0;
