@@ -463,7 +463,7 @@ class Player extends Monster{
       if(this.poisontimer > 0){
         this.poisontimer--
       }
-      if(this.poisontimer < 1){
+      if(this.poisontimer < 1 || !this.poisontimer){
         if(!this.small){//not exactly a foolproof way to check this is 1st turn of poison being active.
           turnMsg = "Feeling weak!";
           playSound("weak");

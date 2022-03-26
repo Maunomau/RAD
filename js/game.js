@@ -74,7 +74,7 @@ function draw(){
     
     drawText("Score:"+totalCharge+"/"+runeTypesTotal+"", tileSize/2, false, 25, "violet");
     drawText("Day:"+day+" t:"+time+"", tileSize/2, false, 45, "violet");
-    if(player.tile.maincircle >= 0){
+    if(player.tile.maincircle >= 0 && circle[player.tile.maincircle].found){
       drawText(""+runeinv.length+"/"+gemMax+" "+circle[player.tile.maincircle].runesChargedWith.length+"/"+circle[player.tile.maincircle].maxCharge, tileSize/2, false, 65, "violet");
     }else if (player.tile.exit) {
       drawText(""+runeinv.length+"/"+gemMax+" ("+player.tile.exitRuneCount+")", tileSize/2, false, 65, "violet");
@@ -349,15 +349,24 @@ function showTitle(){
 function startGame(){
   //playSound("newLevel");
   //sounds["newLevel"].play();
-  if("getpageurlafter?" == "v7DRL"){
+  if(urlInfo.search == "?v7DRL"){
     gamesettings.noFreeAttacks = false;
     gamesettings.freeHeals = true;
-    gamesettings.disableFoV = true;
+    gamesettings.disableFoV = true;//make enemies not care about it?
     gamesettings.oldDarkness = true;
     gamesettings.senseMelee = false;
     gamesettings.runeSight = false;
     gamesettings.smallMap = false;
     wpos = [14,11,10,0];//world position, x,y,z,plane
+  }else if(urlInfo.search.includes("?gs=" && urlInfo.search.length > 9)){
+    let urlsettings = urlInfo.search;
+    gamesettings.noFreeAttacks = parseInt(urlsettings[4]);
+    gamesettings.freeHeals = parseInt(urlsettings[5]);
+    gamesettings.disableFoV = parseInt(urlsettings[6]);
+    gamesettings.oldDarkness = parseInt(urlsettings[7]);
+    gamesettings.senseMelee = parseInt(urlsettings[8]);
+    gamesettings.runeSight = parseInt(urlsettings[9]);
+    gamesettings.smallMap = parseInt(urlsettings[10]);
   }else{
     gamesettings.noFreeAttacks = true;
     gamesettings.freeHeals = false;
