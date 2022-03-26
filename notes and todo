@@ -122,6 +122,7 @@ hunter's DIG probably still doesn't work always
 hobgobs don't always knockback?
 Push doesn't stun when done in melee against 1 enemy?
 More runes than needed? How?
+Reloading map replaces exits which removes the seenByPlayer tags from just them.
 
 probably fixed
 leap cooldown is weird

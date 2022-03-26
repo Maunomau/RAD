@@ -178,7 +178,7 @@ class Tile{
 		//look at neighbouring rooms runes
 		if(this.exit){
 			if(!this.exitRuneCount){
-				drawTile(45, this.x, this.y);
+				drawTile(44, this.x, this.y);
 			}else if(this.exitRuneCount <= 4){
 				ctx.globalAlpha = 0.95-(this.exitRuneCount*0.2);
 				drawTile(45, this.x, this.y);

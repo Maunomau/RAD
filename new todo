@@ -35,6 +35,9 @@ Try out indicating just sounds on the map instead of showing the monster sprite,
 make webs require trying to move to break? And potentially stronger webs that require multiple attempts.
 What if you could see around runes? Might be interesting.
 Make capture change displayed name to release based on capturedMons.length
+Resting at base to heal for free?
+Make defeating hunters more rewarding, simply removing the hunted status might be enough(especially if I add indicator for it) but I do want a way to increase fullHp and that being one crossed the mind, it'd be just 1 a day so not too bad even if it's cheesable, at least when high score is a goal. I could up the difficulty for following nights if you manahe to do it.
+Map room that shows where the runes are? Perhaps one that depends on having been to rooms for it to show them.
 
 done:
 Main circle charge info

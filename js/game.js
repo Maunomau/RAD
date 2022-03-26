@@ -352,12 +352,19 @@ function startGame(){
   if(urlInfo.search == "?v7DRL"){
     gamesettings.noFreeAttacks = false;
     gamesettings.freeHeals = true;
-    gamesettings.disableFoV = true;//make enemies not care about it?
+    gamesettings.disableFoV = true;//make enemies also not care about it?
     gamesettings.oldDarkness = true;
     gamesettings.senseMelee = false;
     gamesettings.runeSight = false;
     gamesettings.smallMap = false;
+    runeTypesTotal = 128;
     wpos = [14,11,10,0];//world position, x,y,z,plane
+    gamesettings.bedrest = false;
+    gamesettings.optionTBD2 = false;
+    gamesettings.optionTBD3 = false;
+    gamesettings.optionTBD4 = false;
+    gamesettings.optionTBD5 = false;
+    gamesettings.optionTBD6 = false;
   }else if(urlInfo.search.includes("?gs=" && urlInfo.search.length > 9)){
     let urlsettings = urlInfo.search;
     gamesettings.noFreeAttacks = parseInt(urlsettings[4]);
@@ -367,6 +374,19 @@ function startGame(){
     gamesettings.senseMelee = parseInt(urlsettings[8]);
     gamesettings.runeSight = parseInt(urlsettings[9]);
     gamesettings.smallMap = parseInt(urlsettings[10]);
+    if(gamesettings.smallMap) {
+      runeTypesTotal = 64;
+      wpos = [14,12,10,0];
+    }else {
+      runeTypesTotal = 128;
+      wpos = [14,11,10,0];
+    }
+    gamesettings.bedrest = parseInt(urlsettings[11]);
+    gamesettings.optionTBD2 = parseInt(urlsettings[12]);
+    gamesettings.optionTBD3 = parseInt(urlsettings[13]);
+    gamesettings.optionTBD4 = parseInt(urlsettings[14]);
+    gamesettings.optionTBD5 = parseInt(urlsettings[15]);
+    gamesettings.optionTBD6 = parseInt(urlsettings[16]);
   }else{
     gamesettings.noFreeAttacks = true;
     gamesettings.freeHeals = false;
@@ -375,7 +395,14 @@ function startGame(){
     gamesettings.senseMelee = true;//while not knowing for sure if enemy is right behind you or not can be nice it's easily confusing and being able to hear creatures at so close makes sense. // TODO: don't reveal what creature unless you look.
     gamesettings.runeSight = true;
     gamesettings.smallMap = true;
+    runeTypesTotal = 64;
     wpos = [14,12,10,0];//world position, x,y,z,plane
+    gamesettings.bedrest = true;
+    gamesettings.optionTBD2 = true;
+    gamesettings.optionTBD3 = true;
+    gamesettings.optionTBD4 = true;
+    gamesettings.optionTBD5 = true;
+    gamesettings.optionTBD6 = true;
   }
   totalCharge = 0;
   spellSlots = [];//player.spells are set to this.
